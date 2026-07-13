@@ -1,0 +1,33 @@
+# Build results
+[Bb]in/
+[Oo]bj/
+[Ll]og/
+*.user
+*.userosscache
+*.sln.docstates
+
+# Visual Studio files
+.vs/
+.vscode/
+
+# Database files
+*.db
+*.sqlite
+*.sdf
+*.ldf
+*.mdf
+
+# User-specific files
+appsettings.Development.json
+appsettings.Local.json
+.env
+.secrets
+
+# Packages
+packages/
+publish/
+
+# OS files
+.DS_Store
+Thumbs.db
+.devin
