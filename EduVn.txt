@@ -1,0 +1,356 @@
+Tên project & Slogan
+EduPath
+"Lộ trình học tập thông minh dành cho bạn"
+Ý tưởng cốt lõi
+Một nền tảng học tập cá nhân hóa sử dụng AI để phân tích khả năng của người dùng, sau đó xây dựng lộ trình học phù hợp, gợi ý bài tập, và hỗ trợ giải đáp như một gia sư ảo.
+
+Vấn đề thực tế nó giải quyết
+
+Học sinh, sinh viên Việt Nam thường học lan man, không biết học gì trước, học gì sau.
+Khó tìm tài liệu phù hợp với trình độ.
+Không có người hướng dẫn cá nhân hóa (gia sư đắt tiền).
+Thiếu công cụ theo dõi tiến độ dài hạn.
+
+
+Đối tượng người dùng
+
+Học sinh THPT (ôn thi đại học, kỳ thi tốt nghiệp).
+Sinh viên năm nhất, năm hai (học lập trình, tiếng Anh, kỹ năng mềm…).
+Người đi làm muốn học thêm kỹ năng.
+
+FLOW CHON NGHE : 
+Bước 1: User chọn lĩnh vực mình quan tâm
+Khi mới vào app, user được hỏi: "Bạn quan tâm tới lĩnh vực nào?" — CNTT, Kinh tế, Marketing... User chọn 1 cái, ví dụ chọn CNTT.
+Bước 2: Hệ thống soạn ra bộ câu hỏi đúng với lĩnh vực đó
+Vì user chọn CNTT, hệ thống sẽ lấy ra đúng bộ câu hỏi dành riêng cho CNTT (không đưa câu hỏi về Marketing hay Kinh tế vào, vì không liên quan). Bộ câu hỏi này đã được soạn sẵn từ trước, xoay quanh việc tìm hiểu user hợp với ngành nào trong CNTT — Backend, Frontend, Data, QA...
+Bước 3: User trả lời từng câu
+Mỗi câu hỏi, user chọn 1 trong các đáp án có sẵn (không phải tự gõ). Ví dụ:
+
+"Bạn thích làm việc với con số hay hình ảnh?" → User chọn "Con số"
+
+Bước 4: Hệ thống lưu lại tất cả đáp án user đã chọn
+Trả lời xong 20 câu, hệ thống ghi nhớ: "User này đã chọn đáp án A cho câu 1, đáp án C cho câu 2..." — giống như lưu lại 1 tờ bài làm đã hoàn thành, để lát nữa còn có cái mà chấm điểm.
+Bước 5: Chấm điểm — mỗi đáp án đã chọn "ngầm" cộng điểm cho 1 vài ngành nghề
+Đây là phần quan trọng: từ trước, khi soạn câu hỏi, người làm app đã quy định sẵn — "nếu ai chọn đáp án Con số, thì cộng điểm cho ngành Data Analyst và Backend Developer, trừ điểm ngành UI/UX Designer". Nên khi user chọn xong 20 câu, hệ thống chỉ cần tra lại từng đáp án user đã chọn, rồi cộng dồn điểm vào đúng ngành nghề tương ứng.
+Bước 6: Sau khi cộng hết điểm, xem ngành nào cao điểm nhất
+Ví dụ sau khi cộng dồn: Backend Developer được 87 điểm, Data Analyst 74 điểm, UI/UX Designer 22 điểm. Hệ thống quy đổi ra %, để dễ hiểu hơn: Backend 87%, Data 74%, UI/UX 22%.
+Bước 7: Đưa ra kết quả gợi ý nghề nghiệp
+Cuối cùng, hệ thống hiển thị cho user: "Bạn phù hợp nhất với Backend Developer (87%), tiếp theo là Data Analyst (74%)..." — đây chính là kết quả cuối cùng user nhận được sau khi làm xong quiz.
+
+Tóm gọn 1 câu: User chọn lĩnh vực → làm bộ câu hỏi đúng lĩnh vực đó → mỗi câu trả lời được lưu lại → hệ thống tra bảng điểm đã soạn sẵn để cộng điểm cho từng ngành → ngành nào điểm cao nhất thì gợi ý cho user
+
+
+
+1. Đăng ký / Đăng nhập
+
+User tạo tài khoản (Email + Password hoặc Google).
+Sau khi đăng nhập lần đầu → Bắt buộc đi qua Onboarding.
+
+2. Onboarding (Thu thập thông tin ban đầu)
+
+Nhập thông tin cơ bản: Họ tên, Ngày sinh, Trình độ hiện tại (Học sinh, Sinh viên, Đã đi làm...).
+Chọn lĩnh vực quan tâm ban đầu (CNTT, Kinh tế, Marketing, Kỹ thuật...).
+Câu hỏi nhanh về sở thích, điểm mạnh (tùy chọn).
+
+→ Sau đó chuyển sang Quiz Định hướng Nghề nghiệp.
+3. Làm Quiz Định hướng Nghiệp (Career Quiz)
+
+Khoảng 15–25 câu hỏi (tính cách, sở thích, kỹ năng, giá trị cá nhân).
+Ví dụ câu hỏi:
+Bạn thích làm việc với con số hay sáng tạo?
+Bạn có kiên nhẫn debug code nhiều giờ không?
+Bạn muốn làm việc remote hay văn phòng?
+
+Quiz có thể chia theo lĩnh vực (IT, Business, Design...).
+
+4. AI Phân tích & Đưa ra Kết quả Định hướng Nghề
+Sau khi nộp quiz, hệ thống gửi dữ liệu cho AI phân tích → Trả về:
+
+Top 3-5 ngành nghề phù hợp (ví dụ: Backend Developer, Data Analyst, UI/UX Designer...).
+Tỷ lệ phù hợp % (Match Percentage).
+Lý do AI giải thích (bằng tiếng Việt, dễ hiểu).
+Mức lương tham khảo & nhu cầu thị trường.
+
+User có thể chọn 1 ngành chính để tiếp tục.
+5. Gợi ý Lộ trình Học theo Ngành đã chọn
+Sau khi user chọn ngành (hoặc hệ thống gợi ý mặc định):
+
+Hiển thị Lộ trình học chi tiết theo giai đoạn:
+Giai đoạn 1: Kiến thức nền tảng (Nhập môn lập trình, OOP...)
+Giai đoạn 2: Chuyên sâu (Database, API, .NET, React...)
+Giai đoạn 3: Dự án thực tế, Portfolio
+Giai đoạn 4: Kỹ năng mềm + Chuẩn bị phỏng vấn
+
+Danh sách môn học cần học (ưu tiên theo mức độ quan trọng).
+Thời gian ước tính cho từng giai đoạn.
+
+6. Dashboard Chính (Trang chính sau này)
+
+Tiến độ lộ trình hiện tại.
+Gợi ý bài học / bài tập hôm nay.
+Chat với Gia sư AI (hỏi về môn học, giải bài tập...).
+Thống kê (số môn đã học, % hoàn thành lộ trình).
+Có thể đổi ngành nghề khác nếu muốn.
+
+
+Tóm tắt Flow đơn giản:
+Login → Onboarding → Quiz → AI Gợi ý Nghề → Chọn Nghề → Xem Lộ trình Học → Học & Theo dõi Tiến độ → Gia sư AI hỗ trợ
+
+1. Luồng Đăng ký & Onboarding (Lần đầu sử dụng)
+
+Trang Home
+Giới thiệu ngắn gọn về EduPath + slogan.
+Nút "Bắt đầu học tập miễn phí".
+
+Đăng ký / Đăng nhập
+Đăng ký bằng Email + Password, Google, hoặc Facebook.
+Sau khi đăng ký → Chuyển sang bước Onboarding.
+
+Onboarding (Thu thập thông tin ban đầu)
+Chọn vai trò: Học sinh THPT / Sinh viên / Người đi làm.
+Chọn môn học quan tâm (có thể chọn nhiều): Toán, Lý, Hóa, Tiếng Anh, Lập trình C#, Java, Python…
+Chọn mục tiêu: Thi đại học / Cải thiện điểm / Học kỹ năng mới / Chuẩn bị phỏng vấn…
+Thời gian học mỗi ngày (30 phút, 1 giờ, 2 giờ…).
+
+Placement Test (Kiểm tra trình độ)
+Hệ thống đưa ra bài test ngắn (10-15 câu) theo môn đã chọn.
+Hoàn thành → AI phân tích và hiển thị báo cáo:
+“Bạn mạnh về Đại số, yếu về Giải tích. Nên tập trung Giải tích trước.”
+
+
+
+2. Luồng Chính - Dashboard & Học Tập
+Sau khi hoàn tất Onboarding, người dùng vào Dashboard chính:
+Trang Dashboard:
+
+Chào mừng + tên người dùng.
+Tiến độ tổng thể (biểu đồ).
+Lộ trình học tuần này (gợi ý).
+Nút nhanh: “Học tiếp”, “Làm bài tập”, “Hỏi AI”, “Kiểm tra tiến độ”.
+
+Các luồng con:
+Luồng A: Xem & Học theo Lộ trình
+
+Vào mục Lộ trình cá nhân.
+Thấy danh sách theo tuần (Week 1, Week 2…).
+Click vào một chủ đề → Hiển thị:
+Nội dung lý thuyết (văn bản + video nhúng).
+Bài tập thực hành.
+Nút “Hỏi AI giải thích”.
+
+
+Luồng B: Hỏi đáp với Gia sư AI (Chatbot)
+
+Click nút “Gia sư AI” (có ở mọi trang).
+Giao diện chat như ChatGPT.
+Người dùng hỏi:
+“Giải thích định lý Pythagoras”
+“Làm giúp bài tập này: 2x + 5 = 11”
+“Tạo 5 bài tập về hàm số bậc 2”
+
+AI trả lời kèm ví dụ, công thức, và gợi ý bài tập tiếp theo.
+
+Luồng C: Làm bài tập & Kiểm tra
+
+Chọn chủ đề → Làm bài tập.
+Hệ thống chấm điểm tự động.
+Sau khi nộp → Hiển thị đáp án + giải thích chi tiết + điểm số.
+AI nhận xét: “Bạn làm tốt phần này nhưng còn sai ở khái niệm…”
+
+
+3. Luồng Theo dõi & Tương tác
+
+Progress Tracking: Xem biểu đồ tiến bộ theo thời gian (điểm số, thời gian học, chủ đề đã hoàn thành).
+Nhắc nhở: Hệ thống gửi thông báo (Email + In-app) “Hôm nay bạn nên học 30 phút Giải tích”.
+Gamification: Kiếm điểm, huy hiệu khi hoàn thành mục tiêu (ví dụ: “7 ngày học liên tục”).
+Lịch sử học tập: Xem lại tất cả bài đã làm.
+
+
+4. Luồng Admin / Giáo viên (nếu có)
+
+Quản lý câu hỏi, bài tập.
+Xem thống kê người dùng.
+Tạo lộ trình thủ công cho lớp học.
+
+
+Các tính năng chi tiết
+Tính năng cốt lõi (MVP)
+
+Đánh giá trình độ ban đầu (Placement Test)
+Người dùng làm bài kiểm tra nhanh theo môn (Toán, Lý, Hóa, Tiếng Anh, Lập trình…).
+AI tự động phân tích điểm yếu, điểm mạnh.
+
+AI Xây dựng Lộ trình học cá nhân hóa
+Ví dụ: “Bạn yếu phần Giải tích, nên học 2 tuần phần này trước”.
+Lộ trình theo tuần/tháng với mục tiêu rõ ràng.
+
+Gia sư AI (Chatbot)
+Hỏi bài trực tiếp: “Giải thích công thức tích phân cho mình”, “Bài này giải sao?”.
+AI giải thích dễ hiểu, có ví dụ, có thể tạo bài tập tương tự.
+
+Ngân hàng bài tập & Bài kiểm tra
+Hệ thống tự động sinh bài tập theo mức độ.
+Tự động chấm điểm.
+
+Theo dõi tiến độ (Dashboard)
+Biểu đồ tiến bộ, thời gian học, điểm số cải thiện.
+Nhắc nhở lịch học (notification).
+
+
+Tính năng nâng cao (làm sau khi xong MVP)
+
+Hỗ trợ nhiều môn học (bắt đầu với Toán + Tiếng Anh + Lập trình).
+Tích hợp tài liệu miễn phí (YouTube, Coursera, sách PDF).
+Mock Interview (luyện phỏng vấn tiếng Anh hoặc kỹ thuật).
+Hệ thống gamification (điểm thưởng, huy hiệu, bảng xếp hạng).
+Chế độ học nhóm (study with friends).
+Xuất lộ trình PDF để in.
+
+
+Tech Stack khuyến nghị
+
+Backend: .NET 9 Web API
+Frontend: Blazor WebAssembly (hoặc React nếu bạn muốn)
+Database: PostgreSQL + EF Core
+Authentication: Identity + JWT
+AI Integration:
+Gemini 1.5 Flash hoặc Grok API (chatbot & tạo lộ trình)
+Semantic Kernel (.NET) để quản lý AI
+
+Real-time: SignalR (nếu có chat)
+Storage: Azure Blob hoặc local
+
+
+Chi phí AI
+
+Hoàn toàn miễn phí ở giai đoạn phát triển:
+Gemini 1.5 Flash: quota miễn phí khá cao.
+Hoặc dùng Ollama chạy local (không tốn tiền).
+
+Khi demo: chi phí gần như bằng 0.
+
+ERD : 
+Danh sách đầy đủ các Table/Entity
+
+ApplicationUser (Kế thừa IdentityUser)
+Career (Ngành nghề)
+Subject (Môn học)
+CareerSubject (Bảng nối Career ↔ Subject)
+Topic (Chủ đề bên trong môn học)
+Quiz
+Question
+Answer
+QuizCareerRecommendation (Kết quả AI gợi ý nghề)
+UserLearningPath (Lộ trình học của user)
+UserProgress (Tiến độ học)
+
+
+Mối quan hệ đầy đủ (Cập nhật)
+ApplicationUser
+
+1-n QuizCareerRecommendation
+1-n UserLearningPath
+1-n UserProgress
+
+Career
+
+1-n CareerSubject
+1-n QuizCareerRecommendation
+1-n UserLearningPath
+
+Subject
+
+1-n CareerSubject
+1-n Topic
+1-n UserProgress (tùy chọn)
+
+Topic
+
+n-1 Subject (Foreign Key)
+1-n Question
+
+Quiz
+
+1-n Question
+1-n QuizCareerRecommendation
+
+Question
+
+n-1 Quiz
+n-1 Topic
+1-n Answer
+
+Answer
+
+n-1 Question
+
+CareerSubject
+
+n-1 Career
+n-1 Subject
+
+QuizCareerRecommendation
+
+n-1 ApplicationUser
+n-1 Career
+n-1 Quiz (tùy chọn)
+
+UserLearningPath
+
+n-1 ApplicationUser
+n-1 Career
+
+UserProgress
+
+n-1 ApplicationUser
+n-1 Subject hoặc Topic
+
+3. QUIZ CẦN GÌ?
+
+Để Quiz hoạt động, cần:
+
+  • ✅ Fields (để filter quiz theo lĩnh vực user chọn)
+  • ✅ Careers (để tính điểm recommendation)
+  • ✅ Quizzes (bài quiz theo field)
+  • ✅ Questions (câu hỏi trong quiz)
+  • ✅ Answers (đáp án cho câu hỏi)
+  • ✅ AnswerCareerWeights (trọng số điểm - đây là "menu điểm" để tính career
+  recommendation)
+
+4. LEARNING PATH CẦN GÌ?
+
+Để Learning Path hoạt động, cần:
+
+  • ✅ Careers (để tạo lộ trình theo career)
+  • ✅ Subjects (môn học trong career)
+  • ✅ Topics (chủ đề cần học)
+  • ✅ LearningPaths (lộ trình học tập)
+  • ✅ UserProgress (tiến độ học tập)
+
+───────────────────────────────────────────────────────────────────────────────────────────
+📊 THỨ TỰ SEEDING ĐÚNG:
+
+1. Fields (CNTT, Marketing, Kinh tế...)
+2. Careers (trong từng Field)
+3. Subjects (môn học chung)
+4. CareerSubjects (gán Subject cho Career)
+5. Quizzes (theo Field)
+6. Topics (trong từng Subject)
+7. Questions (trong Quiz + Topic)
+8. Answers (cho từng Question)
+9. AnswerCareerWeights (gán trọng số cho Answer+Career) ⭐
+
+───────────────────────────────────────────────────────────────────────────────────────────
+🎯 TÓM LẠI:
+
+Quiz System cần:
+
+  • Fields (để lọc quiz theo lĩnh vực)
+  • Careers (để recommend)
+  • Quizzes + Questions + Answers (dữ liệu quiz)
+  • AnswerCareerWeights (để tính điểm recommendation)
+
+Learning Path System cần:
+
+  • Careers (để tạo lộ trình)
+  • Subjects + Topics (nội dung học tập)

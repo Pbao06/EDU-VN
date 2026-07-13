@@ -1,0 +1,371 @@
+EDU VN PROJECT STATUS
+======================
+
+PROJECT OVERVIEW
+----------------
+Project Name: EduPath API - Nền tảng định hướng nghề nghiệp
+Technology: ASP.NET Core 9.0, Entity Framework Core, SQL Server LocalDB
+Type: Web API with JWT Authentication
+Location: C:\Users\OS\OneDrive\Desktop\Project\EDU VN\BackEnd\Source
+
+COMPLETED FEATURES
+------------------
+✅ Authentication System
+   - Login/Register với JWT token
+   - Refresh token mechanism
+   - ASP.NET Identity integration
+   - BCrypt password hashing
+
+✅ Onboarding System
+   - User cập nhật thông tin sau đăng ký
+   - Lưu UserType (HighSchoolStudent, University, Working)
+   - Lưu MainGoal (UniversityExam, ImproveGrades, NewSkill, InterviewPrep)
+   - Lưu FieldId (lĩnh vực quan tâm: CNTT, Marketing, Kinh tế...)
+   - Đánh dấu IsOnboardingCompleted = true
+
+✅ Database Schema (REFACTORED - DDD Design)
+   - Tách entity theo bounded context (Recommendation vs Learning)
+   - Tất cả DbSet đã được thêm vào ApplicationDbContext
+   - Quan hệ giữa các bảng đã được cấu hình
+   - Migration mới đã chạy thành công (20260710084530_InitDatabase)
+   - Database đã được reset và seed data thành công
+
+✅ Code Column Implementation
+   - Thêm Code column cho Field, Career, Subject, Quiz
+   - Code có Unique Index để đảm bảo không trùng lặp
+   - Code dùng để stable entity referencing thay vì filter by Name
+
+✅ Data Seeding System
+   - Seed 5 Fields (CNTT, MARKETING, KINH_TE, Y_TE, GIAO_DUC)
+   - Seed 9 Careers (FRONTEND_DEV, BACKEND_DEV, DATA_SCIENTIST, v.v.)
+   - Seed 9 Subjects (LAP_TRINH_CO_BAN, CAU_TRUC_DU_LIEU, v.v.)
+   - Seed 21 CareerSubjects
+   - Seed 3 Quizzes (QUIZ_CNTT, QUIZ_MARKETING, QUIZ_KINH_TE)
+   - Seed 11 Topics
+   - Seed 5 RecommendationQuestions
+   - Seed 15 RecommendationAnswers
+   - Seed 42 AnswerCareerWeights
+
+DATABASE STRUCTURE (REFACTORED)
+----------------------------------
+DOMAIN 1: CAREER RECOMMENDATION
+---------------------------------
+Quiz (Chỉ phục vụ Recommendation)
+  - Id, Code (UNIQUE), Title, Description, FieldId, DurationMinutes
+  - Navigation: Field, RecommendationQuestions, RecommendationUserAnswers, QuizCareerRecommendations
+  - ĐÃ HỦY liên kết với Subject (Quiz thuộc Recommendation Domain, Subject thuộc Learning Domain)
+
+RecommendationQuestion
+  - Id, Content, QuizId
+  - Navigation: Quiz, RecommendationAnswers, RecommendationUserAnswers
+
+RecommendationAnswer
+  - Id, Content, RecommendationQuestionId
+  - KHÔNG có IsCorrect (recommendation không có đúng/sai)
+  - Navigation: RecommendationQuestion, AnswerCareerWeights, RecommendationUserAnswers
+
+AnswerCareerWeight (Bảng trọng số điểm cho career)
+  - Id, RecommendationAnswerId, CareerId, Weight (-3 đến +5)
+  - Navigation: RecommendationAnswer, Career
+  - Unique index: (RecommendationAnswerId, CareerId)
+
+RecommendationUserAnswer
+  - Id, UserId, QuizId, RecommendationQuestionId, RecommendationAnswerId, AnsweredAt
+  - Navigation: User, Quiz, RecommendationQuestion, RecommendationAnswer
+  - Index: (UserId, QuizId, RecommendationQuestionId)
+
+QuizCareerRecommendations (Kết quả career recommendation)
+  - Id, UserId, QuizId, CareerId, MatchPercentage, AiExplanation, CreatedAt
+  - Navigation: User, Quiz, Career
+  - Index: (UserId, CreatedAt)
+
+DOMAIN 2: LEARNING
+-------------------
+Subjects
+  - Id, Code (UNIQUE), Name, Description, Type
+  - Navigation: CareerSubjects, Topics, Quizzes
+
+Topics
+  - Id, SubjectId, Name, Description, DifficultyLevel
+  - Navigation: Subject, LearningQuestions, UserProgresses
+
+LearningQuestion
+  - Id, Content, Explanation, Hint, Difficulty, TopicId
+  - Navigation: Topic, LearningAnswers, LearningUserAnswers
+
+LearningAnswer
+  - Id, Content, IsCorrect, Explanation, LearningQuestionId
+  - Có đúng/sai, có explanation
+  - Navigation: LearningQuestion, LearningUserAnswers
+
+LearningUserAnswer
+  - Id, UserId, LearningQuestionId, LearningAnswerId, IsCorrect, Score, AnsweredAt
+  - Navigation: User, LearningQuestion, LearningAnswer
+  - Index: (UserId, LearningQuestionId)
+
+UserProgress (Tiến độ học tập)
+  - Id, UserId, TopicId, CompletedQuestions, TotalQuestions, Score, LastAccessedAt
+  - Navigation: User, Topic
+
+LearningPaths (Lộ trình học tập)
+  - Id, UserId, CareerId, IsActive, StartedAt, CompletedAt
+  - Navigation: User, Career
+  - Index: (UserId, IsActive)
+
+SHARED DOMAIN
+-------------
+Users (AspNetUsers)
+  - Id, Email, Password, FullName, AvatarUrl
+  - UserType, MainGoal, FieldId, IsOnboardingCompleted
+  - Navigation: Field, Recommendations, LearningPaths, Progresses, RefreshTokens, RecommendationUserAnswers, LearningUserAnswers
+
+Fields
+  - Id, Code (UNIQUE), Name, Description
+  - Navigation: Users, Careers, Quizzes
+
+Careers
+  - Id, Code (UNIQUE), Name, FieldId, Description, Responsibilities
+  - MinSalary, MaxSalary, DemandLevel, IconUrl, PopularityScore
+  - Navigation: Field, Recommendations, CareerSubjects, LearningPaths, AnswerCareerWeights
+
+CareerSubjects (Many-to-Many)
+  - CareerId, SubjectId
+  - Unique index: (CareerId, SubjectId)
+
+RefreshTokens
+  - Id, Token, UserId, ExpiresAt, CreatedAt
+  - Navigation: User
+  - Unique index: Token
+
+SYSTEM FLOW (UPDATED - Định hướng chọn chuyên ngành)
+-----------
+1. User đăng ký → Login → Nhận JWT token
+2. User làm Onboarding → Cập nhật UserType, MainGoal, FieldId
+3. User làm Recommendation Quiz (theo FieldId của user):
+   - Quiz filter theo FieldId
+   - Quiz có RecommendationQuestions và RecommendationAnswers
+   - User chọn RecommendationAnswer → Lưu vào RecommendationUserAnswer
+4. Tính điểm career recommendation:
+   - RecommendationUserAnswer join AnswerCareerWeight (bảng trọng số)
+   - Tính tổng điểm cho từng Career
+   - Lưu kết quả vào QuizCareerRecommendation (TOP 3 careers)
+5. KHÁM PHÁ LEARNING PATHS (MỚI - TRƯỚC KHI CHỌN):
+   - User xem learning path của TOP 3 careers được recommend
+   - User có thể xem learning paths của TẤT CẢ careers trong field
+   - User so sánh lộ trình học: subjects, topics, độ khó, thời gian ước tính
+   - User xem chi tiết: mỗi subject gồm những topics nào, độ khó từng topic
+6. RA QUYẾT ĐỊNH:
+   - User chọn career phù hợp nhất dựa trên: % match + learning path + lương + sở thích
+7. BẮT ĐẦU HỌC:
+   - User tạo LearningPath cá nhân cho career đã chọn
+   - User học theo Learning Path: Subjects → Topics → LearningQuestions
+   - User trả lời LearningQuestions → Lưu vào LearningUserAnswer
+   - Update UserProgress (tiến độ học tập)
+
+CURRENT CONTROLLERS
+-------------------
+✅ AuthController
+   - POST /api/auth/register
+   - POST /api/auth/login
+   - POST /api/auth/refresh-token
+
+✅ OnboardingController
+   - POST /api/onboarding/complete
+   - GET /api/onboarding/status
+
+✅ QuizController
+   - GET /api/quiz/available?fieldId={fieldId}
+   - GET /api/quiz/{id}/questions
+   - POST /api/quiz/{id}/submit
+   - GET /api/quiz/results/{id}
+
+✅ CareerController (NEW)
+   - GET /api/career/GetListCareer (list careers theo FieldId của user)
+   - GET /api/career/GetDetailCareer/{id} (chi tiết career)
+
+NEXT STEPS (TODO)
+-----------------
+✅ Quiz System (PRIORITY 1) - COMPLETED
+   - QuizController ✅
+   - QuizService, IQuizService ✅
+   - DTOs: QuizDto, RecommendationQuestionDto, RecommendationAnswerDto, QuizDetailDto, QuizSubmitRequestDto, QuizCareerRecommendationDto, CareerRecommendationDto ✅
+   - Endpoints:
+     * GET /api/quiz/available?fieldId={fieldId} ✅
+     * GET /api/quiz/{id}/questions ✅
+     * POST /api/quiz/{id}/submit ✅
+     * GET /api/quiz/results/{id} ✅
+
+✅ Career Management (PRIORITY 1) - COMPLETED
+   - CareerController ✅
+   - CareerService, ICareerService ✅
+   - DTOs: CareerDetailDto, ListCareerDto ✅
+   - Endpoints:
+     * GET /api/career/GetListCareer (list careers theo FieldId của user) ✅
+     * GET /api/career/GetDetailCareer/{id} (chi tiết career) ✅
+
+❌ Learning Path System (PRIORITY 2) - UPDATED FLOW
+   MỤC TIÊU: "Định hướng chọn chuyên ngành" - User xem learning path TRƯỚC khi chọn career
+   - LearningPathController
+   - LearningPathService, ILearningPathService
+   - DTOs: LearningPathDto, SubjectDto, TopicDto, UserProgressDto, CareerLearningPathDto
+   - Endpoints:
+     * PUBLIC APIs (Không cần login - Xem learning path để ra quyết định):
+       - GET /api/career/{careerId}/learning-path (Xem learning path của 1 career cụ thể)
+       - GET /api/field/{fieldId}/careers/learning-paths (Xem learning paths của TẤT CẢ careers trong field để so sánh)
+     * PRIVATE APIs (Cần login - Quản lý learning path cá nhân):
+       - POST /api/learning-path/{careerId}/start (Bắt đầu học career này)
+       - GET /api/learning-path/active (Lấy learning path đang học của user)
+       - PUT /api/learning-path/topic/{topicId}/progress (Cập nhật tiến độ học topic)
+   - Flow:
+     1. User làm Quiz → Hiển thị TOP 3 careers với % match
+     2. User có thể xem learning path của TOP 3 careers và TẤT CẢ careers khác
+     3. User so sánh lộ trình học giữa các careers (subjects, topics, độ khó)
+     4. User chọn career phù hợp nhất dựa trên: % match + learning path + lương + sở thích
+     5. User bắt đầu learning path của career đã chọn
+     6. Theo dõi tiến độ học tập
+
+❌ Learning Quiz System (PRIORITY 3)
+   - LearningQuestionController
+   - LearningQuestionService, ILearningQuestionService
+   - DTOs: LearningQuestionDto, LearningAnswerDto, LearningUserAnswerDto
+   - Endpoints:
+     * GET /api/learning/topic/{id}/questions (lấy câu hỏi của topic)
+     * POST /api/learning/topic/{id}/submit (nộp bài kiểm tra kiến thức)
+     * GET /api/learning/progress/{userId} (xem tiến độ học tập)
+
+DATABASE CONNECTION
+-------------------
+Server: (localdb)\mssqllocaldb
+Database: EduPathDb
+Connection String: Trong appsettings.json
+
+JWT CONFIGURATION
+-----------------
+Key: YourSuperSecretKeyAtLeast32CharactersLong12345
+Issuer: http://localhost:5000
+Audience: http://localhost:5000
+
+MIGRATION STATUS
+----------------
+Latest Migration: 20260711150104_RemoveSubjectIdFromQuiz
+Status: ✅ Applied successfully
+Changes made:
+- REFACTOR COMPLETE: Tách entity theo bounded context (DDD)
+- Tạo RecommendationQuestion, LearningQuestion
+- Tạo RecommendationAnswer, LearningAnswer
+- Tạo RecommendationUserAnswer, LearningUserAnswer
+- Xóa Question, Answer, UserAnswer cũ
+- Loại bỏ QuizType từ Quiz
+- Loại bỏ QuestionType từ Questions
+- Cập nhật AnswerCareerWeight: AnswerId → RecommendationAnswerId
+- Thêm Code column cho Field, Career, Subject, Quiz
+- Cấu hình Unique Index cho Code columns
+- HỦY liên kết Quiz-Subject (tách biệt Recommendation vs Learning Domain)
+- Reset database hoàn toàn
+- Seed data thành công với cấu trúc mới
+
+IMPORTANT NOTES
+----------------
+1. DDD DESIGN: Database đã được refactor theo Domain-Driven Design
+   - Recommendation Domain: Quiz, RecommendationQuestion, RecommendationAnswer, RecommendationUserAnswer, AnswerCareerWeight
+   - Learning Domain: Subject, Topic, LearningQuestion, LearningAnswer, LearningUserAnswer, UserProgress
+   - Hai domain hoàn toàn tách biệt, không dùng chung entity
+   - Quiz chỉ có liên kết với Field, KHÔNG liên kết với Subject (tách biệt rõ ràng domain)
+
+2. CODE COLUMN: Thay vì filter by Name (fragile), dùng Code (stable)
+   - Field.Code: "CNTT", "MARKETING", "KINH_TE", "Y_TE", "GIAO_DUC"
+   - Career.Code: "FRONTEND_DEV", "BACKEND_DEV", "DATA_SCIENTIST", v.v.
+   - Subject.Code: "LAP_TRINH_CO_BAN", "CAU_TRUC_DU_LIEU", v.v.
+   - Quiz.Code: "QUIZ_CNTT", "QUIZ_MARKETING", "QUIZ_KINH_TE"
+
+3. AnswerCareerWeight là bảng QUAN TRỌNG NHẤT - đây là "menu điểm" để tính career recommendation
+   - Link với RecommendationAnswer (không phải Answer cũ)
+   - Weight từ -3 đến +5
+   - Mỗi Answer có thể có weight cho nhiều Career
+
+4. RecommendationUserAnswer lưu đáp án user chọn, sau đó join với AnswerCareerWeight để tính điểm
+5. LearningUserAnswer lưu đáp án user cho learning quiz, có IsCorrect và Score
+6. Flow: Onboarding → Recommendation Quiz → RecommendationUserAnswer → AnswerCareerWeight → QuizCareerRecommendation → LearningPath → Learning Questions → LearningUserAnswer → UserProgress
+7. Database đang dùng SQL Server LocalDB - tốt cho development, cần thay đổi cho production
+8. JWT token cần được bảo mật trong production
+9. Đã fix lỗi multiple cascade paths bằng cách thay đổi một số quan hệ sang Restrict
+
+10. ⚠️ PHẦN CHƯA HIỂU RÕ (CẦN ÔN TẬP & REVIEW VÀO NGÀY MAI)
+    - Luồng nộp bài (Submit Quiz): Cách sử dụng `Dictionary<int, int> Answers` (Key: QuestionId - câu hỏi, Value: AnswerId - đáp án đã chọn) để gửi dữ liệu từ Frontend lên Backend.
+    - Thuật toán tính điểm (Career Recommendation Score):
+      + Cách truy vấn bảng trọng số `AnswerCareerWeights` dựa trên đáp án đã chọn (`RecommendationAnswerId`) và từng ngành nghề trong cùng Field.
+      + Công thức chuẩn hóa điểm số (Min-Max Scaling) để chuyển đổi tổng điểm thành tỷ lệ phần trăm từ 0% đến 100% (`MatchPercentage`).
+    - Lưu kết quả gợi ý: Cách thêm dữ liệu và đồng bộ hóa kết quả gợi ý vào bảng `QuizCareerRecommendations` theo mốc thời gian làm bài (`DateTime.UtcNow`).
+
+PROJECT STRUCTURE
+-----------------
+BackEnd/Source/
+├── Controllers/
+│   ├── AuthController.cs ✅
+│   ├── BaseController.cs ✅
+│   ├── CareerController.cs ✅ (NEW)
+│   ├── OnboardingController.cs ✅
+│   └── QuizController.cs ✅ (NEW)
+├── DTOs/
+│   ├── AuthResponseDto.cs ✅
+│   ├── CareerDetailDto.cs ✅ (NEW)
+│   ├── OnBoardingDto.cs ✅
+│   ├── QuizDto.cs ✅ (NEW)
+│   ├── RefreshTokenDto.cs ✅
+│   └── RegisterDto.cs ✅
+├── Models/
+│   ├── Enums/
+│   │   ├── MainGoal.cs ✅
+│   │   └── UserType.cs ✅
+│   ├── AnswerCareerWeight.cs ✅ (Updated: RecommendationAnswerId)
+│   ├── Career.cs ✅ (Has Code)
+│   ├── CareerSubject.cs ✅
+│   ├── Field.cs ✅ (Has Code)
+│   ├── LearningAnswer.cs ✅ (NEW)
+│   ├── LearningQuestion.cs ✅ (NEW)
+│   ├── LearningUserAnswer.cs ✅ (NEW)
+│   ├── LearningPath.cs ✅
+│   ├── Quiz.cs ✅ (Removed QuizType, Removed SubjectId, Navigation updated)
+│   ├── QuizCareerRecommendation.cs ✅
+│   ├── RecommendationAnswer.cs ✅ (NEW)
+│   ├── RecommendationQuestion.cs ✅ (NEW)
+│   ├── RecommendationUserAnswer.cs ✅ (NEW)
+│   ├── RefreshToken.cs ✅
+│   ├── Subject.cs ✅ (Has Code)
+│   ├── Topic.cs ✅ (Navigation updated to LearningQuestion)
+│   ├── User.cs ✅ (Navigation updated)
+│   └── UserProgress.cs ✅
+├── Service/
+│   ├── Interface/
+│   │   ├── IAuthService.cs ✅
+│   │   ├── ICareerService.cs ✅ (NEW)
+│   │   ├── IOnboardingService.cs ✅
+│   │   └── IQuizService.cs ✅ (NEW)
+│   ├── AuthService.cs ✅
+│   ├── CareerService.cs ✅ (NEW)
+│   ├── OnboardingService.cs ✅
+│   └── QuizService.cs ✅ (NEW)
+├── Data/
+│   ├── ApplicationDbContext.cs ✅ (Updated DbSets and configurations)
+│   ├── DataSeeder.cs ✅ (Updated for new entities)
+│   └── DataConstants.cs ✅
+├── Middleware/
+│   ├── BadRequestException.cs ✅
+│   ├── ExceptionError.cs ✅
+│   ├── ExceptionMiddleware.cs ✅
+│   ├── ForbiddenException.cs ✅
+│   ├── NotFoundException.cs ✅
+│   └── UnauthorizedException.cs ✅
+├── Migrations/
+│   ├── 20260710084530_InitDatabase.cs ✅ (NEW - complete refactor)
+│   └── 20260711150104_RemoveSubjectIdFromQuiz.cs ✅ (NEW - remove Quiz-Subject link)
+├── Program.cs ✅
+├── appsettings.json ✅
+└── Source.csproj ✅
+
+LAST UPDATED: 2026-07-12
+NEXT PRIORITY: Learning Path System (Updated Flow - Định hướng chọn chuyên ngành)
+- Mục tiêu: User xem learning path TRƯỚC khi chọn career
+- Public APIs: Xem learning paths của careers để so sánh
+- Private APIs: Quản lý learning path cá nhân
+- Focus: Cho phép user khám phá và so sánh lộ trình học trước khi ra quyết định
