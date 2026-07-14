@@ -137,7 +137,7 @@ RefreshTokens
   - Navigation: User
   - Unique index: Token
 
-SYSTEM FLOW (UPDATED - Định hướng chọn chuyên ngành)
+SYSTEM FLOW (UPDATED - Multiple Learning Paths)
 -----------
 1. User đăng ký → Login → Nhận JWT token
 2. User làm Onboarding → Cập nhật UserType, MainGoal, FieldId
@@ -149,18 +149,22 @@ SYSTEM FLOW (UPDATED - Định hướng chọn chuyên ngành)
    - RecommendationUserAnswer join AnswerCareerWeight (bảng trọng số)
    - Tính tổng điểm cho từng Career
    - Lưu kết quả vào QuizCareerRecommendation (TOP 3 careers)
-5. KHÁM PHÁ LEARNING PATHS (MỚI - TRƯỚC KHI CHỌN):
-   - User xem learning path của TOP 3 careers được recommend
-   - User có thể xem learning paths của TẤT CẢ careers trong field
-   - User so sánh lộ trình học: subjects, topics, độ khó, thời gian ước tính
-   - User xem chi tiết: mỗi subject gồm những topics nào, độ khó từng topic
-6. RA QUYẾT ĐỊNH:
-   - User chọn career phù hợp nhất dựa trên: % match + learning path + lương + sở thích
-7. BẮT ĐẦU HỌC:
-   - User tạo LearningPath cá nhân cho career đã chọn
-   - User học theo Learning Path: Subjects → Topics → LearningQuestions
+5. KHÁM PHÁ CAREERS:
+   - Hiển thị TOP 3 careers với % match + Career Cards
+   - Mỗi Career Card có 2 nút: "Learn Now" và "Details"
+   - User có thể xem các career khác tương tự
+6. BẮT ĐẦU HỌC (MULTIPLE LEARNING PATHS):
+   - User bấm "Learn Now" → Tạo LearningPath cá nhân mới (nếu chưa có)
+   - User có thể có NHIỀU learning paths cùng lúc
+   - Progress tracking theo tree structure:
+     * Topic complete khi xong hết LearningQuestions trong topic
+     * Subject complete khi xong hết tất cả topics trong subject
+7. HỌC THEO LEARNING PATH:
+   - User xem learning path với progress tree (Subjects → Topics)
+   - Hiển thị rõ: Đang học đâu, còn bao nhiêu phần, môn nào done
+   - User bấm vào Topic → Làm LearningQuestions
    - User trả lời LearningQuestions → Lưu vào LearningUserAnswer
-   - Update UserProgress (tiến độ học tập)
+   - Hoàn thành Topic → Update progress tree
 
 CURRENT CONTROLLERS
 -------------------
@@ -203,35 +207,69 @@ NEXT STEPS (TODO)
      * GET /api/career/GetListCareer (list careers theo FieldId của user) ✅
      * GET /api/career/GetDetailCareer/{id} (chi tiết career) ✅
 
-❌ Learning Path System (PRIORITY 2) - UPDATED FLOW
-   MỤC TIÊU: "Định hướng chọn chuyên ngành" - User xem learning path TRƯỚC khi chọn career
-   - LearningPathController
-   - LearningPathService, ILearningPathService
-   - DTOs: LearningPathDto, SubjectDto, TopicDto, UserProgressDto, CareerLearningPathDto
+✅ Learning Path System (PRIORITY 2) - COMPLETED
+   MỤC TIÊU: User có thể học nhiều careers, track progress theo tree structure
+   - LearningPathController ✅
+   - LearningPathService, ILearningPathService ✅
+   - DTOs: LearningPathDto, LearningPathDetailDto, SubjectSummaryDto, SubjectDetailDto, TopicSummaryDto, TopicDetailDto, LearningQuestionDto, LearningAnswerDto ✅
+   - ARCHITECTURE: Chia nhỏ API theo level để tối ưu performance (lazy loading)
    - Endpoints:
-     * PUBLIC APIs (Không cần login - Xem learning path để ra quyết định):
-       - GET /api/career/{careerId}/learning-path (Xem learning path của 1 career cụ thể)
-       - GET /api/field/{fieldId}/careers/learning-paths (Xem learning paths của TẤT CẢ careers trong field để so sánh)
      * PRIVATE APIs (Cần login - Quản lý learning path cá nhân):
-       - POST /api/learning-path/{careerId}/start (Bắt đầu học career này)
-       - GET /api/learning-path/active (Lấy learning path đang học của user)
-       - PUT /api/learning-path/topic/{topicId}/progress (Cập nhật tiến độ học topic)
+       - POST /api/learning-path/{careerId}/start (Tạo learning path mới cho user - nếu chưa có) ✅
+       - GET /api/learning-path/user (Lấy TẤT CẢ learning paths của user - summary only) ✅
+       - GET /api/learning-path/{learningPathId} (Chi tiết learning path với Subjects list - không có Topics) ✅
+       - GET /api/learning-path/{learningPathId}/subject/{subjectId} (Chi tiết subject với Topics list - không có Questions) ✅
+       - GET /api/learning-path/topic/{topicId} (Chi tiết topic với LearningQuestions) ✅
+       - POST /api/learning-path/topic/submit (Submit answers cho topic và cập nhật progress) ✅
+
+✅ Subject Management System (PRIORITY 2.5) - COMPLETED
+   MỤC TIÊU: Quản lý Subject và hiển thị Topics trong Subject
+   - SubjectController ✅
+   - SubjectService, ISubjectService ✅
+   - DTOs: SubjectDetailDto, TopicSummaryDto ✅
+   - Endpoints:
+     * GET /api/subject/{learningPathId}/subject/{subjectId} (Chi tiết subject với Topics list - không có Questions) ✅
+   - Features:
+     * Lấy chi tiết subject theo learning path cụ thể
+     * Hiển thị danh sách topics với progress tracking
+     * Tính toán subject completion percentage
+     * Hiển thị Priority và Reason từ CareerSubject
+
+✅ Topic Management System (PRIORITY 2.5) - COMPLETED
+   MỤC TIÊU: Quản lý Topic và hiển thị LearningQuestions trong Topic
+   - TopicController ✅
+   - TopicService, ITopicService ✅
+   - DTOs: TopicDetailDto, LearningQuestionDto, LearningAnswerDto, SubmitTopicAnswersDto, SubmitTopicAnswersResponseDto ✅
+   - Endpoints:
+     * GET /api/topic/{topicId} (Chi tiết topic với LearningQuestions) ✅
+     * POST /api/topic/submit (Submit answers cho topic và cập nhật progress) ✅
+   - Features:
+     * Lấy chi tiết topic với danh sách learning questions và answers
+     * Hiển thị user answers đã chọn (nếu có)
+     * Submit answers và tính điểm
+     * Cập nhật UserProgress khi hoàn thành topic
+     * Cập nhật Subject progress khi topic hoàn thành
    - Flow:
      1. User làm Quiz → Hiển thị TOP 3 careers với % match
-     2. User có thể xem learning path của TOP 3 careers và TẤT CẢ careers khác
-     3. User so sánh lộ trình học giữa các careers (subjects, topics, độ khó)
-     4. User chọn career phù hợp nhất dựa trên: % match + learning path + lương + sở thích
-     5. User bắt đầu learning path của career đã chọn
-     6. Theo dõi tiến độ học tập
+     2. Mỗi Career Card có 2 nút: "Learn Now" và "Details"
+     3. User bấm "Learn Now" → Tạo learning path cá nhân mới (nếu chưa có)
+     4. User có thể có NHIỀU learning paths cùng lúc
+     5. Progress tracking theo tree structure:
+        - Topic complete khi xong hết LearningQuestions trong topic
+        - Subject complete khi xong hết tất cả topics trong subject
+        - Hiển thị rõ: Đang học đâu, còn bao nhiêu phần, môn nào done
+     6. User bấm vào Topic → Làm LearningQuestions → Hoàn thành topic
+   - Performance Optimization:
+     * Load data on-demand theo từng level
+     * Giảm response size, tăng tốc độ load
+     * Dễ cache từng level riêng biệt
 
-❌ Learning Quiz System (PRIORITY 3)
-   - LearningQuestionController
-   - LearningQuestionService, ILearningQuestionService
-   - DTOs: LearningQuestionDto, LearningAnswerDto, LearningUserAnswerDto
-   - Endpoints:
-     * GET /api/learning/topic/{id}/questions (lấy câu hỏi của topic)
-     * POST /api/learning/topic/{id}/submit (nộp bài kiểm tra kiến thức)
-     * GET /api/learning/progress/{userId} (xem tiến độ học tập)
+✅ Learning Quiz System (PRIORITY 3) - INTEGRATED
+   - Learning Questions và Answers đã được tích hợp vào Learning Path System
+   - GET /api/learning-path/topic/{topicId} - Lấy chi tiết topic với LearningQuestions ✅
+   - POST /api/learning-path/topic/submit - Submit answers cho topic ✅
+   - DTOs: LearningQuestionDto, LearningAnswerDto, SubmitTopicAnswersDto, SubmitTopicAnswersResponseDto ✅
+   - Focus: Learning Quiz System đã được tích hợp hoàn chỉnh vào Learning Path System
 
 DATABASE CONNECTION
 -------------------
@@ -304,11 +342,15 @@ BackEnd/Source/
 │   ├── AuthController.cs ✅
 │   ├── BaseController.cs ✅
 │   ├── CareerController.cs ✅ (NEW)
+│   ├── LearningPathController.cs ✅ (NEW)
 │   ├── OnboardingController.cs ✅
-│   └── QuizController.cs ✅ (NEW)
+│   ├── QuizController.cs ✅ (NEW)
+│   ├── SubjectController.cs ✅ (NEW)
+│   └── TopicController.cs ✅ (NEW)
 ├── DTOs/
 │   ├── AuthResponseDto.cs ✅
 │   ├── CareerDetailDto.cs ✅ (NEW)
+│   ├── LearningPathDto.cs ✅ (NEW)
 │   ├── OnBoardingDto.cs ✅
 │   ├── QuizDto.cs ✅ (NEW)
 │   ├── RefreshTokenDto.cs ✅
@@ -324,7 +366,7 @@ BackEnd/Source/
 │   ├── LearningAnswer.cs ✅ (NEW)
 │   ├── LearningQuestion.cs ✅ (NEW)
 │   ├── LearningUserAnswer.cs ✅ (NEW)
-│   ├── LearningPath.cs ✅
+│   ├── LearningPath.cs ✅ (Updated: Added CompletedAt)
 │   ├── Quiz.cs ✅ (Removed QuizType, Removed SubjectId, Navigation updated)
 │   ├── QuizCareerRecommendation.cs ✅
 │   ├── RecommendationAnswer.cs ✅ (NEW)
@@ -339,12 +381,18 @@ BackEnd/Source/
 │   ├── Interface/
 │   │   ├── IAuthService.cs ✅
 │   │   ├── ICareerService.cs ✅ (NEW)
+│   │   ├── ILearningPathService.cs ✅ (NEW)
 │   │   ├── IOnboardingService.cs ✅
-│   │   └── IQuizService.cs ✅ (NEW)
+│   │   ├── IQuizService.cs ✅ (NEW)
+│   │   ├── ISubjectService.cs ✅ (NEW)
+│   │   └── ITopicService.cs ✅ (NEW)
 │   ├── AuthService.cs ✅
 │   ├── CareerService.cs ✅ (NEW)
+│   ├── LearningPathService.cs ✅ (NEW)
 │   ├── OnboardingService.cs ✅
-│   └── QuizService.cs ✅ (NEW)
+│   ├── QuizService.cs ✅ (NEW)
+│   ├── SubjectService.cs ✅ (NEW)
+│   └── TopicService.cs ✅ (NEW)
 ├── Data/
 │   ├── ApplicationDbContext.cs ✅ (Updated DbSets and configurations)
 │   ├── DataSeeder.cs ✅ (Updated for new entities)
@@ -363,9 +411,9 @@ BackEnd/Source/
 ├── appsettings.json ✅
 └── Source.csproj ✅
 
-LAST UPDATED: 2026-07-12
-NEXT PRIORITY: Learning Path System (Updated Flow - Định hướng chọn chuyên ngành)
-- Mục tiêu: User xem learning path TRƯỚC khi chọn career
-- Public APIs: Xem learning paths của careers để so sánh
-- Private APIs: Quản lý learning path cá nhân
-- Focus: Cho phép user khám phá và so sánh lộ trình học trước khi ra quyết định
+LAST UPDATED: 2026-07-14
+NEXT PRIORITY: Frontend Development & Testing
+- Subject Management System (SubjectController, SubjectService) ✅ COMPLETED
+- Topic Management System (TopicController, TopicService) ✅ COMPLETED
+- Tất cả backend API đã hoàn thành theo kiến trúc chia nhỏ API theo level
+- Focus: Test các endpoint mới và bắt đầu phát triển Frontend

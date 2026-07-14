@@ -10,5 +10,6 @@
         public string Title { get; set; } = string.Empty;
         public bool IsActive { get; set; } = true;
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+        public DateTime? CompletedAt { get; set; } // Khi user hoàn thành tất cả subjects trong learning path
     }
 }

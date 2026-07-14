@@ -11,6 +11,8 @@ using System.Text;
 using Source.Service;
 using Source.Service.Interface;
 using Source.Middleware;
+using Source.Service.Admin.Interface;
+using Source.Service.Admin;
 namespace Source
 {
     public class Program
@@ -65,6 +67,25 @@ namespace Source
             builder.Services.AddScoped<IOnboardingService, OnboardingService>();
             builder.Services.AddScoped<IQuizService, QuizService>();
             builder.Services.AddScoped<ICareerService, CareerService>();
+            builder.Services.AddScoped<ILearningPathService, LearningPathService>();
+            builder.Services.AddScoped<ISubjectService, SubjectService>();
+            builder.Services.AddScoped<ITopicService, TopicService>();
+            
+            // Admin Services
+            builder.Services.AddScoped<IAdminFieldService, AdminFieldService>();
+            builder.Services.AddScoped<IAdminCareerService, AdminCareerService>();
+            builder.Services.AddScoped<IAdminQuizService, AdminQuizService>();
+            builder.Services.AddScoped<IAdminAnswerCareerWeightService, AdminAnswerCareerWeightService>();
+            builder.Services.AddScoped<IAdminSubjectService, AdminSubjectService>();
+            builder.Services.AddScoped<IAdminTopicService, AdminTopicService>();
+            builder.Services.AddScoped<IAdminLearningQuestionService, AdminLearningQuestionService>();
+            builder.Services.AddScoped<IAdminCareerSubjectService,AdminCareerSubjectService>();
+            builder.Services.AddScoped<IAdminRecoAnswers, AdminRecommendationAnswer>();
+            builder.Services.AddScoped<IAdminRecoQuestions, AdminRecommendationQuestions>();
+            builder.Services.AddScoped<IAdminLearningAnswers, AdminLearningAnswers>();
+
+
+
             builder.Services.AddControllers();
             builder.Services.AddScoped<ExceptionMiddleware>();
             builder.Services.AddEndpointsApiExplorer();
