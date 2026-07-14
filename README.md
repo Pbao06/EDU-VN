@@ -334,7 +334,7 @@ Backend Developer (.NET)
 
 ```
 
-## Theo mình còn nên bổ sung thêm sau khi frontend hoàn thành:
+## Tôi sẽ bổ sung thêm sau khi frontend hoàn thành:
 
 - 📸 Screenshot giao diện.
 - 🎥 Demo GIF.
@@ -343,5 +343,3 @@ Backend Developer (.NET)
 - 📡 API Sequence Flow.
 - ☁️ Link Deploy (Render/Azure).
 - 📖 API Documentation (Swagger).
-
-**Đánh giá:** Với quy mô project hiện tại, README này đã ở mức khoảng **8.5/10**. Sau khi có frontend, thêm ảnh demo, sơ đồ kiến trúc và link deploy thì hoàn toàn có thể đạt **9.5–10/10**, đủ chuyên nghiệp để đưa vào portfolio xin thực tập hoặc xin việc.
