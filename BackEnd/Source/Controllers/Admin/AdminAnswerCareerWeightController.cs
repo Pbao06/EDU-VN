@@ -4,8 +4,14 @@ using Source.Service.Admin.Interface;
 
 namespace Source.Controllers.Admin
 {
+<<<<<<< HEAD
    
     public class AdminAnswerCareerWeightController : BaseAdminController
+=======
+    [ApiController]
+    [Route("api/admin/[controller]")]
+    public class AdminAnswerCareerWeightController : BaseController
+>>>>>>> 4c338964ceab40710cfd71caa92fa05a73ce5c73
     {
         private readonly IAdminAnswerCareerWeightService _adminAnswerCareerWeightService;
 

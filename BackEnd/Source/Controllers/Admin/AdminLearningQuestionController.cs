@@ -4,8 +4,14 @@ using Source.Service.Admin.Interface;
 
 namespace Source.Controllers.Admin
 {
+<<<<<<< HEAD
    
     public class AdminLearningQuestionController : BaseAdminController
+=======
+    [ApiController]
+    [Route("api/admin/[controller]")]
+    public class AdminLearningQuestionController : BaseController
+>>>>>>> 4c338964ceab40710cfd71caa92fa05a73ce5c73
     {
         private readonly IAdminLearningQuestionService _adminLearningQuestionService;
 

@@ -4,7 +4,11 @@ using Source.Service.Admin.Interface;
 
 namespace Source.Controllers.Admin
 {
+<<<<<<< HEAD
     public class AdminRecoQuestionsController : BaseAdminController
+=======
+    public class AdminRecoQuestionsController : BaseController
+>>>>>>> 4c338964ceab40710cfd71caa92fa05a73ce5c73
     {
         private readonly IAdminRecoQuestions _recoQuestions;
         public AdminRecoQuestionsController(IAdminRecoQuestions recoQuestions)
