@@ -8,7 +8,6 @@ namespace Source.Controllers
     [ApiController]
     [Authorize]
     [Route("api/[controller]")]
-
     public class LearningPathController : BaseController
     {
         private readonly ILearningPathService _learningPathService;
