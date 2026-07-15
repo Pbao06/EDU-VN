@@ -1,19 +1,10 @@
 using Microsoft.AspNetCore.Mvc;
 using Source.DTOs.Admin;
 using Source.Service.Admin.Interface;
-<<<<<<< HEAD
 namespace Source.Controllers.Admin
 {
-    
-    public class AdminTopicController : BaseAdminController
-=======
 
-namespace Source.Controllers.Admin
-{
-    [ApiController]
-    [Route("api/admin/[controller]")]
-    public class AdminTopicController : BaseController
->>>>>>> 4c338964ceab40710cfd71caa92fa05a73ce5c73
+    public class AdminTopicController : BaseAdminController
     {
         private readonly IAdminTopicService _adminTopicService;
 

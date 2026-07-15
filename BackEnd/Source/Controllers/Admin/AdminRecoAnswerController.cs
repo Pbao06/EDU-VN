@@ -5,11 +5,7 @@ using Source.Service.Admin.Interface;
 
 namespace Source.Controllers.Admin
 {
-<<<<<<< HEAD
     public class AdminRecoAnswerController : BaseAdminController
-=======
-    public class AdminRecoAnswerController : BaseController
->>>>>>> 4c338964ceab40710cfd71caa92fa05a73ce5c73
     {
         private readonly IAdminRecoAnswers _recoAnswer;
         public AdminRecoAnswerController(IAdminRecoAnswers recoAnswer)

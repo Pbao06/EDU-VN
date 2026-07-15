@@ -1,21 +1,12 @@
 using Microsoft.AspNetCore.Mvc;
 using Source.DTOs.Admin;
 using Source.Service.Admin.Interface;
-<<<<<<< HEAD
 using Source.Controllers.Admin;
 
 namespace Source.Controllers.Admin
 {
-    
     public class AdminCareerSubjectController : BaseAdminController
-=======
 
-namespace Source.Controllers.Admin
-{
-    [ApiController]
-    [Route("api/admin/[controller]")]
-    public class AdminCareerSubjectController : BaseController
->>>>>>> 4c338964ceab40710cfd71caa92fa05a73ce5c73
     {
         private readonly IAdminCareerSubjectService _adminCareerSubjectService;
 

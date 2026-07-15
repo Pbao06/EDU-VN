@@ -4,14 +4,8 @@ using Source.Service.Admin.Interface;
 
 namespace Source.Controllers.Admin
 {
-<<<<<<< HEAD
-    
+
     public class AdminQuizController : BaseAdminController
-=======
-    [ApiController]
-    [Route("api/admin/[controller]")]
-    public class AdminQuizController : BaseController
->>>>>>> 4c338964ceab40710cfd71caa92fa05a73ce5c73
     {
         private readonly IAdminQuizService _adminQuizService;
 

@@ -1,17 +1,9 @@
 using Microsoft.AspNetCore.Mvc;
 using Source.DTOs.Admin;
 using Source.Service.Admin.Interface;
-
 namespace Source.Controllers.Admin
 {
-<<<<<<< HEAD
-   
     public class AdminFieldController : BaseAdminController
-=======
-    [ApiController]
-    [Route("api/admin/[controller]")]
-    public class AdminFieldController : BaseController
->>>>>>> 4c338964ceab40710cfd71caa92fa05a73ce5c73
     {
         private readonly IAdminFieldService _adminFieldService;
 
