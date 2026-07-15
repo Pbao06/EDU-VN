@@ -1,11 +1,64 @@
 using Microsoft.EntityFrameworkCore;
 using Source.Models;
 using Source.Models.Enums;
+using Microsoft.AspNetCore.Identity;
+using System.Linq;
 
 namespace Source.Data
 {
     public static class DataSeeder
     {
+       
+
+        public static async Task SeedIdentityAsync(UserManager<User> userManager, RoleManager<IdentityRole> roleManager)
+        {
+            Console.WriteLine("Seeding Identity for admin account...");
+
+            // 1. Seed Roles
+            string[] rolenames = { "Admin", "User" };
+            foreach (var role in rolenames)
+            {
+                if (!await roleManager.RoleExistsAsync(role))
+                {
+                    await roleManager.CreateAsync(new IdentityRole(role));
+                }
+            }
+
+            // 2. Seed Admin User
+            var email = "phangia223@gmail.com";
+            var adminUser = await userManager.FindByEmailAsync(email);
+
+            if (adminUser == null)
+            {
+                var newadmin = new User
+                {
+                    UserName = email,
+                    Email = email,
+                    FullName = "Pbao Admin", // Bỏ khoảng trắng thừa ở đầu
+                    EmailConfirmed = true,
+                    IsOnboardingCompleted = true,
+                };
+
+                var createacc = await userManager.CreateAsync(newadmin, "Phangiabao@65");
+
+                if (createacc.Succeeded)
+                {
+                    await userManager.AddToRoleAsync(newadmin, "Admin");
+                    Console.WriteLine("Admin user created successfully.");
+                }
+                else
+                {
+                    // Sửa lỗi cú pháp string.Join tại đây
+                    var errors = string.Join(", ", createacc.Errors.Select(e => e.Description));
+                    Console.WriteLine($"Failed to create Admin user: {errors}");
+                }
+            }
+            else
+            {
+                Console.WriteLine("Admin user already exists.");
+            }
+        }
+
         public static async Task SeedDataAsync(ApplicationDbContext context)
         {
             // Check if data already exists
@@ -626,5 +679,7 @@ namespace Source.Data
             await context.SaveChangesAsync();
             Console.WriteLine($"Seeded {answerCareerWeights.Count} AnswerCareerWeights.");
         }
-    }
-}
+ 
+       }
+   
+ }

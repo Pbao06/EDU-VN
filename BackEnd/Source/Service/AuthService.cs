@@ -49,7 +49,9 @@ namespace Source.Service
             {
                 throw new ValidationException("Đăng ký thất bại: " + string.Join(", ", result.Errors.Select(e => e.Description)));
 
-            }
+            } 
+            // auto mac dinh gan role dang ki la User
+            await _userManager.AddToRoleAsync(newUser,"User");
             return new RegisterDto
             {
                 Email = newUser.Email,
@@ -71,7 +73,7 @@ namespace Source.Service
                 throw new BadRequestException("Email hoặc mật khẩu không đúng");
             }
 
-            var accessToken = GenerateToken(user);
+            var accessToken = await GenerateToken(user);
             var refreshToken = await GenerateRefreshToken(user, deviceInfo);
 
             return new AuthResponseDto
@@ -84,7 +86,7 @@ namespace Source.Service
             };
         }
 
-        public string GenerateToken(User user)
+        public async  Task<string> GenerateToken(User user)
         {
             var jwtSettings = _configuration.GetSection("Jwt");
             var key = Encoding.UTF8.GetBytes(jwtSettings["Key"]!);
@@ -98,7 +100,12 @@ namespace Source.Service
                 new Claim(ClaimTypes.Name, user.FullName ?? string.Empty),
                 new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
             };
-
+            // get danh sach roles tu Usermanager them vao claims duoi dnag ClaimsTypes.Role
+            var roles= await _userManager.GetRolesAsync(user); // ham nay co san 
+            foreach(var role in roles)
+            {
+                claims.Add(new Claim(ClaimTypes.Role,role));
+            } 
             var tokenDescriptor = new SecurityTokenDescriptor
             {
                 Subject = new ClaimsIdentity(claims),
@@ -156,7 +163,7 @@ namespace Source.Service
             var newRefreshToken = await GenerateRefreshToken(existingToken.User, existingToken.DeviceInfo);
             existingToken.ReplacedByToken = newRefreshToken;
 
-            var accessToken = GenerateToken(existingToken.User);
+            var accessToken = await GenerateToken(existingToken.User);
 
             await _context.SaveChangesAsync();
 

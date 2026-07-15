@@ -7,7 +7,7 @@ namespace Source.Service.Interface
     {
         Task<RegisterDto> RegisterUser(RegisterDto model);
         Task<AuthResponseDto> Login(LoginDto model, string? deviceInfo = null);
-        string GenerateToken(User user);
+        Task<string> GenerateToken(User user);
         Task<string> GenerateRefreshToken(User user, string? deviceInfo = null);
         Task<AuthResponseDto> RefreshToken(string refreshToken);
         Task Logout(string userId, string? deviceInfo = null);
