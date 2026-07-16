@@ -1,2 +1,47 @@
-// cau hinh chung 
- // Axios instance (Base URL, JWT interceptor)
+const BASE_URL = 'http://localhost:5000';
+
+type ApiClientOptions = Omit<RequestInit, 'body'> & {
+  headers?: Record<string, string>;
+  body?: unknown;
+};
+
+async function request<T>(path: string, options: ApiClientOptions = {}): Promise<T> {
+  const { body, headers, ...rest } = options;
+
+  const token = typeof window !== 'undefined' ? localStorage.getItem('token') : null;
+
+  const config: RequestInit = {
+    ...rest,
+    headers: {
+      'Content-Type': 'application/json',
+      ...(token ? { Authorization: `Bearer ${token}` } : {}),
+      ...headers,
+    },
+    body: body ? JSON.stringify(body) : undefined,
+  };
+
+  const response = await fetch(`${BASE_URL}${path}`, config);
+
+  if (!response.ok) {
+    const errorText = await response.text();
+    throw new Error(errorText || response.statusText);
+  }
+
+  const text = await response.text();
+  if (!text) throw new Error(" Server returned no contend");
+
+  const json = JSON.parse(text);
+
+  // TỰ ĐỘNG BÓC TÁCH: Nếu backend trả về { data: T, message: string }
+  // thì trả về T. Nếu không phải cấu trúc đó thì trả về nguyên json.
+  return (json && typeof json === 'object' && 'data' in json) ? json.data : json;
+}
+
+const apiClient = {
+  get: <T>(path: string, headers?: Record<string, string>) => request<T>(path, { method: 'GET', headers }),
+  post: <T>(path: string, body: unknown) => request<T>(path, { method: 'POST', body }),
+  put: <T>(path: string, body: unknown) => request<T>(path, { method: 'PUT', body }),
+  delete: <T>(path: string) => request<T>(path, { method: 'DELETE' }),
+};
+
+export default apiClient;
