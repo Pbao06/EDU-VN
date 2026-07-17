@@ -20,13 +20,26 @@ const HARD_SHADOW = "3px 3px 0 0 #111111";
 const HARD_SHADOW_HOVER = "5px 5px 0 0 #111111";
 const HARD_SHADOW_PRESSED = "1px 1px 0 0 #111111";
 
-const DEFAULT_NAV_ITEMS = [
+interface NavItem {
+  label: string;
+  href: string;
+}
+
+const DEFAULT_NAV_ITEMS: NavItem[] = [
   { label: "Ngành nghề", href: "#careers" },
   { label: "Lộ trình học", href: "#learning-paths" },
   { label: "Về EDU VN", href: "#about" },
 ];
 
-function ShadowLink({ href, children, className = "", variant = "outline", onClick }) {
+interface ShadowLinkProps {
+  href: string;
+  children: React.ReactNode;
+  className?: string;
+  variant?: "primary" | "outline" | "outline-mobile";
+  onClick?: () => void;
+}
+
+function ShadowLink({ href, children, className = "", variant = "outline", onClick }: ShadowLinkProps) {
   const [hover, setHover] = useState(false);
   const [active, setActive] = useState(false);
 
@@ -63,12 +76,19 @@ function ShadowLink({ href, children, className = "", variant = "outline", onCli
   );
 }
 
+interface NavbarProps {
+  logoHref?: string;
+  navItems?: NavItem[];
+  browseCareersHref?: string;
+  quizHref?: string;
+}
+
 export default function Navbar({
   logoHref = "#",
   navItems = DEFAULT_NAV_ITEMS,
   browseCareersHref = "#careers",
   quizHref = "#quiz",
-}) {
+}: NavbarProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [logoHover, setLogoHover] = useState(false);
 

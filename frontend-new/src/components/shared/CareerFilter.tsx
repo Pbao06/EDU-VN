@@ -39,7 +39,15 @@ const DEFAULT_SORT_OPTIONS = [
   "A - Z",
 ];
 
-function FilterSelect({ label, icon, options, value, onChange }) {
+interface FilterSelectProps {
+  label: string;
+  icon: React.ReactNode;
+  options: string[];
+  value: string;
+  onChange: (value: string) => void;
+}
+
+function FilterSelect({ label, icon, options, value, onChange }: FilterSelectProps) {
   const [focused, setFocused] = useState(false);
 
   return (
@@ -69,6 +77,18 @@ function FilterSelect({ label, icon, options, value, onChange }) {
   );
 }
 
+interface CareerFilterProps {
+  fieldOptions?: string[];
+  salaryOptions?: string[];
+  difficultyOptions?: string[];
+  sortOptions?: string[];
+  onSearchChange?: (value: string) => void;
+  onFieldChange?: (value: string) => void;
+  onSalaryChange?: (value: string) => void;
+  onDifficultyChange?: (value: string) => void;
+  onSortChange?: (value: string) => void;
+}
+
 export default function CareerFilter({
   fieldOptions = DEFAULT_FIELDS,
   salaryOptions = DEFAULT_SALARY_RANGES,
@@ -79,7 +99,7 @@ export default function CareerFilter({
   onSalaryChange,
   onDifficultyChange,
   onSortChange,
-}) {
+}: CareerFilterProps) {
   const [search, setSearch] = useState("");
   const [field, setField] = useState(fieldOptions[0]);
   const [salary, setSalary] = useState(salaryOptions[0]);
@@ -87,7 +107,7 @@ export default function CareerFilter({
   const [sort, setSort] = useState(sortOptions[0]);
   const [searchFocused, setSearchFocused] = useState(false);
 
-  const handleSearch = (value) => {
+  const handleSearch = (value: string) => {
     setSearch(value);
     onSearchChange?.(value);
   };

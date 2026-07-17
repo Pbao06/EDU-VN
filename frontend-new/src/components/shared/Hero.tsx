@@ -13,7 +13,11 @@ const HARD_SHADOW = "4px 4px 0 0 #111111";
 const HARD_SHADOW_HOVER = "6px 6px 0 0 #111111";
 const HARD_SHADOW_PRESSED = "2px 2px 0 0 #111111";
 
-function QuizButton({ href = "#quiz" }) {
+interface QuizButtonProps {
+  href?: string;
+}
+
+function QuizButton({ href = "#quiz" }: QuizButtonProps) {
   const [hover, setHover] = useState(false);
   const [active, setActive] = useState(false);
 
@@ -45,7 +49,11 @@ function QuizButton({ href = "#quiz" }) {
 }
 
 /** A gentle dotted curve, drawn with plain SVG — no external assets. */
-function DottedCurve({ className = "" }) {
+interface DottedCurveProps {
+  className?: string;
+}
+
+function DottedCurve({ className = "" }: DottedCurveProps) {
   return (
     <svg
       className={className}
@@ -67,7 +75,11 @@ function DottedCurve({ className = "" }) {
   );
 }
 
-export default function Hero({ quizHref = "#quiz" }) {
+interface HeroProps {
+  quizHref?: string;
+}
+
+export default function Hero({ quizHref = "#quiz" }: HeroProps) {
   return (
     <section className="relative w-full overflow-hidden bg-white font-sans">
       {/* Decorative layer — subtle, kept behind and around the content, never over it */}
