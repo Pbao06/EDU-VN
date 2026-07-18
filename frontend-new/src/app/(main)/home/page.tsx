@@ -14,11 +14,9 @@ import {
   Brush,
 } from "lucide-react";
 
-import Navbar from "@/components/shared/Navbar";
 import Hero from "@/components/shared/Hero";
 import CareerFilter from "@/components/shared/CareerFilter";
 import CareerGrid from "@/components/shared/CareerGrid";
-import Footer from "@/components/shared/Footer";
 
 // Mock careers data matching the styling and domain of EDU VN
 const MOCK_CAREERS = [
@@ -202,15 +200,12 @@ export default function Home() {
   };
 
   return (
-    <div className="flex min-h-screen w-full flex-col bg-[#F3F4F6] text-black">
-      {/* 1. Navbar */}
-      <Navbar logoHref="#" quizHref="#quiz" />
-
+    <>
       {/* 2. Hero Section */}
       <Hero quizHref="#quiz" />
 
       {/* 3. Main Content: Search, Filter, and Career Grid */}
-      <main id="careers" className="mx-auto w-full max-w-6xl px-4 py-16 sm:px-6">
+      <div id="careers" className="mx-auto w-full max-w-6xl px-4 py-16 sm:px-6">
         <div className="mb-12 flex flex-col gap-8">
           {/* Header of Content Section */}
           <div className="text-center sm:text-left">
@@ -243,10 +238,7 @@ export default function Home() {
             onCareerClick={handleCareerClick}
           />
         </div>
-      </main>
-
-      {/* 6. Footer */}
-      <Footer quizHref="#quiz" />
-    </div>
+      </div>
+    </>
   );
 }

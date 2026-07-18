@@ -1,3 +1,4 @@
+"use client";
 import React, { useState } from "react";
 import { Sparkles, ArrowRight, Star } from "lucide-react";
 

@@ -1,3 +1,4 @@
+"use client";
 import React, { useState } from "react";
 import { Compass, Sparkles, Mail, ArrowUpRight } from "lucide-react";
 

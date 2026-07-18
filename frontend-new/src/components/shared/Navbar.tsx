@@ -1,3 +1,4 @@
+"use client";
 import React, { useState } from "react";
 import { Menu, X, Sparkles, Compass } from "lucide-react";
 
@@ -137,10 +138,10 @@ export default function Navbar({
 
           {/* Desktop actions */}
           <div className="hidden items-center gap-3 lg:flex">
-            <ShadowLink href={browseCareersHref}>Khám phá ngành nghề</ShadowLink>
-            <ShadowLink href={quizHref} variant="primary">
+            <ShadowLink href="/register">Đăng kí</ShadowLink>
+            <ShadowLink href="/login" variant="primary">
               <Sparkles className="h-4 w-4" strokeWidth={2.5} />
-              Làm bài Quiz
+              Đăng Nhập
             </ShadowLink>
           </div>
 
@@ -178,17 +179,17 @@ export default function Navbar({
             </a>
           ))}
           <div className="mt-2 flex flex-col gap-3">
-            <ShadowLink href={browseCareersHref} className="w-full" onClick={() => setIsOpen(false)}>
-              Khám phá ngành nghề
+            <ShadowLink href="/register" className="w-full" onClick={() => setIsOpen(false)}>
+              Đăng kí
             </ShadowLink>
             <ShadowLink
-              href={quizHref}
+              href="/login"
               variant="primary"
               className="w-full"
               onClick={() => setIsOpen(false)}
             >
               <Sparkles className="h-4 w-4" strokeWidth={2.5} />
-              Làm bài Quiz
+              Đăng nhập
             </ShadowLink>
           </div>
         </nav>
