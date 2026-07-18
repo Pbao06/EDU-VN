@@ -157,16 +157,23 @@ Track Progress
 
 ---
 
-# 🛠 Tech Stack
+### 💻 Tech Stack
 
-- ASP.NET Core 9 Web API
-- Entity Framework Core
-- SQL Server
-- ASP.NET Identity
-- JWT Authentication
-- AutoMapper
-- Swagger
-- LINQ
+#### Backend
+![ASP.NET Core](https://img.shields.io/badge/.NET-512BD4?style=for-the-badge&logo=dotnet&logoColor=white)
+![EF Core](https://img.shields.io/badge/Entity_Framework-512BD4?style=for-the-badge&logo=dotnet&logoColor=white)
+![SQL Server](https://img.shields.io/badge/SQL_Server-CC2927?style=for-the-badge&logo=microsoft-sql-server&logoColor=white)
+![JWT](https://img.shields.io/badge/JWT-000000?style=for-the-badge&logo=json-web-tokens&logoColor=white)
+![Swagger](https://img.shields.io/badge/Swagger-85EA2D?style=for-the-badge&logo=swagger&logoColor=black)
+![AutoMapper](https://img.shields.io/badge/AutoMapper-BD0FE1?style=for-the-badge&logo=automapper&logoColor=white)
+![BCrypt](https://img.shields.io/badge/BCrypt-000000?style=for-the-badge&logo=security&logoColor=white)
+
+#### Frontend
+![Next.js](https://img.shields.io/badge/Next.js-000000?style=for-the-badge&logo=nextdotjs&logoColor=white)
+![React](https://img.shields.io/badge/React-61DAFB?style=for-the-badge&logo=react&logoColor=black)
+![TypeScript](https://img.shields.io/badge/TypeScript-3178C6?style=for-the-badge&logo=typescript&logoColor=white)
+![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white)
+![Lucide React](https://img.shields.io/badge/Lucide_React-000000?style=for-the-badge&logo=lucide&logoColor=white)
 
 ---
 
