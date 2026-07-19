@@ -130,6 +130,18 @@ namespace Source
                 });
             });
 
+            // Thêm đoạn này vào để định nghĩa "AllowFrontend"
+         builder.Services.AddCors(options =>
+         {
+             options.AddPolicy("AllowFrontend", policy =>
+            {
+                policy.WithOrigins("http://localhost:3000") // Cho phép Frontend
+                      .AllowAnyMethod()
+                     .AllowAnyHeader()
+                     .AllowCredentials();
+             });
+         });
+
             // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
             builder.Services.AddOpenApi();
 
@@ -170,7 +182,8 @@ namespace Source
                     options.RoutePrefix = string.Empty; // Set Swagger UI at root URL
                 });
             }
-
+            app.UseRouting();
+            app.UseCors("AllowFrontend");
             // app.UseHttpsRedirection(); // Comment out để tránh redirect từ http sang https trong development
             app.UseMiddleware<ExceptionMiddleware>();
             app.UseAuthentication();

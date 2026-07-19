@@ -1,6 +1,7 @@
 "use client";
 import React, { useState } from "react";
-import { Menu, X, Sparkles, Compass } from "lucide-react";
+import { Menu, X, Sparkles, Compass, User, LogOut } from "lucide-react";
+import { useAuth } from "@/hooks/auth/userAuth";
 
 /**
  * Navbar — EDU VN
@@ -92,6 +93,7 @@ export default function Navbar({
 }: NavbarProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [logoHover, setLogoHover] = useState(false);
+  const { user, isAuthenticated, logout } = useAuth();
 
   return (
     <header className="w-full bg-white font-sans">
@@ -138,11 +140,26 @@ export default function Navbar({
 
           {/* Desktop actions */}
           <div className="hidden items-center gap-3 lg:flex">
-            <ShadowLink href="/register">Đăng kí</ShadowLink>
-            <ShadowLink href="/login" variant="primary">
-              <Sparkles className="h-4 w-4" strokeWidth={2.5} />
-              Đăng Nhập
-            </ShadowLink>
+            {isAuthenticated ? (
+              <>
+                <div className="flex items-center gap-2 rounded-2xl border-2 border-black bg-white px-4 py-2 text-sm font-extrabold shadow-[3px_3px_0_0_#111111]">
+                  <User className="h-4 w-4 text-blue-600" />
+                  {user?.fullName}
+                </div>
+                <ShadowLink onClick={logout} variant="danger">
+                  <LogOut className="h-4 w-4" />
+                  Đăng xuất
+                </ShadowLink>
+              </>
+            ) : (
+              <>
+                <ShadowLink href="/register">Đăng kí</ShadowLink>
+                <ShadowLink href="/login" variant="primary">
+                  <Sparkles className="h-4 w-4" strokeWidth={2.5} />
+                  Đăng Nhập
+                </ShadowLink>
+              </>
+            )}
           </div>
 
           {/* Mobile toggle */}
@@ -179,18 +196,37 @@ export default function Navbar({
             </a>
           ))}
           <div className="mt-2 flex flex-col gap-3">
-            <ShadowLink href="/register" className="w-full" onClick={() => setIsOpen(false)}>
-              Đăng kí
-            </ShadowLink>
-            <ShadowLink
-              href="/login"
-              variant="primary"
-              className="w-full"
-              onClick={() => setIsOpen(false)}
-            >
-              <Sparkles className="h-4 w-4" strokeWidth={2.5} />
-              Đăng nhập
-            </ShadowLink>
+            {isAuthenticated ? (
+              <>
+                <div className="flex w-full items-center justify-center gap-2 rounded-2xl border-2 border-black bg-white px-3 py-3 text-base font-extrabold shadow-[3px_3px_0_0_#111111]">
+                  <User className="h-5 w-5 text-blue-600" />
+                  {user?.fullName}
+                </div>
+                <ShadowLink 
+                  onClick={() => { logout(); setIsOpen(false); }} 
+                  variant="danger" 
+                  className="w-full"
+                >
+                  <LogOut className="h-5 w-5" />
+                  Đăng xuất
+                </ShadowLink>
+              </>
+            ) : (
+              <>
+                <ShadowLink href="/register" className="w-full" onClick={() => setIsOpen(false)}>
+                  Đăng kí
+                </ShadowLink>
+                <ShadowLink
+                  href="/login"
+                  variant="primary"
+                  className="w-full"
+                  onClick={() => setIsOpen(false)}
+                >
+                  <Sparkles className="h-4 w-4" strokeWidth={2.5} />
+                  Đăng nhập
+                </ShadowLink>
+              </>
+            )}
           </div>
         </nav>
       </div>

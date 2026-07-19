@@ -2,7 +2,7 @@
 import { useState, type FormEvent, type ReactNode } from "react";
 import { Eye, EyeOff, Mail, Lock, Loader2 } from "lucide-react";
 import { AuthLayout } from "@/components/auth/AuthLayout";
-
+import { useAuth } from "@/hooks/auth/userAuth"; 
 export interface LoginCardProps {
   onSubmit?: (data: { email: string; password: string; remember: boolean }) => void | Promise<void>;
   onGoogleClick?: () => void;
@@ -230,12 +230,29 @@ function SocialButton({
 
 // Đây là Page Component chính mà Next.js cần
 export default function LoginPage() {
+  const { login, loading, error } = useAuth();
+
+  const handleLoginSubmit = async (data: { email: string; password: string; remember: boolean }) => {
+    try {
+      await login({
+        email: data.email,
+        password: data.password,
+      });
+    } catch (err) {
+      // Lỗi đã được useAuth lưu trữ và hook tự cập nhật state 'error'
+    }
+  };
+
   return (
     <AuthLayout
       title="Đăng nhập"
       description="Chào mừng bạn quay trở lại với EDU VN!"
     >
-      <LoginCard />
+      <LoginCard 
+        onSubmit={handleLoginSubmit} 
+        loading={loading} 
+        error={error} 
+      />
     </AuthLayout>
   );
 }
