@@ -9,5 +9,6 @@ namespace Source.Service.Admin.Interface
         Task<AdminRecommendationQuestionDto> CreateRecommendationQuestion(CreateRecommendationQuestionDto dto);//create
         Task<AdminRecommendationQuestionDto?> UpdateRecommendationQuestion(int id, UpdateRecommendationQuestionDto dto);//edit
         Task<bool> DeleteRecommendationQuestion(int id);
+        Task<AdminRecoDetailQuestion_listAnswerDto> GetDetailQuestion_ListAnswers(int id);
     }
 }

@@ -63,6 +63,7 @@ namespace Source
                     ValidAudiences = builder.Configuration.GetSection("Jwt:ValidAudiences").Get<string[]>()
                 };
             });
+            //User service here
             builder.Services.AddScoped<IAuthService,AuthService>();
             builder.Services.AddScoped<IOnboardingService, OnboardingService>();
             builder.Services.AddScoped<IQuizService, QuizService>();
@@ -70,8 +71,10 @@ namespace Source
             builder.Services.AddScoped<ILearningPathService, LearningPathService>();
             builder.Services.AddScoped<ISubjectService, SubjectService>();
             builder.Services.AddScoped<ITopicService, TopicService>();
+            builder.Services.AddScoped<IUserAnswersService,UserAnswersService>();
+
             
-            // Admin Services
+            // Admin Services there 
             builder.Services.AddScoped<IAdminFieldService, AdminFieldService>();
             builder.Services.AddScoped<IAdminCareerService, AdminCareerService>();
             builder.Services.AddScoped<IAdminQuizService, AdminQuizService>();
@@ -83,8 +86,7 @@ namespace Source
             builder.Services.AddScoped<IAdminRecoAnswers, AdminRecommendationAnswer>();
             builder.Services.AddScoped<IAdminRecoQuestions, AdminRecommendationQuestions>();
             builder.Services.AddScoped<IAdminLearningAnswers, AdminLearningAnswers>();
-
-
+        
 
             builder.Services.AddControllers();
             builder.Services.AddScoped<ExceptionMiddleware>();

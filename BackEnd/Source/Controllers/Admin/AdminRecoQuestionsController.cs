@@ -31,6 +31,15 @@ namespace Source.Controllers.Admin
             return Success(question);
         }
 
+        [HttpGet("questionAnswers/{id}")]
+        public async Task<IActionResult> GetDetailQuestionAndAnswers(int id)
+        {
+            // call service here 
+            var result=await _recoQuestions.GetDetailQuestion_ListAnswers(id); // check service r nen ko can validation
+            return Success(result," getdata successes");
+        }
+
+
         [HttpPost("questions")]
         public async Task<IActionResult> CreateRecommendationQuestion([FromBody] CreateRecommendationQuestionDto dto)
         {

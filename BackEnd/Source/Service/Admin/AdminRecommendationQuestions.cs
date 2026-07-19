@@ -46,6 +46,33 @@ namespace Source.Service.Admin
             };
         }
 
+
+
+        public async Task<AdminRecoDetailQuestion_listAnswerDto> GetDetailQuestion_ListAnswers(int id) // vì là details nên cần id 
+        {
+            var data = await _context.RecommendationQuestions.Include(p => p.Answers).FirstOrDefaultAsync(q => q.Answers.Any());
+            if (data== null) throw new BadRequestException("Valid data cannot get bruhhh ");
+            // get list answer 
+            var answers = await _context.RecommendationAnswers.Where(p => p.RecommendationQuestionId == data.Id).ToListAsync();
+            // tra ve dto 
+            var dto = new AdminRecoDetailQuestion_listAnswerDto
+            {
+                Id = data.Id,
+                QuizId = data.QuizId,
+                content = data.Content,
+                Answers = answers.Select(a => new AdminRecommendationAnswerDto
+                {
+                    Id = a.Id,
+                    Content = a.Content,
+                    RecommendationQuestionId = data.Id,
+                    QuestionContent = data.Content,
+                }).ToList()
+            };
+            if (dto == null) throw new BadRequestException(" Error Cannot get data bruhh  ");
+            return dto;
+            
+        }
+
         public async Task<AdminRecommendationQuestionDto> CreateRecommendationQuestion(CreateRecommendationQuestionDto dto)
         {
             // Check if Quiz exists

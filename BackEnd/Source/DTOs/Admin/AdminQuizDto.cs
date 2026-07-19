@@ -36,6 +36,15 @@ namespace Source.DTOs.Admin
         public int QuizId { get; set; }
         public string QuizTitle { get; set; } = string.Empty;
     }
+    public class AdminRecoDetailQuestion_listAnswerDto
+    {
+        // Dto này lấy details của Question kèm list answers con 
+        public int Id { get; set; }
+        public string content { get; set; } = string.Empty;
+        public int QuizId { get; set; }
+        public string QuizTitle { get; set; }
+        public ICollection<AdminRecommendationAnswerDto>? Answers { get; set; }
+    }
 
     public class CreateRecommendationQuestionDto
     {
@@ -56,6 +65,7 @@ namespace Source.DTOs.Admin
         public int RecommendationQuestionId { get; set; }
         public string QuestionContent { get; set; } = string.Empty;
     }
+    
 
     public class CreateRecommendationAnswerDto
     {
