@@ -1,148 +1,186 @@
 "use client";
-
-import React, { useState, useMemo } from "react";
-import {
-  Server,
-  Code,
-  Megaphone,
-  Palette,
-  Database,
-  Heart,
-  GraduationCap,
-  Settings,
-  TrendingUp,
-  Brush,
-} from "lucide-react";
-
+import React, { useState, useMemo, useEffect} from "react";
+import { Sparkles } from "lucide-react";
+import { useCareer } from "@/hooks/recommendation/useCareer";
 import Hero from "@/components/shared/Hero";
 import CareerFilter from "@/components/shared/CareerFilter";
-import CareerGrid from "@/components/shared/CareerGrid";
+import CareerGrid from"@/components/shared/CareerGrid";
+import { DemandLevel } from"@/components/shared/CareerCard";
+// import React, { useState, useMemo,useEffect } from "react";
+// import {
+//   Server,
+//   Code,
+//   Megaphone,
+//   Palette,
+//   Database,
+//   Heart,
+//   GraduationCap,
+//   Settings,
+//   TrendingUp,
+//   Brush,
+//   Sparkles,
+// } from "lucide-react";
+//  import { useCareer } from "@/hooks/recommendation/useCareer";
+// import Hero from "@/components/shared/Hero";
+// import CareerFilter from "@/components/shared/CareerFilter";
+// import CareerGrid from "@/components/shared/CareerGrid";
+// import { DemandLevel } from "@/components/shared/CareerCard";
 
 // Mock careers data matching the styling and domain of EDU VN
-const MOCK_CAREERS = [
-  {
-    id: "1",
-    name: "Lập trình viên Backend",
-    description: "Xây dựng hệ thống máy chủ, cơ sở dữ liệu và các API mạnh mẽ để hỗ trợ vận hành ứng dụng mượt mà.",
-    salary: "25 - 45 triệu",
-    salaryMin: 25,
-    icon: Server,
-    demand: "high" as const,
-    accent: "blue" as const,
-    difficulty: "Thử thách cao" as const,
-    category: "Công nghệ thông tin",
-  },
-  {
-    id: "2",
-    name: "Lập trình viên Frontend",
-    description: "Tạo nên giao diện người dùng tương tác, trực quan và tối ưu hóa trải nghiệm lướt web, di động.",
-    salary: "20 - 35 triệu",
-    salaryMin: 20,
-    icon: Code,
-    demand: "high" as const,
-    accent: "yellow" as const,
-    difficulty: "Trung bình" as const,
-    category: "Công nghệ thông tin",
-  },
-  {
-    id: "3",
-    name: "Chuyên viên Marketing số",
-    description: "Lên kế hoạch, quản lý chiến dịch quảng cáo mạng xã hội, tối ưu SEO để kết nối khách hàng với doanh nghiệp.",
-    salary: "15 - 30 triệu",
-    salaryMin: 15,
-    icon: Megaphone,
-    demand: "high" as const,
-    accent: "orange" as const,
-    difficulty: "Trung bình" as const,
-    category: "Kinh doanh & Marketing",
-  },
-  {
-    id: "4",
-    name: "Nhà thiết kế UI/UX",
-    description: "Nghiên cứu nhu cầu khách hàng, phác thảo trải nghiệm người dùng và vẽ nên giao diện ứng dụng số hiện đại.",
-    salary: "18 - 32 triệu",
-    salaryMin: 18,
-    icon: Palette,
-    demand: "medium" as const,
-    accent: "pink" as const,
-    difficulty: "Trung bình" as const,
-    category: "Thiết kế & Sáng tạo",
-  },
-  {
-    id: "5",
-    name: "Chuyên viên Phân tích Dữ liệu",
-    description: "Khai phá dữ liệu lớn, vẽ các dashboard trực quan để cung cấp các góc nhìn phân tích hữu ích cho doanh nghiệp.",
-    salary: "22 - 40 triệu",
-    salaryMin: 22,
-    icon: Database,
-    demand: "high" as const,
-    accent: "green" as const,
-    difficulty: "Thử thách cao" as const,
-    category: "Công nghệ thông tin",
-  },
-  {
-    id: "6",
-    name: "Bác sĩ Đa khoa",
-    description: "Khám bệnh, chẩn đoán triệu chứng, kê đơn và đồng hành chăm sóc sức khỏe lâu dài cho người bệnh.",
-    salary: "30 - 60 triệu",
-    salaryMin: 30,
-    icon: Heart,
-    demand: "high" as const,
-    accent: "blue" as const,
-    difficulty: "Thử thách cao" as const,
-    category: "Y tế & Sức khỏe",
-  },
-  {
-    id: "7",
-    name: "Giáo viên Tiếng Anh",
-    description: "Truyền đạt kiến thức ngôn ngữ toàn diện, thiết kế bài giảng hấp dẫn và nâng bước hội nhập quốc tế.",
-    salary: "12 - 25 triệu",
-    salaryMin: 12,
-    icon: GraduationCap,
-    demand: "medium" as const,
-    accent: "yellow" as const,
-    difficulty: "Trung bình" as const,
-    category: "Giáo dục",
-  },
-  {
-    id: "8",
-    name: "Kỹ sư Cơ khí",
-    description: "Thiết kế, chế tạo, kiểm thử lắp ráp và tối ưu quy trình vận hành các máy móc, động cơ công nghiệp.",
-    salary: "15 - 28 triệu",
-    salaryMin: 15,
-    icon: Settings,
-    demand: "medium" as const,
-    accent: "green" as const,
-    difficulty: "Thử thách cao" as const,
-    category: "Kỹ thuật",
-  },
-  {
-    id: "9",
-    name: "Cố vấn Tài chính",
-    description: "Xây dựng chiến lược phân bổ nguồn vốn, quản trị rủi ro đầu tư và hoạch định kế hoạch hưu trí cho khách hàng.",
-    salary: "20 - 50 triệu",
-    salaryMin: 20,
-    icon: TrendingUp,
-    demand: "medium" as const,
-    accent: "orange" as const,
-    difficulty: "Thử thách cao" as const,
-    category: "Kinh doanh & Marketing",
-  },
-  {
-    id: "10",
-    name: "Nhà sáng tạo Nội dung",
-    description: "Sản xuất video ngắn, thiết kế hình ảnh độc đáo và viết kịch bản quảng bá trên TikTok, Youtube, Facebook.",
-    salary: "8 - 18 triệu",
-    salaryMin: 8,
-    icon: Brush,
-    demand: "high" as const,
-    accent: "pink" as const,
-    difficulty: "Dễ tiếp cận" as const,
-    category: "Thiết kế & Sáng tạo",
-  },
-];
+
+
+// const MOCK_CAREERS = [
+//   {
+//     id: "1",
+//     name: "Lập trình viên Backend",
+//     description: "Xây dựng hệ thống máy chủ, cơ sở dữ liệu và các API mạnh mẽ để hỗ trợ vận hành ứng dụng mượt mà.",
+//     salary: "25 - 45 triệu",
+//     salaryMin: 25,
+//     icon: Server,
+//     demand: "high" as const,
+//     accent: "blue" as const,
+//     difficulty: "Thử thách cao" as const,
+//     category: "Công nghệ thông tin",
+//   },
+//   {
+//     id: "2",
+//     name: "Lập trình viên Frontend",
+//     description: "Tạo nên giao diện người dùng tương tác, trực quan và tối ưu hóa trải nghiệm lướt web, di động.",
+//     salary: "20 - 35 triệu",
+//     salaryMin: 20,
+//     icon: Code,
+//     demand: "high" as const,
+//     accent: "yellow" as const,
+//     difficulty: "Trung bình" as const,
+//     category: "Công nghệ thông tin",
+//   },
+//   {
+//     id: "3",
+//     name: "Chuyên viên Marketing số",
+//     description: "Lên kế hoạch, quản lý chiến dịch quảng cáo mạng xã hội, tối ưu SEO để kết nối khách hàng với doanh nghiệp.",
+//     salary: "15 - 30 triệu",
+//     salaryMin: 15,
+//     icon: Megaphone,
+//     demand: "high" as const,
+//     accent: "orange" as const,
+//     difficulty: "Trung bình" as const,
+//     category: "Kinh doanh & Marketing",
+//   },
+//   {
+//     id: "4",
+//     name: "Nhà thiết kế UI/UX",
+//     description: "Nghiên cứu nhu cầu khách hàng, phác thảo trải nghiệm người dùng và vẽ nên giao diện ứng dụng số hiện đại.",
+//     salary: "18 - 32 triệu",
+//     salaryMin: 18,
+//     icon: Palette,
+//     demand: "medium" as const,
+//     accent: "pink" as const,
+//     difficulty: "Trung bình" as const,
+//     category: "Thiết kế & Sáng tạo",
+//   },
+//   {
+//     id: "5",
+//     name: "Chuyên viên Phân tích Dữ liệu",
+//     description: "Khai phá dữ liệu lớn, vẽ các dashboard trực quan để cung cấp các góc nhìn phân tích hữu ích cho doanh nghiệp.",
+//     salary: "22 - 40 triệu",
+//     salaryMin: 22,
+//     icon: Database,
+//     demand: "high" as const,
+//     accent: "green" as const,
+//     difficulty: "Thử thách cao" as const,
+//     category: "Công nghệ thông tin",
+//   },
+//   {
+//     id: "6",
+//     name: "Bác sĩ Đa khoa",
+//     description: "Khám bệnh, chẩn đoán triệu chứng, kê đơn và đồng hành chăm sóc sức khỏe lâu dài cho người bệnh.",
+//     salary: "30 - 60 triệu",
+//     salaryMin: 30,
+//     icon: Heart,
+//     demand: "high" as const,
+//     accent: "blue" as const,
+//     difficulty: "Thử thách cao" as const,
+//     category: "Y tế & Sức khỏe",
+//   },
+//   {
+//     id: "7",
+//     name: "Giáo viên Tiếng Anh",
+//     description: "Truyền đạt kiến thức ngôn ngữ toàn diện, thiết kế bài giảng hấp dẫn và nâng bước hội nhập quốc tế.",
+//     salary: "12 - 25 triệu",
+//     salaryMin: 12,
+//     icon: GraduationCap,
+//     demand: "medium" as const,
+//     accent: "yellow" as const,
+//     difficulty: "Trung bình" as const,
+//     category: "Giáo dục",
+//   },
+//   {
+//     id: "8",
+//     name: "Kỹ sư Cơ khí",
+//     description: "Thiết kế, chế tạo, kiểm thử lắp ráp và tối ưu quy trình vận hành các máy móc, động cơ công nghiệp.",
+//     salary: "15 - 28 triệu",
+//     salaryMin: 15,
+//     icon: Settings,
+//     demand: "medium" as const,
+//     accent: "green" as const,
+//     difficulty: "Thử thách cao" as const,
+//     category: "Kỹ thuật",
+//   },
+//   {
+//     id: "9",
+//     name: "Cố vấn Tài chính",
+//     description: "Xây dựng chiến lược phân bổ nguồn vốn, quản trị rủi ro đầu tư và hoạch định kế hoạch hưu trí cho khách hàng.",
+//     salary: "20 - 50 triệu",
+//     salaryMin: 20,
+//     icon: TrendingUp,
+//     demand: "medium" as const,
+//     accent: "orange" as const,
+//     difficulty: "Thử thách cao" as const,
+//     category: "Kinh doanh & Marketing",
+//   },
+//   {
+//     id: "10",
+//     name: "Nhà sáng tạo Nội dung",
+//     description: "Sản xuất video ngắn, thiết kế hình ảnh độc đáo và viết kịch bản quảng bá trên TikTok, Youtube, Facebook.",
+//     salary: "8 - 18 triệu",
+//     salaryMin: 8,
+//     icon: Brush,
+//     demand: "high" as const,
+//     accent: "pink" as const,
+//     difficulty: "Dễ tiếp cận" as const,
+//     category: "Thiết kế & Sáng tạo",
+//   },
+// ];
 
 export default function Home() {
+   const { getListCareer } = useCareer();
+      const [realCareers, setRealCareers] = useState<any[]>([]);
+      const [loading, setLoading] = useState(true);
+   
+      // Load data thật từ API
+      useEffect(() => {
+        const fetchData = async () => {
+          try {
+            const data = await getListCareer(1); // Lấy ngành nghề (fieldId=1)
+            const formatted = data.map((item: any) => ({
+              id: item.id.toString(),
+              name: item.name,
+              description: item.description,
+              salary: "Liên hệ", 
+              icon: Sparkles, // Placeholder
+              demand: "high" as DemandLevel,
+              category: "Công nghệ thông tin",
+              accent: "blue" as const
+            }));
+            setRealCareers(formatted);
+          } catch (err) {
+            console.error(err);
+          } finally {
+            setLoading(false);
+          }
+      };
+        fetchData();
+      }, []);
   // State for filtering
   const [search, setSearch] = useState("");
   const [field, setField] = useState("Tất cả lĩnh vực");
@@ -152,7 +190,7 @@ export default function Home() {
 
   // Filtering & Sorting memoized logic
   const filteredCareers = useMemo(() => {
-    return MOCK_CAREERS.filter((career) => {
+    return realCareers.filter((career) => {
       // 1. Text Search
       if (search.trim() !== "") {
         const query = search.toLowerCase();
@@ -166,33 +204,9 @@ export default function Home() {
         return false;
       }
 
-      // 3. Difficulty Filter
-      if (difficulty !== "Mọi độ khó" && career.difficulty !== difficulty) {
-        return false;
-      }
-
-      // 4. Salary Filter
-      if (salary !== "Mọi mức lương") {
-        const val = career.salaryMin;
-        if (salary === "Dưới 10 triệu" && val >= 10) return false;
-        if (salary === "10 - 20 triệu" && (val < 10 || val > 20)) return false;
-        if (salary === "20 - 35 triệu" && (val < 20 || val > 35)) return false;
-        if (salary === "Trên 35 triệu" && val <= 35) return false;
-      }
-
       return true;
-    }).sort((a, b) => {
-      // 5. Sorting Options
-      if (sort === "Lương cao nhất") {
-        return b.salaryMin - a.salaryMin;
-      }
-      if (sort === "A - Z") {
-        return a.name.localeCompare(b.name, "vi");
-      }
-      // "Phổ biến nhất" & "Mới cập nhật": Default order
-      return 0;
     });
-  }, [search, field, salary, difficulty, sort]);
+  }, [realCareers, search, field]);
 
   // Handle click on a career card
   const handleCareerClick = (career: any) => {
