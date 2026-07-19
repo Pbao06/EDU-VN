@@ -32,3 +32,6 @@ publish/
 .DS_Store
 Thumbs.db
 .devin
+# important info security 
+appsettings.json
+*.txt
