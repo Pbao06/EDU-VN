@@ -19,5 +19,9 @@ export const careerService = {
   getDetailCareer: async (id: number): Promise<CareerDetailDto> => {
     return (await apiClient.get<CareerDetailDto>(`/api/career/GetDetailCareer/${id}`));
   },
+
+  getListCareerPublic: async (): Promise<ListCareer[]> => {
+    return (await apiClient.get<ListCareer[]>(`/api/career/GetListCareerPublic`));
+  },
 };
 

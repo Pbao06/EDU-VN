@@ -28,16 +28,21 @@ namespace Source.Controllers
             return Success(listcareer, "Danh sách career gửi thành công");
 
         }
+        [AllowAnonymous]
         [HttpGet("GetDetailCareer/{id}")]
         public async Task<IActionResult> GetDetailCareer(int id)
         {
-            var userId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
-            if (string.IsNullOrEmpty(userId))
-            {
-                return Unauthorized("Không tìm thấy User ID trong token");
-            }
-            var detail = await _careerService.GetDetailCareer(userId,id);
+            var detail = await _careerService.GetDetailCareerPublic(id);
             return Success(detail, "Lấy detail career thành công");
+        }
+
+        // Public endpoint - không cần authentication
+        [AllowAnonymous]
+        [HttpGet("GetListCareerPublic")]
+        public async Task<IActionResult> GetListCareerPublic()
+        {
+            var listcareer = await _careerService.GetAllCareersPublic();
+            return Success(listcareer, "Danh sách career public gửi thành công");
         }
     }
 }

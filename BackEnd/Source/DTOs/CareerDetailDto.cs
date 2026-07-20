@@ -15,6 +15,13 @@ namespace Source.DTOs
         public decimal MaxSalary { get; set; }
         public string DemandLevel { get; set; } = "High";          // High / Medium / Low
         public string? IconUrl { get; set; } = string.Empty;
+        
+        // New fields for frontend
+        public string Category { get; set; } = string.Empty;       // From Field.Name
+        public int Difficulty { get; set; } = 3;                    // 1-5 scale
+        public List<string> RequiredSkills { get; set; } = new List<string>();
+        public List<string> Tags { get; set; } = new List<string>();
+        public List<string> RelatedSubjects { get; set; } = new List<string>(); // From CareerSubjects
     }
     public class ListCareerDto
     {

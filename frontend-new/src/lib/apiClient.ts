@@ -20,21 +20,26 @@ async function request<T>(path: string, options: ApiClientOptions = {}): Promise
     body: body ? JSON.stringify(body) : undefined,
   };
 
-  const response = await fetch(`${BASE_URL}${path}`, config);
+  try {
+    const response = await fetch(`${BASE_URL}${path}`, config);
 
-  if (!response.ok) {
-    const errorText = await response.text();
-    throw new Error(errorText || response.statusText);
+    if (!response.ok) {
+      const errorText = await response.text();
+      throw new Error(errorText || response.statusText);
+    }
+
+    const text = await response.text();
+    if (!text) throw new Error(" Server returned no contend");
+
+    const json = JSON.parse(text);
+
+    // TỰ ĐỘNG BÓC TÁCH: Nếu backend trả về { data: T, message: string }
+    // thì trả về T. Nếu không phải cấu trúc đó thì trả về nguyên json.
+    return (json && typeof json === 'object' && 'data' in json) ? json.data : json;
+  } catch (error) {
+    console.error(`API Request failed for ${path}:`, error);
+    throw new Error(`Failed to connect to backend server at ${BASE_URL}. Please ensure the backend is running.`);
   }
-
-  const text = await response.text();
-  if (!text) throw new Error(" Server returned no contend");
-
-  const json = JSON.parse(text);
-
-  // TỰ ĐỘNG BÓC TÁCH: Nếu backend trả về { data: T, message: string }
-  // thì trả về T. Nếu không phải cấu trúc đó thì trả về nguyên json.
-  return (json && typeof json === 'object' && 'data' in json) ? json.data : json;
 }
 
 const apiClient = {

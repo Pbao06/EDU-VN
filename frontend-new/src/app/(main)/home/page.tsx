@@ -1,6 +1,7 @@
 "use client";
 import React, { useState, useMemo, useEffect} from "react";
 import { Sparkles } from "lucide-react";
+import { useRouter } from "next/navigation";
 import { useCareer } from "@/hooks/recommendation/useCareer";
 import Hero from "@/components/shared/Hero";
 import CareerFilter from "@/components/shared/CareerFilter";
@@ -153,25 +154,38 @@ import { DemandLevel } from"@/components/shared/CareerCard";
 // ];
 
 export default function Home() {
-   const { getListCareer } = useCareer();
+   const router = useRouter();
+   const { getListCareerPublic } = useCareer();
       const [realCareers, setRealCareers] = useState<any[]>([]);
       const [loading, setLoading] = useState(true);
-   
-      // Load data thật từ API
+
+      // Load data thật từ API public
       useEffect(() => {
         const fetchData = async () => {
           try {
-            const data = await getListCareer(1); // Lấy ngành nghề (fieldId=1)
-            const formatted = data.map((item: any) => ({
-              id: item.id.toString(),
-              name: item.name,
-              description: item.description,
-              salary: "Liên hệ", 
-              icon: Sparkles, // Placeholder
-              demand: "high" as DemandLevel,
-              category: "Công nghệ thông tin",
-              accent: "blue" as const
-            }));
+            const data = await getListCareerPublic(); // Lấy tất cả ngành nghề (public)
+            const formatted = data.map((item: any) => {
+              // Convert demandLevel từ API (High/Medium/Low) sang lowercase cho frontend
+              const demandLevelMap: Record<string, DemandLevel> = {
+                "High": "high",
+                "Medium": "medium", 
+                "Low": "low",
+                "high": "high",
+                "medium": "medium",
+                "low": "low"
+              };
+              
+              return {
+                id: item.id.toString(),
+                name: item.name,
+                description: item.shortDescription || item.description,
+                salary: item.salary ? `${item.salary} triệu` : "Liên hệ",
+                icon: Sparkles, // Placeholder
+                demand: demandLevelMap[item.demandLevel] || "high" as DemandLevel,
+                category: "Công nghệ thông tin", // Có thể thêm field category từ API nếu có
+                accent: "blue" as const
+              };
+            });
             setRealCareers(formatted);
           } catch (err) {
             console.error(err);
@@ -210,7 +224,7 @@ export default function Home() {
 
   // Handle click on a career card
   const handleCareerClick = (career: any) => {
-    alert(`Bạn đã chọn xem chi tiết ngành: ${career.name}\nMức lương: ${career.salary}\nLĩnh vực: ${career.category}`);
+    router.push(`/careerdetail/${career.id}`);
   };
 
   return (
@@ -219,7 +233,7 @@ export default function Home() {
       <Hero quizHref="#quiz" />
 
       {/* 3. Main Content: Search, Filter, and Career Grid */}
-      <div id="careers" className="mx-auto w-full max-w-6xl px-4 py-16 sm:px-6">
+      <div id="careers" className="mx-auto w-full max-w-6xl px-4 py-16 sm:px-6 bg-gray-50 min-h-screen">
         <div className="mb-12 flex flex-col gap-8">
           {/* Header of Content Section */}
           <div className="text-center sm:text-left">
@@ -242,7 +256,7 @@ export default function Home() {
         </div>
 
         {/* 4 & 5. CareerGrid (renders CareerCard internally) */}
-        <div className="mt-6">
+        <div className="mt-6 bg-gray-100 rounded-2xl p-6">
           <CareerGrid
             careers={filteredCareers}
             title={`Kết quả tìm kiếm`}

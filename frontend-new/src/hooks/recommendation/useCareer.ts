@@ -22,5 +22,14 @@ export const useCareer = () => {
     }
   };
 
-  return { getListCareer, getDetailCareer, loading };
+  const getListCareerPublic = async () => {
+    setLoading(true);
+    try {
+      return await careerService.getListCareerPublic();
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return { getListCareer, getDetailCareer, getListCareerPublic, loading };
 };

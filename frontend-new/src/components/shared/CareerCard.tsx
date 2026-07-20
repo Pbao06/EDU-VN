@@ -47,7 +47,7 @@ export function CareerCard({
   onClick,
   className = "",
 }: CareerCardProps) {
-  const d = demandConfig[demand];
+  const d = demandConfig[demand] || demandConfig.high; // Fallback to high if demand is invalid
 
   return (
     <button
@@ -68,7 +68,7 @@ export function CareerCard({
       {/* header row: icon + demand */}
       <div className="flex items-start justify-between gap-3">
         <div
-          className={`flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl border-[2.5px] border-black ${accentMap[accent]} shadow-[3px_3px_0_0_#000]`}
+          className={`flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl border-[2.5px] border-black ${accentMap[accent] || accentMap.yellow} shadow-[3px_3px_0_0_#000]`}
         >
           <Icon className="h-7 w-7 text-black" strokeWidth={2.5} />
         </div>

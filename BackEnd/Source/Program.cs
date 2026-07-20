@@ -135,10 +135,28 @@ namespace Source
          {
              options.AddPolicy("AllowFrontend", policy =>
             {
-                policy.WithOrigins("http://localhost:3000") // Cho phép Frontend
+                policy.WithOrigins(
+                    "http://localhost:3000",
+                    "http://localhost:3001",
+                    "http://localhost:3002",
+                    "http://127.0.0.1:3000",
+                    "http://127.0.0.1:3001",
+                    "http://127.0.0.1:3002",
+                    "https://localhost:3000",
+                    "https://localhost:3001",
+                    "https://localhost:3002"
+                ) // Cho phép Frontend trên nhiều port
                       .AllowAnyMethod()
                      .AllowAnyHeader()
                      .AllowCredentials();
+             });
+
+             // Policy mở rộng cho development
+             options.AddPolicy("AllowAll", policy =>
+             {
+                 policy.AllowAnyOrigin()
+                       .AllowAnyMethod()
+                       .AllowAnyHeader();
              });
          });
 
@@ -183,7 +201,7 @@ namespace Source
                 });
             }
             app.UseRouting();
-            app.UseCors("AllowFrontend");
+            app.UseCors(app.Environment.IsDevelopment() ? "AllowAll" : "AllowFrontend");
             // app.UseHttpsRedirection(); // Comment out để tránh redirect từ http sang https trong development
             app.UseMiddleware<ExceptionMiddleware>();
             app.UseAuthentication();

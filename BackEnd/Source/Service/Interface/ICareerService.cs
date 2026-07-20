@@ -6,5 +6,7 @@ namespace Source.Service.Interface
     {
         Task<List<ListCareerDto>> GetListCareer(string UserId);
         Task<CareerDetailDto> GetDetailCareer(string userid,int id);
+        Task<CareerDetailDto> GetDetailCareerPublic(int id);
+        Task<List<ListCareerDto>> GetAllCareersPublic();
     }
 }

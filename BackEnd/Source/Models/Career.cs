@@ -13,6 +13,11 @@
         public string DemandLevel { get; set; } = "High";          // High / Medium / Low
         public string IconUrl { get; set; } = string.Empty;
         public int PopularityScore { get; set; }                   // Để sort
+        
+        // New properties for frontend
+        public int Difficulty { get; set; } = 3;                  // 1-5 scale for difficulty
+        public string RequiredSkills { get; set; } = string.Empty; // JSON array or comma-separated
+        public string Tags { get; set; } = string.Empty;           // JSON array or comma-separated
 
         // Navigation Properties
         public Field? Field { get; set; }                         // Navigation đến Field

@@ -63,5 +63,69 @@ namespace Source.Service
             };
             return dto;
         }
+
+        //GET ALL CAREERS PUBLIC - lấy tất cả careers cho public display (không cần authentication)
+        public async Task<List<ListCareerDto>> GetAllCareersPublic()
+        {
+            var dto = await _context.Careers
+            .Select(x => new ListCareerDto
+            {
+                Id = x.Id,
+                Name = x.Name,
+                Salary = x.MaxSalary,
+                DemandLevel = x.DemandLevel,
+                IconUrl = x.IconUrl,
+                ShortDescription = x.Description
+            })
+            .ToListAsync();
+            if (dto.Count == 0) throw new NotFoundException("Không tìm thấy danh sách nghề");
+            return dto;
+        }
+
+        //GET DETAIL CAREER PUBLIC - lấy chi tiết career cho public display (không cần authentication)
+        public async Task<CareerDetailDto> GetDetailCareerPublic(int id)
+        {
+            var career = await _context.Careers
+                .Include(c => c.Field)
+                .Include(c => c.CareerSubjects)
+                .ThenInclude(cs => cs.Subject)
+                .FirstOrDefaultAsync(c => c.Id == id);
+            
+            if (career == null) throw new NotFoundException("Không tìm thấy nghề");
+            
+            // Parse RequiredSkills from string to list
+            var requiredSkillsList = !string.IsNullOrEmpty(career.RequiredSkills) 
+                ? career.RequiredSkills.Split(',').Select(s => s.Trim()).ToList() 
+                : new List<string>();
+            
+            // Parse Tags from string to list
+            var tagsList = !string.IsNullOrEmpty(career.Tags) 
+                ? career.Tags.Split(',').Select(s => s.Trim()).ToList() 
+                : new List<string>();
+            
+            // Get related subjects from CareerSubjects
+            var relatedSubjectsList = career.CareerSubjects
+                .OrderBy(cs => cs.Priority)
+                .Select(cs => cs.Subject.Name)
+                .ToList();
+            
+            var dto = new CareerDetailDto
+            {
+                Id = career.Id,
+                Name = career.Name,
+                Description = career.Description,
+                DemandLevel = career.DemandLevel,
+                IconUrl = career.IconUrl,
+                MaxSalary = career.MaxSalary,
+                MinSalary = career.MinSalary,
+                Responsibilities = career.Responsibilities,
+                Category = career.Field?.Name ?? "General",
+                Difficulty = career.Difficulty,
+                RequiredSkills = requiredSkillsList,
+                Tags = tagsList,
+                RelatedSubjects = relatedSubjectsList
+            };
+            return dto;
+        }
     }
 }

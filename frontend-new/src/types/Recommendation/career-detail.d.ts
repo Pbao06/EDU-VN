@@ -7,6 +7,11 @@ export interface CareerDetailDto {
   maxSalary: number;
   demandLevel: string;
   iconUrl?: string | null;
+  category?: string;
+  difficulty?: number;
+  requiredSkills?: string[];
+  tags?: string[];
+  relatedSubjects?: string[];
 }
 
 export interface ListCareerDto {
