@@ -80,6 +80,7 @@ export default function CareerDetailPage() {
           relatedSubjects: data.relatedSubjects && data.relatedSubjects.length > 0 ? data.relatedSubjects : ["Math", "Physics", "English"],
           outlook: outlook,
           demandLevel: demandLevelMap[data.demandLevel] || "medium",
+          learningPathId: data.id,
           learningPathPreview: learningPathPreview,
           primaryLabel: "Start Learning Now",
           accent: "blue",

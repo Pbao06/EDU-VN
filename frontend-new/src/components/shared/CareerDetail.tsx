@@ -1,4 +1,5 @@
 import type { ReactNode } from "react";
+import  Link  from "next/link";
 import {
   Check,
   TrendingUp,
@@ -64,6 +65,8 @@ export interface CareerDetailProps {
   learningPathPreview: LearningPathPreviewItem[];
   onViewFullRoadmap?: () => void;
 
+  learningPathId?: number;
+
   // CTA
   onPrimaryAction?: () => void;
   onSecondaryAction?: () => void;
@@ -110,6 +113,7 @@ export function CareerDetail({
   outlook,
   learningPathPreview,
   onViewFullRoadmap,
+  learningPathId,
   onPrimaryAction,
   onSecondaryAction,
   primaryLabel = "Bắt đầu học ngay",
@@ -408,14 +412,13 @@ export function CareerDetail({
       {(onPrimaryAction || onSecondaryAction) && (
         <section className={`flex gap-3 ${onSecondaryAction ? 'flex-col sm:flex-row' : 'justify-center'}`}>
           {onPrimaryAction && (
-            <button
-              type="button"
-              onClick={onPrimaryAction}
+            <Link
+              href={learningPathId ? `/learningpath/${learningPathId}` : "/learningpath"}
               className={`inline-flex h-14 items-center justify-center gap-2 rounded-2xl border-[2.5px] border-black bg-[#4D7CFF] text-base font-extrabold uppercase tracking-wide text-white shadow-[6px_6px_0_0_#000] transition-all hover:-translate-y-0.5 hover:shadow-[8px_8px_0_0_#000] active:translate-x-[2px] active:translate-y-[2px] active:shadow-[3px_3px_0_0_#000] ${onSecondaryAction ? 'flex-1' : 'px-8'}`}
             >
               {primaryLabel}
               <ArrowRight className="h-5 w-5" strokeWidth={2.5} />
-            </button>
+            </Link>
           )}
           {onSecondaryAction && (
             <button

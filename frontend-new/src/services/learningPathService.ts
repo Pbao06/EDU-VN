@@ -16,7 +16,8 @@ export const learningPathService = {
   },
 
   getLearningPathDetail: async (learningPathId: number): Promise<LearningPathDetailDto> => {
-    return (await apiClient.get<LearningPathDetailDto>(`/api/learning-path/${learningPathId}`));
+    const response=await apiClient.get<LearningPathDetailDto>(`/api/learning-path/${learningPathId}`);
+    return response;
     
   },
   // Các phương thức dưới đây thuộc về SubjectController hoặc TopicController

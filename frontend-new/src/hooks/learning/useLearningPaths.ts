@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { learningPathService } from '../../services/learningPathService';
-import { LearningPathDto } from '../../types/Learning/learning-path';
+import { LearningPathDto,LearningPathDetailDto } from '../../types/Learning/learning-path';
 
 export const useLearningPaths = () => {
   const [paths, setPaths] = useState<LearningPathDto[]>([]);
@@ -15,10 +15,20 @@ export const useLearningPaths = () => {
       setLoading(false);
     }
   };
-
   useEffect(() => {
     fetchPaths();
   }, []);
+  
+  const getDetail= async (id:number):Promise<LearningPathDetailDto>=>{
+    setLoading(true);
+    try{
+        return await learningPathService.getLearningPathDetail(id);
+    }
+  finally {
+    setLoading(false);
+  };
+}
 
-  return { paths, loading, refetch: fetchPaths };
+
+  return { paths, loading,getDetail, refetch: fetchPaths };
 };
