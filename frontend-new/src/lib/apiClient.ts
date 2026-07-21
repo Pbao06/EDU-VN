@@ -38,6 +38,10 @@ async function request<T>(path: string, options: ApiClientOptions = {}): Promise
     return (json && typeof json === 'object' && 'data' in json) ? json.data : json;
   } catch (error) {
     console.error(`API Request failed for ${path}:`, error);
+    // 👉 Nếu lỗi đã được ném chủ động từ bên trên (ví dụ: errorText từ server hoặc message của chúng ta)
+    if (error instanceof Error) {
+      throw error;
+    }
     throw new Error(`Failed to connect to backend server at ${BASE_URL}. Please ensure the backend is running.`);
   }
 }

@@ -88,7 +88,12 @@ namespace Source
             builder.Services.AddScoped<IAdminLearningAnswers, AdminLearningAnswers>();
         
 
-            builder.Services.AddControllers();
+            builder.Services.AddControllers()
+                .AddJsonOptions(options =>
+                {
+                    options.JsonSerializerOptions.PropertyNamingPolicy = System.Text.Json.JsonNamingPolicy.CamelCase;
+                    options.JsonSerializerOptions.PropertyNameCaseInsensitive = true;
+                });
             builder.Services.AddScoped<ExceptionMiddleware>();
             builder.Services.AddEndpointsApiExplorer();
 

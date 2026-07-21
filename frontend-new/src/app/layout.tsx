@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import MainLayout from "@/components/layout/MainLayout";
+import { AlertProvider } from "@/components/shared/AlertProvider";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -26,7 +27,9 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}>
       <body className="min-h-full">
-        {children}        {/* ← Chỉ giữ {children} thôi, không bọc MainLayout */}
+        <AlertProvider>
+          {children}
+        </AlertProvider>    {/* ← Chỉ giữ {children} thôi, không bọc MainLayout */}
       </body>
     </html>
   );

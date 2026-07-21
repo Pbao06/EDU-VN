@@ -11,7 +11,9 @@ export const authService = {
   },
 
   login: async (data: LoginDto): Promise<AuthResponseDto> => {
-    return (await apiClient.post<AuthResponseDto>('/api/auth/login', data));
+    const res= await apiClient.post<AuthResponseDto>('/api/auth/login', data);
+    console.log("BACKEND LOGIN RESPONSE:", res);
+    return res;
     
   },
 

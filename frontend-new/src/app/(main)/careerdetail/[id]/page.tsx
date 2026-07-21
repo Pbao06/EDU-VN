@@ -1,6 +1,6 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import { useParams } from "next/navigation";
+import { useParams,useRouter } from "next/navigation";
 import { useCareer } from "@/hooks/recommendation/useCareer";
 import CareerDetail, { 
   CareerDetailProps, 
@@ -8,24 +8,29 @@ import CareerDetail, {
   LearningPathPreviewItem,
   DemandLevel 
 } from "@/components/shared/CareerDetail";
+import {useLearningPaths} from '@/hooks/learning/useLearningPaths';
 import { Sparkles } from "lucide-react";
 
 export default function CareerDetailPage() {
   const params = useParams();
-  const { getDetailCareer } = useCareer();
+  const router = useRouter();// dùng cho chuyển trang 
+  const { getDetailCareer } = useCareer(); 
   const [careerData, setCareerData] = useState<CareerDetailProps | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-
+  const {startLearningPath,loading:isCreatingPath}=useLearningPaths();
+// Ép kiểu ID an toàn cho Next.js App Router
+  const rawId = params?.id;
+  const careerId = rawId ? parseInt(Array.isArray(rawId) ? rawId[0] : rawId, 10) : 0;
   useEffect(() => {
     const fetchCareerDetail = async () => {
-      try {
-        const careerId = params.id ? parseInt(params.id as string) : 0;
         if (!careerId) {
           setError("Invalid career ID");
           setLoading(false);
           return;
         }
+      try {
+        
 
         const data = await getDetailCareer(careerId);
         
@@ -82,11 +87,14 @@ export default function CareerDetailPage() {
           demandLevel: demandLevelMap[data.demandLevel] || "medium",
           learningPathId: data.id,
           learningPathPreview: learningPathPreview,
-          primaryLabel: "Start Learning Now",
+          // primaryLabel: "Start Learning Now",
           accent: "blue",
-          onPrimaryAction: () => {
-            alert("Start learning: " + data.name);
-          }
+          // onPrimaryAction: () => {
+            // alert("Start learning: " + data.name);
+            // 👉 BỔ SUNG THÊM 2 DÒNG NÀY VÀO ĐÂY ĐỂ TRUYỀN XUỐNG COMPONENT CON:
+          primaryLabel: isCreatingPath ? "Đang khởi tạo..." : "Start Learning Now",
+          onPrimaryAction: handleStartLearning,
+          
         };
 
         setCareerData(mappedData);
@@ -100,7 +108,36 @@ export default function CareerDetailPage() {
     };
 
     fetchCareerDetail();
-  }, [params.id, getDetailCareer]);
+  }, [params.id]);
+  // nghiệp vụ chuẩn viết riêng hàm xử lý bấm nút
+  const handleStartLearning= async() => {
+    // get id Career 
+     const careerId = params.id ? parseInt(params.id as string) : 0;
+     // --- DEBUG LOG ---
+     console.log("DEBUG: Preparing to start learning path. Full params:", params, "Parsed careerId:", careerId);
+     if(!careerId) return "Error khong the lay id user";
+     try{
+      //call API đăng kí lộ trình 
+      const res= await startLearningPath(careerId);
+      // debug xem lỗi 
+      console.log("API TRẢ VỀ TOÀN BỘ LÀ:", JSON.stringify(res, null, 2));
+      // Lấy ID trả về từ API (backend giờ trả về camelCase)
+      const newPathId = res?.learningPathId;
+
+      if(newPathId)
+      {
+        // chuyển sang trang lộ trình học cho user coi 
+        router.push(`/learningpath/${newPathId}`);
+      }else
+      {
+        alert("Có lỗi xảy ra , không lấy được Id learningPath");
+      }
+     }
+     catch(error)
+     {
+      console.error("Error when start learning :",error);
+     }
+  };
 
   if (loading) {
     return (
@@ -134,11 +171,10 @@ export default function CareerDetailPage() {
       </div>
     );
   }
-
   return (
     <div className="flex justify-center w-full px-4 py-8 sm:px-6 lg:px-8 bg-grey-100 min-h-screen">
       <div className="w-full max-w-5xl">
-        <CareerDetail {...careerData} />
+        <CareerDetail {...careerData} onPrimaryAction={handleStartLearning} primaryLabel={isCreatingPath? "Đang khởi tạo...": "Start Learning Now"} />
       </div>
     </div>
   );

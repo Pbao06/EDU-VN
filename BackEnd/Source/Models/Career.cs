@@ -16,8 +16,8 @@
         
         // New properties for frontend
         public int Difficulty { get; set; } = 3;                  // 1-5 scale for difficulty
-        public string RequiredSkills { get; set; } = string.Empty; // JSON array or comma-separated
-        public string Tags { get; set; } = string.Empty;           // JSON array or comma-separated
+        public string RequiredSkills { get; set; } = string.Empty;
+        public string Tags { get; set; } = string.Empty;
 
         // Navigation Properties
         public Field? Field { get; set; }                         // Navigation đến Field

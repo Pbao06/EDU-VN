@@ -234,12 +234,14 @@ export default function LoginPage() {
 
   const handleLoginSubmit = async (data: { email: string; password: string; remember: boolean }) => {
     try {
-      await login({
+      const res=await login({
         email: data.email,
         password: data.password,
       });
-    } catch (err) {
+     
+      } catch (err) {
       // Lỗi đã được useAuth lưu trữ và hook tự cập nhật state 'error'
+      console.error("Login failed:", err);
     }
   };
 

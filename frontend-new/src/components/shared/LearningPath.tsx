@@ -640,9 +640,9 @@ export default function LearningPathPage() {
         </Section>
 
         {/* ── FOOTER ── */}
-        <p className="pb-6 text-center text-sm font-semibold text-black/40">
+        {/* <p className="pb-6 text-center text-sm font-semibold text-black/40">
           Cập nhật lần cuối: 20/07/2026 · EduVN © 2026
-        </p>
+        </p> */}
       </main>
     </div>
   );

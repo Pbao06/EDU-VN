@@ -24,19 +24,17 @@ namespace Source.Controllers.Admin
         [HttpGet("{id}")]
         public async Task<IActionResult> GetCareerById(int id)
         {
-            var career = await _adminCareerService.GetCareerById(id);
-            if (career == null)
-            {
-                return NotFound(new { message = "Career not found" });
-            }
-            return Success(career," Get successs");
+            var career = await _adminCareerService.GetDetailCareerPublic(id);
+            return Success(career, "Get success");
         }
 
         [HttpPost]
         public async Task<IActionResult> CreateCareer([FromBody] CreateCareerDto dto)
         {
             var career = await _adminCareerService.CreateCareer(dto);
-            return CreatedAtAction(nameof(GetCareerById), new { id = career.Id }, Success(career," Create Career Sucess"));
+            // We use CreatedAtAction to return 201 Created and the location of the new resource.
+            // Note: This won't return the Success envelope, but it's the standard RESTful way.
+            return CreatedAtAction(nameof(GetCareerById), new { id = career.Id }, career);
         }
 
         [HttpPut("{id}")]

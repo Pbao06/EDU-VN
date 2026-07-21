@@ -29,12 +29,28 @@ export const useAuth = () => {
     }, []);
 
     const login = async (data: LoginDto) => {
+        console.log("👉 ĐÃ BẤM ĐĂNG NHẬP VÀ GỌI ĐƯỢC HÀM LOGIN!", data);
         setLoading(true); 
         setError(null);
         try {
             const response = await authService.login(data);
-            localStorage.setItem("token", response.accessToken);
-            localStorage.setItem("refreshToken", response.refreshToken);
+            console.log("RESPONSE NHẬN ĐƯỢC:", response); // Log ra để check
+
+            // localStorage.setItem("token", response.accessToken);
+            // localStorage.setItem("refreshToken", response.refreshToken);
+            const accessToken = response.accessToken;
+            const refreshToken = response.refreshToken;
+            if (accessToken) {
+                localStorage.setItem("token", accessToken);
+                console.log(" đã lưu thành công token vào local:",localStorage.getItem("token"));
+            }
+            else{
+                console.log("Không lưu đc token vào local ");
+            }
+            if (refreshToken) {
+                localStorage.setItem("refreshToken", refreshToken);
+                
+            }
             
             const userInfo: UserInfo = {
                 email: response.email,

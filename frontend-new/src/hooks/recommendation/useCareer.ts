@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState,useCallback } from 'react';
 import { careerService } from '../../services/careerService';
 
 export const useCareer = () => {
@@ -13,14 +13,16 @@ export const useCareer = () => {
     }
   };
 
-  const getDetailCareer = async (id: number) => {
+  const getDetailCareer = useCallback(async (id: number) => {
     setLoading(true);
     try {
-      return await careerService.getDetailCareer(id);
-    } finally {
+      const data = await careerService.getDetailCareer(id);
+      return data;
+    } 
+     finally {
       setLoading(false);
     }
-  };
+  }, []); // Mảng dependency rỗng nghĩa là hàm này chỉ khởi tạo một lần duy nhất, không bao giờ bị đổi địa chỉ nữa.
 
   const getListCareerPublic = async () => {
     setLoading(true);

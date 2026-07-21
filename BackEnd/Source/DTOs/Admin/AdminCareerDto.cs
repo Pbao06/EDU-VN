@@ -14,6 +14,9 @@ namespace Source.DTOs.Admin
         public string DemandLevel { get; set; } = string.Empty;
         public string IconUrl { get; set; } = string.Empty;
         public int PopularityScore { get; set; }
+        public int Difficulty { get; set; } = 3;                  // 1-5 scale for difficulty
+        public List<string> RequiredSkills { get; set; } = new List<string>();
+        public List<string> Tags { get; set; } = new List<string>();
     }
 
     public class CreateCareerDto
@@ -28,6 +31,10 @@ namespace Source.DTOs.Admin
         public string DemandLevel { get; set; } = string.Empty;
         public string IconUrl { get; set; } = string.Empty;
         public int PopularityScore { get; set; }
+        //new
+        public int Difficulty { get; set; } = 3;                  // 1-5 scale for difficulty
+        public List<string> RequiredSkills { get; set; } = new List<string>();
+        public List<string> Tags { get; set; } = new List<string>();
     }
 
     public class UpdateCareerDto
@@ -42,5 +49,10 @@ namespace Source.DTOs.Admin
         public string DemandLevel { get; set; } = string.Empty;
         public string IconUrl { get; set; } = string.Empty;
         public int PopularityScore { get; set; }
+        //new
+
+        public int Difficulty { get; set; } = 3;                  // 1-5 scale for difficulty
+        public List<string> RequiredSkills { get; set; } = new List<string>();
+        public List<string> Tags { get; set; } = new List<string>();
     }
 }
