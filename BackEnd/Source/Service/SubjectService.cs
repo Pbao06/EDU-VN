@@ -17,12 +17,11 @@ namespace Source.Service
         /// <summary>
         /// Lấy chi tiết subject với Topics list (không có Questions)
         /// </summary>
-        public async Task<SubjectDetailDto> GetSubjectDetail(int learningPathId, int subjectId, string userId)
+        public async Task<SubjectDetailDto> GetSubjectDetail(int subjectId, string userId)
         {
-             // flow la mon hoc thuoc learning path cu the , get join lay danh sach topic 
+             // lay subject doc lap , get join lay danh sach topic 
             
-            var path= await _context.UserLearningPaths.FirstOrDefaultAsync(p=> p.Id == learningPathId && p.UserId==userId);
-            if (path == null) throw new NotFoundException(" Not found Learning Path");
+ 
             var subject = await _context.Subjects.Include(s=> s.Topics).FirstOrDefaultAsync(s=> s.Id==subjectId);
             var careersubject = await _context.CareerSubjects.FirstOrDefaultAsync(s => s.SubjectId == subject.Id);
             if (careersubject == null) throw new NotFoundException(" Not found Subject of Career ");

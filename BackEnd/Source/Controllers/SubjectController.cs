@@ -13,14 +13,14 @@ namespace Source.Controllers
         }
 
         [HttpGet("{LearningPathId}/subject/{subjectId}")] //  /GET /api/learningpaths/1/subjects/5
-        public async Task<IActionResult> GetDetaiSubject_ListTopics(int subjectId , int LearningPathId)
+        public async Task<IActionResult> GetDetaiSubject_ListTopics(int subjectId )
         {
             var userId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
             if (string.IsNullOrEmpty(userId))
             {
                 return Unauthorized("Không tìm thấy User ID trong token");
             }
-            var result = await _subjectService.GetSubjectDetail(LearningPathId, subjectId, userId);
+            var result = await _subjectService.GetSubjectDetail( subjectId, userId);
             return Success(result, " Get Detail Subject + List Topics Success");
         }
 

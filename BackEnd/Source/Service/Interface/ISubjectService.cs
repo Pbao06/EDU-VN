@@ -7,6 +7,6 @@ namespace Source.Service.Interface
         /// <summary>
         /// Lấy chi tiết subject với Topics list (không có Questions)
         /// </summary>
-        Task<SubjectDetailDto> GetSubjectDetail(int learningPathId, int subjectId, string userId);
+        Task<SubjectDetailDto> GetSubjectDetail( int subjectId, string userId);
     }
 }

@@ -176,7 +176,7 @@ export default function Home() {
               };
               
               return {
-                id: item.id.toString(),
+                id: item.id?.toString() || item._id?.toString() || "unknown",
                 name: item.name,
                 description: item.shortDescription || item.description,
                 salary: item.salary ? `${item.salary} triệu` : "Liên hệ",
@@ -224,6 +224,9 @@ export default function Home() {
 
   // Handle click on a career card
   const handleCareerClick = (career: any) => {
+    console.log("Career clicked:", career);
+    console.log("Career ID:", career.id);
+    console.log("Navigating to:", `/careerdetail/${career.id}`);
     router.push(`/careerdetail/${career.id}`);
   };
 

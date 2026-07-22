@@ -3,7 +3,7 @@
 import React, { useEffect, useRef, useState, type ReactNode } from "react";
 import { useLearningPaths } from "@/hooks/learning/useLearningPaths";
 import { LearningPathDetailDto } from "@/types/Learning/learning-path";
-import {useParams} from "next/navigation";
+import {useParams, useRouter} from "next/navigation";
 
 /* ─────────────────────────────────────────────
    DATA (DỮ LIỆU CŨ - ĐÃ COMMENT)
@@ -215,7 +215,7 @@ function AnimatedProgressBar({
 /* ─────────────────────────────────────────────
    SUBJECT CARD
 ───────────────────────────────────────────── */
-function SubjectCard({ subject }: { subject: any }) {
+function SubjectCard({ subject, onSubjectClick }: { subject: any; onSubjectClick: (subjectId: number) => void }) {
   const [hovered, setHovered] = useState(false);
 
   const statusMap = {
@@ -321,6 +321,7 @@ function SubjectCard({ subject }: { subject: any }) {
         {/* CTA */}
         <button
           type="button"
+          onClick={() => onSubjectClick(subject.id)}
           className="mt-auto inline-flex w-full items-center justify-center gap-2 rounded-2xl border-[2.5px] border-black py-3 text-sm font-extrabold uppercase tracking-wide shadow-[4px_4px_0_0_#000] transition-all hover:-translate-y-0.5 hover:shadow-[6px_6px_0_0_#000] active:translate-x-[2px] active:translate-y-[2px] active:shadow-[2px_2px_0_0_#000]"
           style={{
             backgroundColor: subject.progress === 0 ? "#F4F4F5" : subject.accentHex,
@@ -355,6 +356,7 @@ function SubjectCard({ subject }: { subject: any }) {
 export default function LearningPathPage() {
 
   const params= useParams(); // get Id ừ url
+  const router = useRouter();
   const id=params.id ? Number(params.id) : null;
   // call hook here 
   const {paths,loading,getDetail}=useLearningPaths();
@@ -368,6 +370,11 @@ export default function LearningPathPage() {
       getDetail(id).then((res)=> setData(res));
     }
   },[id]);
+
+  // Handler khi click vào subject card
+  const handleSubjectClick = (subjectId: number) => {
+    router.push(`/subjectdetail/${subjectId}`);
+  };
   // xử lý loading nếu đang tải thì loading 
   if(loading || !data) return <div className='p-20 text-center'>Đang tải lộ trình...</div>
   return (
@@ -575,7 +582,10 @@ export default function LearningPathPage() {
           {/* grid */}
           <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3 sm:gap-6">
             {data.subjects.map((s: any) => (
-              <SubjectCard key={s.id} subject={{
+              <SubjectCard 
+                key={s.id} 
+                onSubjectClick={handleSubjectClick}
+                subject={{
                 id: s.id.toString(),
                 code: s.code,
                 fullName: s.name,
