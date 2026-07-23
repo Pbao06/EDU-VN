@@ -12,7 +12,7 @@ namespace Source.Controllers
             _subjectService = subjectService;
         }
 
-        [HttpGet("{LearningPathId}/subject/{subjectId}")] //  /GET /api/learningpaths/1/subjects/5
+        [HttpGet("{subjectId}")] //  /GET /api/subject/5
         public async Task<IActionResult> GetDetaiSubject_ListTopics(int subjectId )
         {
             var userId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;

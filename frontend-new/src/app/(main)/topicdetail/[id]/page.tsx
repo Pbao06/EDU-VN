@@ -1,14 +1,12 @@
-
 "use client";
-
-import { useEffect, useState } from "react";
+import { useEffect, useState, use } from "react";
 import { TopicPractice, PracticeQuestion } from "@/components/shared/TopicPractice";
 import { useTopic } from "@/hooks/learning/useTopic";
 
 // Define a type for the expected API response structure for better type safety
 interface ApiTopicData {
   name: string;
-  learningQuestions: {
+  questions: {
     id: number;
     content: string;
     explanation: string | null;
@@ -20,13 +18,20 @@ interface ApiTopicData {
   }[];
 }
 
-const TopicDetailPage = ({ params }: { params: { id: string } }) => {
+const TopicDetailPage = ({ params: paramsPromise }: { params: Promise<{ id: string }> }) => {
+  const params = use(paramsPromise); // Unwrap the promise
   const { getTopicDetail, loading } = useTopic();
+  const topicIdParam = params.id; // Get id directly from unwrapped params
   const [topicData, setTopicData] = useState<{ name: string; questions: PracticeQuestion[] } | null>(null);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    const topicId = parseInt(params.id, 10);
+    if (!topicIdParam) {
+        setError("Không có ID chủ đề.");
+        return;
+    }
+
+    const topicId = parseInt(topicIdParam, 10);
     if (isNaN(topicId)) {
       setError("ID chủ đề không hợp lệ.");
       return;
@@ -36,10 +41,18 @@ const TopicDetailPage = ({ params }: { params: { id: string } }) => {
       try {
         setError(null);
         const data: ApiTopicData = await getTopicDetail(topicId);
+        
+        console.log("DEBUG: API Topic detail response:", data);
+
+        // Check if data exists
+        if (!data) {
+          throw new Error("Không nhận được dữ liệu từ máy chủ.");
+        }
 
         // Map the API data to the structure required by the TopicPractice component
-        const mappedQuestions: PracticeQuestion[] = data.learningQuestions.map(q => {
-          const correctOption = q.answers.find(a => a.isCorrect);
+        // Use optional chaining and fallback to empty array to prevent crashes
+        const mappedQuestions: PracticeQuestion[] = (data.questions || []).map(q => {
+          const correctOption = (q.answers || []).find(a => a.isCorrect);
           if (!correctOption) {
             // Throw an error if a question has no correct answer, which is a data integrity issue.
             throw new Error(`Câu hỏi ID ${q.id} không có đáp án đúng.`);
@@ -47,8 +60,8 @@ const TopicDetailPage = ({ params }: { params: { id: string } }) => {
           return {
             id: q.id.toString(),
             prompt: q.content,
-            explanation: q.explanation,
-            options: q.answers.map(a => ({
+            explanation: q.explanation || "",
+            options: (q.answers || []).map(a => ({
               id: a.id.toString(),
               label: a.content,
             })),
@@ -68,7 +81,7 @@ const TopicDetailPage = ({ params }: { params: { id: string } }) => {
     };
 
     fetchAndSetTopicData();
-  }, [params.id]); // Dependency array ensures this runs when the id changes
+  }, [topicIdParam]); // Dependency array ensures this runs when the id changes
 
   if (loading) {
     return (
@@ -100,4 +113,3 @@ const TopicDetailPage = ({ params }: { params: { id: string } }) => {
 };
 
 export default TopicDetailPage;
-

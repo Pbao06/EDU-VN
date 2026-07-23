@@ -18,10 +18,10 @@ export default function SubjectDetailPage() {
   const [error, setError] = useState<string | null>(null);
 
   // Lấy subjectId từ URL params
-  const rawSubjectId = params?.id;
+  const rawSubjectId = React.useMemo(() => {
+    return params?.id;
+  }, [params]);
   const subjectId = rawSubjectId ? parseInt(Array.isArray(rawSubjectId) ? rawSubjectId[0] : rawSubjectId, 10) : 0;
-  
-
 
   useEffect(() => {
     const fetchSubjectDetail = async () => {
@@ -71,16 +71,16 @@ export default function SubjectDetailPage() {
           name: data.name || data.title || "Unknown Subject",
           description: data.description || "No description available",
           difficulty: difficultyMap[data.difficulty] || "beginner",
-          topicsCount: data.topicsCount || mappedTopics.length,
-          hours: data.hours || data.duration || 0,
-          progress: data.progress || 0,
+          topicsCount: data.totalTopics || mappedTopics.length,
+          hours: data.hours || 0,
+          progress: data.subjectProgress || 0,
           topics: mappedTopics,
           onBack: () => router.back(),
           onContinue: () => {
             console.log("Continue learning:", data.name);
           },
           onTopicClick: (topic: SubjectTopic) => {
-            console.log("Topic clicked:", topic);
+            router.push(`/topicdetail/${topic.id}`);
           }
         };
 

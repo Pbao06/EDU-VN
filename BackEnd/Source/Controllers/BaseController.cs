@@ -2,9 +2,9 @@
 
 namespace Source.Controllers
 {
+    [Route("api/[controller]")]
     public class BaseController : ControllerBase
     {
-        [Route("api/[controller]")]
         protected IActionResult Success(object? data = null, string message = "Success")
         {
             return Ok(new

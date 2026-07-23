@@ -89,6 +89,8 @@ namespace Source.DTOs
         public double SubjectProgress { get; set; } // 0-100
         public bool IsCompleted { get; set; }
         public bool IsInProgress { get; set; }
+        public string Difficulty { get; set; } = "beginner";
+        public int Hours { get; set; }
         
         // Topics list (summary only, không có Questions)
         public List<TopicSummaryDto> Topics { get; set; } = new();
@@ -103,6 +105,8 @@ namespace Source.DTOs
         public string Name { get; set; } = string.Empty;
         public string Description { get; set; } = string.Empty;
         public int DifficultyLevel { get; set; } // 1-5
+        public string Status { get; set; } = "available";
+        public int Minutes { get; set; }
         
         // Progress summary (Questions level only)
         public int TotalQuestions { get; set; }

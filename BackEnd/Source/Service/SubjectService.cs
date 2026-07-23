@@ -23,9 +23,10 @@ namespace Source.Service
             
  
             var subject = await _context.Subjects.Include(s=> s.Topics).FirstOrDefaultAsync(s=> s.Id==subjectId);
-            var careersubject = await _context.CareerSubjects.FirstOrDefaultAsync(s => s.SubjectId == subject.Id);
-            if (careersubject == null) throw new NotFoundException(" Not found Subject of Career ");
             if (subject == null) throw new NotFoundException(" Not found Subject ");
+
+            var careersubject = await _context.CareerSubjects.FirstOrDefaultAsync(s => s.SubjectId == subject.Id);
+            // if (careersubject == null) throw new NotFoundException(" Not found Subject of Career ");
 
             //var topics= subject.Topics.Select(t => new TopicSummaryDto
             //{
@@ -66,7 +67,9 @@ namespace Source.Service
                 SubjectProgress = subjectProgress,
                 IsCompleted = isCompleted,
                 IsInProgress = isInProgress,
-                Topics = topicSummaryDtos
+                Topics = topicSummaryDtos,
+                Difficulty = "intermediate", // Default to intermediate or logic based on topics
+                Hours = totalTopics // 1 hour per topic estimate
             };
         }
         #region Helper Methods
@@ -92,6 +95,10 @@ namespace Source.Service
             bool isCompleted = progress != null && progress.CompletionPercentage >= 100;
             bool isInProgress = completedQuestions > 0 && !isCompleted;
 
+            string status = "available";
+            if (isCompleted) status = "completed";
+            else if (isInProgress) status = "in_progress";
+
             return new TopicSummaryDto
             {
                 Id = topic.Id,
@@ -103,7 +110,9 @@ namespace Source.Service
                 TopicProgress = topicProgress,
                 IsCompleted = isCompleted,
                 IsInProgress = isInProgress,
-                LastAccessedAt = progress?.LastAccessedAt
+                LastAccessedAt = progress?.LastAccessedAt,
+                Status = status,
+                Minutes = 15 // 15 mins per topic estimate
             };
         }
 

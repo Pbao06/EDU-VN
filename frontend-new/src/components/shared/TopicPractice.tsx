@@ -1,4 +1,6 @@
+'use client';
 import { useEffect, useMemo, useState, type ReactNode } from "react";
+import React from "react"; // Đảm bảo đã import React
 import {
   ArrowLeft,
   ArrowRight,

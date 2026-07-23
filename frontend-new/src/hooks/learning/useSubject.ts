@@ -4,7 +4,7 @@ import { subjectService } from '../../services/subjectService';
 export const useSubject = () => {
   const [loading, setLoading] = useState(false);
 
-  const getSubjectDetail = async ( subjectId: number) => {
+  const getSubjectDetail = async (subjectId: number) => {
     setLoading(true);
     try {
       return await subjectService.getSubjectDetail(subjectId);
