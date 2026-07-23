@@ -5,102 +5,6 @@ import { useLearningPaths } from "@/hooks/learning/useLearningPaths";
 import { LearningPathDetailDto } from "@/types/Learning/learning-path";
 import {useParams, useRouter} from "next/navigation";
 
-/* ─────────────────────────────────────────────
-   DATA (DỮ LIỆU CŨ - ĐÃ COMMENT)
-───────────────────────────────────────────── */
-// const SUBJECTS: Subject[] = [
-//   {
-//     id: "csharp",
-//     code: "C#",
-//     fullName: "Lập trình C#",
-//     topicCount: 12,
-//     completedTopics: 10,
-//     progress: 80,
-//     status: "in-progress",
-//     description:
-//       "Nền tảng lập trình hướng đối tượng với C# — ngôn ngữ chính trong hệ sinh thái .NET",
-//     cardBg: "#EFF6FF",
-//     accentHex: "#4D7CFF",
-//     iconBg: "#4D7CFF",
-//     progressGradient: "linear-gradient(90deg, #1d4ed8 0%, #60a5fa 100%)",
-//     icon: (
-//       <svg
-//         width="22"
-//         height="22"
-//         viewBox="0 0 24 24"
-//         fill="none"
-//         stroke="white"
-//         strokeWidth="2.5"
-//         strokeLinecap="round"
-//         strokeLinejoin="round"
-//       >
-//         <polyline points="16 18 22 12 16 6" />
-//         <polyline points="8 6 2 12 8 18" />
-//       </svg>
-//     ),
-//   },
-//   {
-//     id: "oop",
-//     code: "OOP",
-//     fullName: "Lập trình hướng đối tượng",
-//     topicCount: 10,
-//     completedTopics: 2,
-//     progress: 20,
-//     status: "in-progress",
-//     description:
-//       "Các nguyên lý OOP cốt lõi: Encapsulation, Inheritance, Polymorphism, Abstraction",
-//     cardBg: "#FFF7ED",
-//     accentHex: "#FF8A3D",
-//     iconBg: "#FF8A3D",
-//     progressGradient: "linear-gradient(90deg, #c2410c 0%, #fb923c 100%)",
-//     icon: (
-//       <svg
-//         width="22"
-//         height="22"
-//         viewBox="0 0 24 24"
-//         fill="none"
-//         stroke="white"
-//         strokeWidth="2.5"
-//         strokeLinecap="round"
-//         strokeLinejoin="round"
-//       >
-//         <circle cx="12" cy="12" r="3" />
-//         <path d="M12 1v4M12 19v4M4.22 4.22l2.83 2.83M16.95 16.95l2.83 2.83M1 12h4M19 12h4M4.22 19.78l2.83-2.83M16.95 7.05l2.83-2.83" />
-//       </svg>
-//     ),
-//   },
-//   {
-//     id: "sql",
-//     code: "SQL",
-//     fullName: "Cơ sở dữ liệu SQL",
-//     topicCount: 15,
-//     completedTopics: 0,
-//     progress: 0,
-//     status: "not-started",
-//     description:
-//       "Thiết kế database, viết query, JOIN, index và tối ưu truy vấn SQL Server / PostgreSQL",
-//     cardBg: "#FAFAFA",
-//     accentHex: "#71717a",
-//     iconBg: "#52525b",
-//     progressGradient: "linear-gradient(90deg, #52525b 0%, #a1a1aa 100%)",
-//     icon: (
-//       <svg
-//         width="22"
-//         height="22"
-//         viewBox="0 0 24 24"
-//         fill="none"
-//         stroke="white"
-//         strokeWidth="2.5"
-//         strokeLinecap="round"
-//         strokeLinejoin="round"
-//       >
-//         <ellipse cx="12" cy="5" rx="9" ry="3" />
-//         <path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3" />
-//         <path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5" />
-//       </svg>
-//     ),
-//   },
-// ];
 
 /* ─────────────────────────────────────────────
    HELPERS
@@ -378,7 +282,7 @@ export default function LearningPathPage() {
   // xử lý loading nếu đang tải thì loading 
   if(loading || !data) return <div className='p-20 text-center'>Đang tải lộ trình...</div>
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen ">
       {/* Subtle dot pattern background */}
       <div
         className="pointer-events-none fixed inset-0 opacity-[0.04]"

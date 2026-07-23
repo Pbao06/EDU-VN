@@ -8,12 +8,15 @@ interface MainLayoutProps {
 
 export default function MainLayout({ children }: MainLayoutProps) {
   return (
-    <div className="flex flex-col min-h-screen">
+    <div className="flex flex-col min-h-screen ">
       <Navbar />
-      <main className="flex-grow w-full">
+      <main className="flex-grow w-full bg-[#FFF8E7]">
         {children}
       </main>
       <Footer />
     </div>
   );
 }
+//bg-[#F5F7FA] transition-colors duration-300
+//bg-[#FFF8E7]
+//bg-slate-200
