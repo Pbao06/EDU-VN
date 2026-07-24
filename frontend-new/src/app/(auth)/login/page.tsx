@@ -50,7 +50,7 @@ function LoginCard({
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (loading) return;
-    await onSubmit?.({ email, password, remember });
+    await onSubmit?.({ email, password, remember }); // lhucs này là đang gọi thg hanldelogin hook bên dưới 
   };
 
   return (
@@ -230,7 +230,7 @@ function SocialButton({
 
 // Đây là Page Component chính mà Next.js cần
 export default function LoginPage() {
-  const { login, loading, error } = useAuth();
+  const { login, loading, error } = useAuth(); // gọi hook auth 
 
   const handleLoginSubmit = async (data: { email: string; password: string; remember: boolean }) => {
     try {

@@ -152,7 +152,7 @@ function QuizCta({ href = "#quiz" }: QuizCtaProps) {
   const [active, setActive] = useState(false);
   return (
     <a
-      href={href}
+      href='/onboarding'
       onMouseEnter={() => setHover(true)}
       onMouseLeave={() => {
         setHover(false);
@@ -210,7 +210,7 @@ export default function Footer({
               Làm bài Career Quiz 5 phút để nhận gợi ý ngành nghề phù hợp với bạn.
             </p>
           </div>
-          <QuizCta href={quizHref} />
+          <QuizCta href='/onboarding' />
         </div>
       </div>
 

@@ -24,7 +24,7 @@ function QuizButton({ href = "#quiz" }: QuizButtonProps) {
 
   return (
     <a
-      href={href}
+      href='/onboarding'
       onMouseEnter={() => setHover(true)}
       onMouseLeave={() => {
         setHover(false);
@@ -134,7 +134,7 @@ export default function Hero({ quizHref = "#quiz" }: HeroProps) {
         </p>
 
         <div className="mt-9">
-          <QuizButton href={quizHref} />
+          <QuizButton href='/onboarding' />
         </div>
 
         <p className="mt-4 text-sm font-semibold text-black/60">

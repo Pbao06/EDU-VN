@@ -6,8 +6,8 @@ import { RefreshTokenDto } from '../types/Auth/refresh-token';
 export const authService = {
   register: async (data: RegisterDto): Promise<AuthResponseDto> => {
 
-    return (await apiClient.post<AuthResponseDto>('/api/auth/register', data));
-    
+    return (await apiClient.post<AuthResponseDto>('/api/auth/register', data)); // data là dữ liệu phía client gửi cho server 
+    // post<authResponseDto> là gói dữ liệu xem dto trả về cái gì 
   },
 
   login: async (data: LoginDto): Promise<AuthResponseDto> => {
