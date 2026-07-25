@@ -22,8 +22,20 @@ namespace Source
             var builder = WebApplication.CreateBuilder(args);
 
 
+            var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+
             builder.Services.AddDbContext<Data.ApplicationDbContext>(options =>
-                options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+                options.UseMySql(
+                    connectionString,
+                    ServerVersion.AutoDetect(connectionString),
+                    mySqlOptions =>
+                    {
+                        mySqlOptions.EnableRetryOnFailure(
+                            maxRetryCount: 5,
+                            maxRetryDelay: TimeSpan.FromSeconds(30),
+                            errorNumbersToAdd: null);
+                    }));
+                    
 
             // ===== Add Identity =====
             builder.Services.AddIdentity<User, IdentityRole>()
@@ -177,22 +189,22 @@ namespace Source
             using (var scope = app.Services.CreateScope())
             {
                 var services = scope.ServiceProvider;
-                var context=services.GetRequiredService<ApplicationDbContext>();
-                var userManager= services.GetRequiredService<UserManager<User>>();
-                var roleManager= services.GetRequiredService<RoleManager<IdentityRole>>();
+                var context = services.GetRequiredService<ApplicationDbContext>();
+                var userManager = services.GetRequiredService<UserManager<User>>();
+                var roleManager = services.GetRequiredService<RoleManager<IdentityRole>>();
                 try
                 {
+                    context.Database.EnsureCreated();
+
                     DataSeeder.SeedDataAsync(context).GetAwaiter().GetResult();
 
-                    //  Gọi các hàm seed (truyền đủ tham số nếu hàm yêu cầu)
                     DataSeeder.SeedIdentityAsync(userManager, roleManager).GetAwaiter().GetResult();
                 }
                 catch (Exception ex)
                 {
-                    Console.WriteLine($"Error seeding data: {ex.Message}");
+                    Console.WriteLine($"Error initializing database: {ex.Message}");
                 }
             }
-
             // Configure the HTTP request pipeline.
            // ===== Middleware =====
             if (app.Environment.IsDevelopment())
