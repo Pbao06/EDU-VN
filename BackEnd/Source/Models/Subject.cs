@@ -8,6 +8,7 @@
         public string Name { get; set; } = string.Empty;           // "Nhập môn Lập trình", "OOP", "Database"
         public string Description { get; set; } = string.Empty;
         public string Type { get; set; } = "Core";                 // C
+        public int SubjectIndex{get;set;}
         public ICollection<Topic> Topics { get; set; } = new List<Topic>();
         public ICollection<CareerSubject> CareerSubjects { get; set; } = new List<CareerSubject>();
         public ICollection<Quiz> Quizzes { get; set; } = new List<Quiz>();

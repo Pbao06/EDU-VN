@@ -12,7 +12,7 @@ namespace Source.Models
         public bool IsCorrect { get; set; }  // Có đúng/sai
         public string? Explanation { get; set; }  // Giải thích tại sao đúng/sai
         public int LearningQuestionId { get; set; }  // FK → LearningQuestion
-        
+        public int AsnwerIndex{get;set;}
         public ICollection<LearningUserAnswer> UserAnswers { get; set; } = new List<LearningUserAnswer>();
 
         // Navigation Properties

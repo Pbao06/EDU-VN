@@ -6,16 +6,21 @@ export interface CareerQuizFormData {
   fullName: string;
   userType: string;
   mainGoal: string;
-  field: string;
+  fieldId: string;
+}
+
+export interface OptionItem {
+  value: string;
+  label: string;
 }
 
 export interface CareerQuizCardProps {
   title: string;
   description: string;
   benefits?: string[];
-  userTypeOptions?: string[];
-  mainGoalOptions?: string[];
-  fieldOptions?: string[];
+  userTypeOptions?: OptionItem[];
+  mainGoalOptions?: OptionItem[];
+  fieldOptions?: OptionItem[];
   onSubmit: (data: CareerQuizFormData) => void;
   loading?: boolean;
   className?: string;
@@ -27,29 +32,27 @@ const defaultBenefits = [
   "Learning Path rõ ràng",
 ];
 
-const defaultUserTypeOptions = [
-  "Học sinh",
-  "Sinh viên",
-  "Người đi làm",
-  "Phụ huynh",
-  "Khác",
+const defaultUserTypeOptions: OptionItem[] = [
+  { value: 'HighSchoolStudent', label: 'Học sinh' },
+  { value: 'University', label: 'Sinh viên' },
+  { value: 'Working', label: 'Người đi làm' },
 ];
 
-const defaultMainGoalOptions = [
-  "Tìm hiểu nghề nghiệp",
-  "Xây dựng lộ trình học",
-  "Chuyển ngành",
-  "Khám phá bản thân",
+const defaultMainGoalOptions: OptionItem[] = [
+  { value: 'UniversityExam', label: 'Thi đại học' },
+  { value: 'ImproveGrades', label: 'Cải thiện điểm số' },
+  { value: 'NewSkill', label: 'Học kỹ năng mới' },
+  { value: 'InterviewPrep', label: 'Chuẩn bị phỏng vấn' },
 ];
 
-const defaultFieldOptions = [
-  "Công nghệ thông tin",
-  "Kinh doanh / Marketing",
-  "Y tế",
-  "Kỹ thuật",
-  "Nghệ thuật / Sáng tạo",
-  "Khoa học xã hội",
-  "Khác",
+const defaultFieldOptions: OptionItem[] = [
+  { value: '1', label: 'Công nghệ thông tin' },
+  { value: '2', label: 'Kinh doanh / Marketing' },
+  { value: '3', label: 'Y tế' },
+  { value: '4', label: 'Kỹ thuật' },
+  { value: '5', label: 'Nghệ thuật / Sáng tạo' },
+  { value: '6', label: 'Khoa học xã hội' },
+  { value: '7', label: 'Khác' },
 ];
 
 function EduVnLogo() {
@@ -160,7 +163,7 @@ function SelectField({
 }: {
   label: string;
   value: string;
-  options: string[];
+  options: OptionItem[];
   onChange: (value: string) => void;
   placeholder: string;
 }) {
@@ -179,8 +182,8 @@ function SelectField({
             {placeholder}
           </option>
           {options.map((opt) => (
-            <option key={opt} value={opt}>
-              {opt}
+            <option key={opt.value} value={opt.value}>
+              {opt.label}
             </option>
           ))}
         </select>
@@ -205,7 +208,7 @@ export function CareerQuizCard({
     fullName: "",
     userType: "",
     mainGoal: "",
-    field: "",
+    fieldId: "",
   });
   const [error, setError] = useState<string | null>(null);
 
@@ -223,7 +226,7 @@ export function CareerQuizCard({
       setError("Vui lòng nhập họ tên.");
       return;
     }
-    if (!form.userType || !form.mainGoal || !form.field) {
+    if (!form.userType || !form.mainGoal || !form.fieldId) {
       setError("Vui lòng chọn đầy đủ thông tin.");
       return;
     }
@@ -321,9 +324,9 @@ export function CareerQuizCard({
                 />
                 <SelectField
                   label="Lĩnh vực quan tâm"
-                  value={form.field}
+                  value={form.fieldId}
                   options={fieldOptions}
-                  onChange={(v) => updateField("field", v)}
+                  onChange={(v) => updateField("fieldId", v)}
                   placeholder="Chọn lĩnh vực"
                 />
 

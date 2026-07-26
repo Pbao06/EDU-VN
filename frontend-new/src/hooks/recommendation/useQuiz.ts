@@ -1,44 +1,35 @@
-import { useState } from 'react';
+import { useCallback, useState } from 'react';
 import { quizService } from '../../services/quizService';
 
 export const useQuiz = () => {
   const [loading, setLoading] = useState(false);
 
-  const getAvailableQuizzes = async (fieldId: number) => {
+  const getUserQuiz = useCallback(async () => {
     setLoading(true);
     try {
-      return await quizService.getAvailableQuizzes(fieldId);
+      return await quizService.getUserQuiz();
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
 
-  const getQuizQuestions = async (id: number) => {
+  const submitQuiz = useCallback(async (data: any) => {
     setLoading(true);
     try {
-      return await quizService.getQuizQuestions(id);
+      return await quizService.submitQuiz(data);
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
 
-  const submitQuiz = async (id: number, data: any) => {
-    setLoading(true);
-    try {
-      return await quizService.submitQuiz(id, data);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const getQuizResult = async (id: number) => {
+  const getQuizResult = useCallback(async (id: number) => {
     setLoading(true);
     try {
       return await quizService.getQuizResult(id);
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
 
-  return { getAvailableQuizzes, getQuizQuestions, submitQuiz, getQuizResult, loading };
+  return { getUserQuiz, submitQuiz, getQuizResult, loading };
 };

@@ -84,5 +84,12 @@ namespace Source.Controllers
             // Bước 4: Trả về response thành công với dữ liệu trạng thái
             return Success(status, "Lấy trạng thái onboarding thành công");
         }
+        [HttpPost("Edit")]
+        public async Task<IActionResult> EditOnBoarding([FromBody] OnBoardingDto dto)
+        {
+            var userId=User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+            await _onboardingService.EditOnBoardingUser(userId,dto);
+            return Success(" Edit success");
+        }
     }
 }

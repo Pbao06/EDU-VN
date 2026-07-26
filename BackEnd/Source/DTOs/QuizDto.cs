@@ -68,10 +68,10 @@ namespace Source.DTOs
     {
         public int CareerId { get; set; }
         public string CareerName { get; set; } = string.Empty;
-        public string FieldName { get; set; } = string.Empty;
-        public string Description { get; set; } = string.Empty;
-        public decimal MinSalary { get; set; }
-        public decimal MaxSalary { get; set; }
+        // public string FieldName { get; set; } = string.Empty;
+        // public string Description { get; set; } = string.Empty;
+        // public decimal MinSalary { get; set; }
+        // public decimal MaxSalary { get; set; }
         public double MatchPercentage { get; set; }
         public string Explanation { get; set; } = string.Empty;
     }

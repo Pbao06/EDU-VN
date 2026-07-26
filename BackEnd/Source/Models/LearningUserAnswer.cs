@@ -13,6 +13,7 @@ namespace Source.Models
         public bool IsCorrect { get; set; }  // Computed từ LearningAnswer.IsCorrect
         public int Score { get; set; }  // Điểm cho câu trả lời đúng
         public DateTime AnsweredAt { get; set; } = DateTime.UtcNow;
+        
 
         // Navigation Properties
         public User User { get; set; } = null!;

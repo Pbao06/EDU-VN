@@ -22,5 +22,6 @@ namespace Source.Service.Interface
         /// <param name="userId">ID của người dùng cần kiểm tra</param>
         /// <returns>Đối tượng chứa trạng thái onboarding và dữ liệu nếu đã hoàn thành</returns>
         Task<OnboardingStatusDto> IsOnboardingCompletedAsync(string userId);
+         Task EditOnBoardingUser(string UserId, OnBoardingDto dto);
     }
 }

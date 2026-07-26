@@ -1,6 +1,8 @@
 "use client";
 import React, { useState } from "react";
 import { Sparkles, ArrowRight, Star } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { onboardingService } from "@/services/onboardingService";
 
 /**
  * Hero — EDU VN
@@ -18,13 +20,34 @@ interface QuizButtonProps {
   href?: string;
 }
 
-function QuizButton({ href = "#quiz" }: QuizButtonProps) {
+function QuizButton({ href = "/onboarding" }: QuizButtonProps) {
+  const router = useRouter();
   const [hover, setHover] = useState(false);
   const [active, setActive] = useState(false);
+  const [checking, setChecking] = useState(false);
+
+  const handleClick = async () => {
+    if (checking) return;
+    setChecking(true);
+
+    try {
+      const status = await onboardingService.getStatus(); // kiểm tra xem user đã có onBoarding chưa 
+      if (status?.isCompleted) {
+        router.push('/quiz');
+      } else {
+        router.push('/onboarding');
+      }
+    } catch (error) {
+      router.push('/onboarding');
+    } finally {
+      setChecking(false);
+    }
+  };
 
   return (
-    <a
-      href='/onboarding'
+    <button
+      type="button"
+      onClick={handleClick}
       onMouseEnter={() => setHover(true)}
       onMouseLeave={() => {
         setHover(false);
@@ -32,7 +55,8 @@ function QuizButton({ href = "#quiz" }: QuizButtonProps) {
       }}
       onMouseDown={() => setActive(true)}
       onMouseUp={() => setActive(false)}
-      className="inline-flex items-center justify-center gap-2 rounded-2xl border-2 border-black bg-orange-400 px-7 py-4 text-base font-extrabold text-black transition-transform duration-150 sm:text-lg"
+      disabled={checking}
+      className="inline-flex items-center justify-center gap-2 rounded-2xl border-2 border-black bg-orange-400 px-7 py-4 text-base font-extrabold text-black transition-transform duration-150 hover:bg-orange-300 disabled:cursor-wait disabled:opacity-70 sm:text-lg"
       style={{
         boxShadow: active ? HARD_SHADOW_PRESSED : hover ? HARD_SHADOW_HOVER : HARD_SHADOW,
         transform: active
@@ -43,9 +67,9 @@ function QuizButton({ href = "#quiz" }: QuizButtonProps) {
       }}
     >
       <Sparkles className="h-5 w-5" strokeWidth={2.5} />
-      Start Career Quiz
+      {checking ? 'Đang kiểm tra…' : 'Start Career Quiz'}
       <ArrowRight className="h-5 w-5" strokeWidth={2.5} />
-    </a>
+    </button>
   );
 }
 

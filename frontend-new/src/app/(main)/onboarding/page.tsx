@@ -21,7 +21,7 @@ const CareerQuizCardPage = () => {
             
             // Nếu thành công, có thể chuyển người dùng sang trang khác
             //alert("Gửi thông tin thành công!");
-            router.push('/');
+            router.push('/quiz'); // xử lý điền thông tin xong thì chuyển sang trang quiz làm bài 
 
         } catch (err: any) {
             // Lỗi đã được xử lý bên trong hook và được lưu vào state `error` của hook

@@ -94,7 +94,11 @@ namespace Source.Service
             }
 
             var answeredAt = DateTime.UtcNow;
-            foreach (var answer in request.Answers) // create từng thằng vào entity rồi lưu 
+
+            // SaveChangesAsync already uses a transaction internally, so the explicit manual transaction
+            // is not necessary here and conflicts with MySqlRetryingExecutionStrategy.
+            // This keeps the operation atomic while avoiding the unsupported user-initiated transaction error.
+            foreach (var answer in request.Answers)
             {
                 _context.RecommendationUserAnswers.Add(new RecommendationUserAnswer
                 {
@@ -106,8 +110,10 @@ namespace Source.Service
                 });
             }
 
+            // Calculate career recommendations (may read DB)
             var careerResults = await CalculateCareerRecommendationsAsync(quiz.Id, request.Answers);
 
+            // Insert career recommendations
             foreach (var career in careerResults)
             {
                 _context.QuizCareerRecommendations.Add(new QuizCareerRecommendation
@@ -165,10 +171,10 @@ namespace Source.Service
                     {
                         CareerId = qcr.CareerId,
                         CareerName = qcr.Career != null ? qcr.Career.Name : string.Empty,
-                        FieldName = qcr.Career != null && qcr.Career.Field != null ? qcr.Career.Field.Name : string.Empty,
-                        Description = qcr.Career != null ? qcr.Career.Description : string.Empty,
-                        MinSalary = qcr.Career != null ? qcr.Career.MinSalary : 0,
-                        MaxSalary = qcr.Career != null ? qcr.Career.MaxSalary : 0,
+                        // FieldName = qcr.Career != null && qcr.Career.Field != null ? qcr.Career.Field.Name : string.Empty,
+                        // Description = qcr.Career != null ? qcr.Career.Description : string.Empty,
+                        // MinSalary = qcr.Career != null ? qcr.Career.MinSalary : 0,
+                        // MaxSalary = qcr.Career != null ? qcr.Career.MaxSalary : 0,
                         MatchPercentage = qcr.MatchPercentage,
                         Explanation = qcr.AiExplanation ?? string.Empty
                     })
@@ -240,10 +246,10 @@ namespace Source.Service
                 {
                     CareerId = career.Id,
                     CareerName = career.Name,
-                    FieldName = career.Field?.Name ?? string.Empty,
-                    Description = career.Description,
-                    MinSalary = career.MinSalary,
-                    MaxSalary = career.MaxSalary,
+                    // FieldName = career.Field?.Name ?? string.Empty,
+                    // Description = career.Description,
+                    // MinSalary = career.MinSalary,
+                    // MaxSalary = career.MaxSalary,
                     MatchPercentage = Math.Round(matchPercentage, 2),
                     Explanation = GenerateExplanation(career, matchPercentage)
                 });
@@ -257,7 +263,7 @@ namespace Source.Service
             var level = matchPercentage > 70 ? "mạnh" : matchPercentage > 50 ? "trung bình" : "khá thấp";
             var explanation = $"Dựa trên câu trả lời của bạn, bạn có tiềm năng {level} cho nghề {career.Name}. ";
             
-            explanation += $"Nghề này trong lĩnh vực {career.Field?.Name ?? career.FieldId.ToString()} có mức lương từ {career.MinSalary:N0} - {career.MaxSalary:N0} VND.";
+            // explanation += $"Nghề này trong lĩnh vực {career.Field?.Name ?? career.FieldId.ToString()} có mức lương từ {career.MinSalary:N0} - {career.MaxSalary:N0} VND.";
             
             return explanation;
         }

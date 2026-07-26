@@ -1,20 +1,17 @@
 import apiClient from '../lib/apiClient';
+import { CareerResultDto, QuizResultDto, QuizSubmitRequestDto, QuizDto } from '@/types/Recommendation/quiz'
 
 export const quizService = {
-  getAvailableQuizzes: async (fieldId: number): Promise<any[]> => {
-    return (await apiClient.get<any[]>(`/api/quiz/available?fieldId=${fieldId}`));
-    
+  getUserQuiz: async (): Promise<QuizDto> => {
+    return await apiClient.get<QuizDto>('/api/quiz');
   },
-  getQuizQuestions: async (id: number): Promise<any> => {
-    return (await apiClient.get<any>(`/api/quiz/${id}/questions`));
-    
+
+  submitQuiz: async (data: QuizSubmitRequestDto): Promise<QuizResultDto> => {
+    return await apiClient.post<QuizResultDto>('/api/quiz/submit', data);
   },
-  submitQuiz: async (id: number, data: any): Promise<any> => {
-    return (await apiClient.post<any>(`/api/quiz/${id}/submit`, data));
-    
-  },
-  getQuizResult: async (id: number): Promise<any> => {
-    return await apiClient.get<any>(`/api/quiz/results/${id}`);
+
+  getQuizResult: async (id: number): Promise<QuizResultDto> => {
+    return await apiClient.get<QuizResultDto>(`/api/quiz/results/${id}`);
   },
 };
 

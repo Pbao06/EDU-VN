@@ -194,7 +194,9 @@ namespace Source
                 var roleManager = services.GetRequiredService<RoleManager<IdentityRole>>();
                 try
                 {
-                    context.Database.EnsureCreated();
+                    // Use migrations for database creation and updates instead of EnsureCreated.
+                    // This keeps schema changes versioned and avoids conflicts with EF migrations.
+                    context.Database.Migrate();
 
                     DataSeeder.SeedDataAsync(context).GetAwaiter().GetResult();
 

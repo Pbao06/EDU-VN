@@ -48,7 +48,7 @@ namespace Source.Service
             }
 
             // Bước 4: Cập nhật thông tin user từ DTO
-            user.FullName = dto.FullName;
+            // user.FullName = dto.FullName;
             
             // Parse UserType từ string sang enum
             if (Enum.TryParse<UserType>(dto.UserType, out var userType))
@@ -110,6 +110,28 @@ namespace Source.Service
 
             // Bước 5: Trả về kết quả
             return statusDto;
+        }
+        // cap nhat lai thong tin OnBoarding 
+        public async Task EditOnBoardingUser(string UserId, OnBoardingDto dto)
+        {
+           
+            
+                 var user= await _context.Users.FindAsync(UserId);
+                if(user==null) throw new NotFoundException(" Not found user");
+                // user exist 
+                user.FieldId=dto.FieldId;
+                // Parse MainGoal từ string sang enum
+                if (!string.IsNullOrEmpty(dto.MainGoal) && Enum.TryParse<MainGoal>(dto.MainGoal, out var mainGoal))
+                {
+                    user.MainGoal = mainGoal;
+                }
+                // Parse UserType từ string sang enum
+                if (Enum.TryParse<UserType>(dto.UserType, out var userType))
+                {
+                    user.UserType = userType;
+                }
+                await _context.SaveChangesAsync(); 
+                // neu co error thi middleware log ra 500 ( neu API 500 thi hieu he)
         }
     }
 }
