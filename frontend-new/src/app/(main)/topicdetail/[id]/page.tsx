@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useState, use } from "react";
+import { useEffect, useState } from "react";
 import { TopicPractice, PracticeQuestion } from "@/components/shared/TopicPractice";
 import { useTopic } from "@/hooks/learning/useTopic";
 
@@ -18,10 +18,9 @@ interface ApiTopicData {
   }[];
 }
 
-const TopicDetailPage = ({ params: paramsPromise }: { params: Promise<{ id: string }> }) => {
-  const params = use(paramsPromise); // Unwrap the promise
+const TopicDetailPage = ({ params }: { params: { id: string } }) => {
   const { getTopicDetail, loading } = useTopic();
-  const topicIdParam = params.id; // Get id directly from unwrapped params
+  const topicIdParam = params.id;
   const [topicData, setTopicData] = useState<{ name: string; questions: PracticeQuestion[] } | null>(null);
   const [error, setError] = useState<string | null>(null);
 
