@@ -104,14 +104,14 @@ export function RecommendationQuiz({
                   {item.emoji ?? MEDALS[i]}
                 </span>
                 <ScoreRing score={item.score} color={TOP_COLORS[i]} />
-                <h3 className="mt-5 text-xl font-extrabold leading-tight text-black sm:text-2xl">
-                  {item.name}
-                </h3>
                 {item.description && (
-                  <p className="mt-2 line-clamp-2 text-sm font-bold text-black/55">
+                  <p className="mt-3 min-h-[52px] text-sm font-semibold leading-6 text-black/70">
                     {item.description}
                   </p>
                 )}
+                <h3 className="mt-3 text-xl font-extrabold leading-tight text-black sm:text-2xl">
+                  {item.name}
+                </h3>
                 <button
                   type="button"
                   onClick={() => onSelect?.(item)}

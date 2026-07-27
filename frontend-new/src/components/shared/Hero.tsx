@@ -3,6 +3,8 @@ import React, { useState } from "react";
 import { Sparkles, ArrowRight, Star } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { onboardingService } from "@/services/onboardingService";
+import {useAuth} from '@/hooks/auth/userAuth';
+import {useAlert} from '@/components/shared/AlertProvider';
 
 /**
  * Hero — EDU VN
@@ -25,8 +27,22 @@ function QuizButton({ href = "/onboarding" }: QuizButtonProps) {
   const [hover, setHover] = useState(false);
   const [active, setActive] = useState(false);
   const [checking, setChecking] = useState(false);
+  const {isAuthenticated} =useAuth();// gọi hook 
+  const {showAlert}=useAlert(); // lấy hàm gọi alert 
 
   const handleClick = async () => {
+    if(!isAuthenticated){
+      showAlert({
+        title: "Yêu cầu đăng nhập",
+        message:"Bạn cần đăng nhập để thực hiện Career Quiz định hướng nghề nghiệp và xây dựng lộ trình học tập",
+        confirmLabel:"Đăng nhập ngay",
+        tone:"default",
+        onConfirm:()=>{
+          router.push("/login");
+        },
+      });
+      return;
+    }
     if (checking) return;
     setChecking(true);
 
@@ -142,7 +158,7 @@ export default function Hero({ quizHref = "#quiz" }: HeroProps) {
           style={{ boxShadow: HARD_SHADOW }}
         >
           <Sparkles className="h-4 w-4 text-blue-600" strokeWidth={2.5} />
-          Định hướng nghề nghiệp cùng AI
+          Định hướng nghề nghiệp cùng Edu
         </span>
 
         <h1 className="text-4xl font-extrabold leading-[1.1] tracking-tight text-black sm:text-6xl">
@@ -162,7 +178,7 @@ export default function Hero({ quizHref = "#quiz" }: HeroProps) {
         </div>
 
         <p className="mt-4 text-sm font-semibold text-black/60">
-          Or explore all careers below.
+          Bạn có thể khám phá các nghề khác bên dưới.
         </p>
       </div>
     </section>

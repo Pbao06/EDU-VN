@@ -84,6 +84,7 @@ namespace Source
             builder.Services.AddScoped<ISubjectService, SubjectService>();
             builder.Services.AddScoped<ITopicService, TopicService>();
             builder.Services.AddScoped<IUserAnswersService,UserAnswersService>();
+            builder.Services.AddScoped<IProfileService,ProfileService>();
 
             
             // Admin Services there 

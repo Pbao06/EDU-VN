@@ -2,9 +2,10 @@
 import React, { useEffect, useState } from "react";
 import { useParams,useRouter } from "next/navigation";
 import { useCareer } from "@/hooks/recommendation/useCareer";
+import {useAuth} from '@/hooks/auth/userAuth';
+import {useAlert} from '@/components/shared/AlertProvider';
 import CareerDetail, { 
   CareerDetailProps, 
-  CareerOutlook, 
   LearningPathPreviewItem,
   DemandLevel 
 } from "@/components/shared/CareerDetail";
@@ -19,6 +20,8 @@ export default function CareerDetailPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const {startLearningPath,loading:isCreatingPath}=useLearningPaths();
+  const {isAuthenticated}=useAuth();
+  const {showAlert} =useAlert();
 // Ép kiểu ID an toàn cho Next.js App Router
   const rawId = params?.id;
   const careerId = rawId ? parseInt(Array.isArray(rawId) ? rawId[0] : rawId, 10) : 0;
@@ -49,41 +52,39 @@ export default function CareerDetailPage() {
           ? data.responsibilities.split('\n').filter((r: string) => r.trim())
           : [];
 
-        // Create career outlook based on demand level
-        const outlook: CareerOutlook = {
-          demandLabel: data.demandLevel === "High" ? "Very High" : 
-                      data.demandLevel === "Medium" ? "Medium" : "Low",
-          demandStars: data.demandLevel === "High" ? 5 : 
-                       data.demandLevel === "Medium" ? 3 : 1,
-          growthLabel: data.demandLevel === "High" ? "+30%" : "+10%",
-          environmentLabel: "Startup, Big Tech"
-        };
+        const previewSubjects = Array.isArray(data.relatedSubjects) && data.relatedSubjects.length > 0
+          ? data.relatedSubjects
+          : (Array.isArray(data.requiredSkills) ? data.requiredSkills : []);
 
-        // Create learning path preview (mock data for now)
-        const learningPathPreview: LearningPathPreviewItem[] = [
-          { emoji: "📚", title: "Programming Basics" },
-          { emoji: "💻", title: "Project Practice" },
-          { emoji: "🚀", title: "Advanced Skills" },
-          { emoji: "🎯", title: "Real-world Application" }
-        ];
+        const learningPathPreview: LearningPathPreviewItem[] = previewSubjects
+          .filter((_: string, index: number) => index < 4)
+          .map((subject: string, index: number) => ({
+            emoji: ["📚", "🛠️", "🧠", "🚀"][index] ?? "📘",
+            title: subject,
+          }));
 
         const mappedData: CareerDetailProps = {
           name: data.name,
           category: data.category || "Information Technology",
           difficulty: data.difficulty || (data.demandLevel === "High" ? 4 : 3),
-          averageSalaryLabel: `${data.minSalary} - ${data.maxSalary} million/month`,
+          averageSalaryLabel: `${data.minSalary} - ${data.maxSalary}`,
           shortDescription: data.description?.substring(0, 150) + "..." || "No description available",
           tags: data.tags && data.tags.length > 0 ? data.tags : ["IT", "Technology", "Development"],
           iconUrl: data.iconUrl || undefined,
           overview: data.description || "No detailed description available",
-          minSalary: data.minSalary * 1000000,
-          maxSalary: data.maxSalary * 1000000,
+          minSalary: Number(data.minSalary) || 0,
+          maxSalary: Number(data.maxSalary) || 0,
           currency: "VND",
           salaryUnit: "month",
           responsibilities: responsibilitiesArray.length > 0 ? responsibilitiesArray : ["No specific responsibilities listed"],
           requiredSkills: data.requiredSkills && data.requiredSkills.length > 0 ? data.requiredSkills : ["Programming", "Analysis", "Problem Solving"],
-          relatedSubjects: data.relatedSubjects && data.relatedSubjects.length > 0 ? data.relatedSubjects : ["Math", "Physics", "English"],
-          outlook: outlook,
+          relatedSubjects: Array.isArray(data.relatedSubjects) ? data.relatedSubjects : [],
+          outlook: {
+            demandLabel: data.demandLevel === "High" ? "Very High" : data.demandLevel === "Medium" ? "Medium" : "Low",
+            demandStars: data.demandLevel === "High" ? 5 : data.demandLevel === "Medium" ? 3 : 1,
+            growthLabel: data.demandLevel === "High" ? "+30%" : "+10%",
+            environmentLabel: "Startup, Big Tech",
+          },
           demandLevel: demandLevelMap[data.demandLevel] || "medium",
           learningPathId: data.id,
           learningPathPreview: learningPathPreview,
@@ -111,6 +112,19 @@ export default function CareerDetailPage() {
   }, [params.id]);
   // nghiệp vụ chuẩn viết riêng hàm xử lý bấm nút
   const handleStartLearning= async() => {
+    if(!isAuthenticated)
+    {
+      showAlert({
+         title: "Yêu cầu đăng nhập",
+        message:"Bạn cần đăng nhập để thực hiện Career Quiz định hướng nghề nghiệp và xây dựng lộ trình học tập",
+        confirmLabel:"Đăng nhập ngay",
+        tone:"default",
+        onConfirm:()=>{
+          router.push("/login");
+        },
+      });
+      return;
+    }
     // get id Career 
      const careerId = params.id ? parseInt(params.id as string) : 0;
      // --- DEBUG LOG ---

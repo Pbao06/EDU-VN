@@ -16,7 +16,7 @@ const ResultQuizPage = () => {
           id: String(c.careerId),
           name: c.careerName,
           score: Math.round(c.matchPercentage),
-          description: c.description,
+          description: c.explanation ?? c.description ?? '',
         }));
         setResults(mapped);
       } else {

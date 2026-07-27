@@ -28,13 +28,13 @@ interface NavItem {
 }
 
 const DEFAULT_NAV_ITEMS: NavItem[] = [
-  { label: "Ngành nghề", href: "#careers" },
-  { label: "Lộ trình học", href: "#learning-paths" },
-  { label: "Về EDU VN", href: "#about" },
+  { label: "Ngành nghề", href: "/home#careers" },
+  { label: "Lộ trình học", href: "/home#learning-paths" },
+  { label: "Về EDU VN", href: "/home#about" },
 ];
 
 interface ShadowLinkProps {
-  href: string;
+  href?: string;
   children: React.ReactNode;
   className?: string;
   variant?: "primary" | "outline" | "outline-mobile";
@@ -86,7 +86,7 @@ interface NavbarProps {
 }
 
 export default function Navbar({
-  logoHref = "#",
+  logoHref = "/home",
   navItems = DEFAULT_NAV_ITEMS,
   browseCareersHref = "#careers",
   quizHref = "#quiz",
@@ -146,7 +146,7 @@ export default function Navbar({
                   <User className="h-4 w-4 text-blue-600" />
                   {user?.fullName}
                 </div>
-                <ShadowLink onClick={logout} variant="danger">
+                <ShadowLink onClick={logout} variant="outline">
                   <LogOut className="h-4 w-4" />
                   Đăng xuất
                 </ShadowLink>
@@ -204,7 +204,7 @@ export default function Navbar({
                 </div>
                 <ShadowLink 
                   onClick={() => { logout(); setIsOpen(false); }} 
-                  variant="danger" 
+                  variant="outline" 
                   className="w-full"
                 >
                   <LogOut className="h-5 w-5" />
