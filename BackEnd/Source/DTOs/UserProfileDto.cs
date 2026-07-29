@@ -12,7 +12,7 @@ namespace Source.DTOs
         public string FullName { get; set; } = string.Empty;
         public string? AvatarUrl { get; set; }
         public string? UseType{get;set;}
-        public string? Maingoal{get;set;}
+        public string? MainGoal{get;set;}
         public string? Role{get;set;}
         public int? FieldId{get;set;}
         public string? FieldName{get;set;}

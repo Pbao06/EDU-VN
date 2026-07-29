@@ -1,5 +1,6 @@
 "use client";
 import React from "react";
+import type {useprofile,editprofile } from "@/types/Profile/userProfile";
 import {
   Trophy,
   BookOpen,
@@ -8,6 +9,8 @@ import {
   Pencil,
   KeyRound,
 } from "lucide-react";
+import { useProfile } from "@/hooks/learning/useProfile";
+import { userProfile } from "@/services/profileService";
 
 /**
  * Profile — EDU VN
@@ -29,28 +32,55 @@ const personalInfo = [
   { label: "Role", value: "Student" },
 ];
 
-const learningPaths = [
-  {
-    name: "Backend Developer",
-    progress: 72,
-    subject: "ASP.NET Core",
-    action: "Continue",
-  },
-  {
-    name: "Frontend Developer",
-    progress: 18,
-    subject: "JavaScript",
-    action: "Continue",
-  },
-  {
-    name: "AI Engineer",
-    progress: 0,
-    subject: "—",
-    action: "Start",
-  },
-];
 
-export default function Profile() {
+export interface LearningPath {
+  id: string;           // nên có id để làm key + gọi API theo path
+  name: string;
+  progress: number;      // 0-100
+  subject: string;
+  action: "Continue" | "Start";
+}
+export interface Achievement {
+  completedTopics: number;
+  completedSubjects: number;
+  totalLearningPaths: number;
+}
+
+export interface ProfileProps {
+  personalInfo:useprofile;
+  learningPath: LearningPath[];
+  achievement: Achievement;
+  onEditProfile: () => void;
+  onChangePassword: () => void;
+  onContinuePath: (pathId: string) => void;
+}
+// const learningPaths = [
+//   {
+//     name: "Backend Developer",
+//     progress: 72,
+//     subject: "ASP.NET Core",
+//     action: "Continue",
+//   },
+//   {
+//     name: "Frontend Developer",
+//     progress: 18,
+//     subject: "JavaScript",
+//     action: "Continue",
+//   },
+//   {
+//     name: "AI Engineer",
+//     progress: 0,
+//     subject: "—",
+//     action: "Start",
+//   },
+// ];
+
+
+
+export default function Profile({
+  personalInfo,learningPath,achievement,onEditProfile,onChangePassword,onContinuePath
+}: ProfileProps) 
+{
   return (
     <div className="mx-auto w-full max-w-6xl px-4 py-12 font-sans text-black sm:px-6 lg:px-8">
       {/* Profile Header: Avatar (left) + Personal Information (right) — no card boxes */}
@@ -61,7 +91,7 @@ export default function Profile() {
             className="flex h-24 w-24 shrink-0 items-center justify-center rounded-2xl border-2 border-black bg-amber-300 text-3xl font-extrabold"
             style={{ boxShadow: HARD_SHADOW }}
           >
-            NA
+            Pbao
           </div>
           <div className="lg:mt-5">
             <span className="inline-flex w-fit items-center rounded-xl border-2 border-black bg-blue-600 px-3 py-1 text-xs font-extrabold uppercase tracking-wide text-white">
@@ -76,21 +106,65 @@ export default function Profile() {
             Personal Information
           </h2>
 
-          <dl className="mt-4 grid grid-cols-1 gap-x-10 gap-y-4 sm:grid-cols-2">
-            {personalInfo.map((item) => (
-              <div
-                key={item.label}
-                className="flex items-baseline justify-between gap-4 border-b border-black/10 pb-3 sm:justify-start sm:gap-6"
-              >
+          <div className="mt-4 grid grid-cols-1 gap-x-10 gap-y-4 sm:grid-cols-2">
+              <div className="flex items-baseline justify-between gap-4 border-b border-black/10 pb-3 sm:justify-start sm:gap-6" >
                 <dt className="shrink-0 text-xs font-extrabold uppercase tracking-wide text-black/50 sm:w-36">
-                  {item.label}
+                  Full Name
                 </dt>
                 <dd className="truncate text-right text-sm font-extrabold sm:text-left">
-                  {item.value}
+                  {personalInfo.fullName}
                 </dd>
               </div>
-            ))}
-          </dl>
+               
+               <div className="flex items-baseline justify-between gap-4 border-b border-black/10 pb-3 sm:justify-start sm:gap-6" >
+                <dt className="shrink-0 text-xs font-extrabold uppercase tracking-wide text-black/50 sm:w-36">
+                  Email
+                </dt>
+                <dd className="truncate text-right text-sm font-extrabold sm:text-left">
+                  {personalInfo.email}
+                </dd>
+              </div>
+               <div className="flex items-baseline justify-between gap-4 border-b border-black/10 pb-3 sm:justify-start sm:gap-6" >
+                <dt className="shrink-0 text-xs font-extrabold uppercase tracking-wide text-black/50 sm:w-36">
+                  User Type
+                </dt>
+                <dd className="truncate text-right text-sm font-extrabold sm:text-left">
+                  {personalInfo.useType}
+                </dd>
+              </div>
+               <div className="flex items-baseline justify-between gap-4 border-b border-black/10 pb-3 sm:justify-start sm:gap-6" >
+                <dt className="shrink-0 text-xs font-extrabold uppercase tracking-wide text-black/50 sm:w-36">
+                  Main Goal
+                </dt>
+                <dd className="truncate text-right text-sm font-extrabold sm:text-left">
+                  {personalInfo.mainGoal}
+                </dd>
+              </div>
+               <div className="flex items-baseline justify-between gap-4 border-b border-black/10 pb-3 sm:justify-start sm:gap-6" >
+                <dt className="shrink-0 text-xs font-extrabold uppercase tracking-wide text-black/50 sm:w-36">
+                  Role
+                </dt>
+                <dd className="truncate text-right text-sm font-extrabold sm:text-left">
+                  {personalInfo.role}
+                </dd>
+              </div>
+               <div className="flex items-baseline justify-between gap-4 border-b border-black/10 pb-3 sm:justify-start sm:gap-6" >
+                <dt className="shrink-0 text-xs font-extrabold uppercase tracking-wide text-black/50 sm:w-36">
+                  Field
+                </dt>
+                <dd className="truncate text-right text-sm font-extrabold sm:text-left">
+                  {personalInfo.fieldName}
+                </dd>
+              </div>
+               {/* <div className="flex items-baseline justify-between gap-4 border-b border-black/10 pb-3 sm:justify-start sm:gap-6" >
+                <dt className="shrink-0 text-xs font-extrabold uppercase tracking-wide text-black/50 sm:w-36">
+                  Update At:
+                </dt>
+                <dd className="truncate text-right text-sm font-extrabold sm:text-left">
+                  {personalInfo.updateAt}
+                </dd>
+              </div> */}
+          </div>
           <div className="mt-7 flex flex-col gap-3 sm:flex-row">
             <button
               type="button"
@@ -146,9 +220,9 @@ export default function Profile() {
               </tr>
             </thead>
             <tbody>
-              {learningPaths.map((path) => (
+              {learningPath.map((path) => (
                 <tr
-                  key={path.name}
+                  key={path.id}
                   className="border-b border-black/15 text-sm sm:text-base"
                 >
                   <td className="py-4 pr-4 font-extrabold">{path.name}</td>
@@ -172,6 +246,7 @@ export default function Profile() {
                     <button
                       type="button"
                       className="inline-flex items-center gap-1.5 rounded-xl border-2 border-black bg-white px-4 py-1.5 text-xs font-extrabold uppercase tracking-wide hover:bg-amber-100 sm:text-sm"
+                      onClick={() => onContinuePath(path.id)} 
                     >
                       {path.action}
                       <ArrowRight className="h-3.5 w-3.5" strokeWidth={2.5} />

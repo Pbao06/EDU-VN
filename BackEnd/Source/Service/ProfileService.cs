@@ -33,7 +33,7 @@ namespace Source.Service
                 Email=user.Email,
                 AvatarUrl=user.AvatarUrl,
                 FieldName=user.Field.Name,
-                Maingoal=user.MainGoal.ToString()!,
+                MainGoal=user.MainGoal.ToString()!,
                 UseType=user.UserType.ToString()!,
                 UpdatedAt=user.UpdatedAt,
                 FieldId=user.FieldId,

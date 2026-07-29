@@ -68,7 +68,8 @@ namespace Source.Service.Admin
                 Explanation = dto.Explanation,
                 Hint = dto.Hint,
                 Difficulty = dto.Difficulty,
-                TopicId = dto.TopicId
+                TopicId = dto.TopicId,
+                questionIndex= dto.QuestionIndex ?? 1 
             };
 
             _context.LearningQuestions.Add(question);

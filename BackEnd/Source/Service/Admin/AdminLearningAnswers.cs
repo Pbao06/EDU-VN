@@ -64,7 +64,8 @@ namespace Source.Service.Admin
                 Content = dto.Content,
                 IsCorrect = dto.IsCorrect,
                 Explanation = dto.Explanation,
-                LearningQuestionId = dto.LearningQuestionId
+                LearningQuestionId = dto.LearningQuestionId,
+                AnswerIndex=dto.AnswerIndex
             };
 
             _context.LearningAnswers.Add(answer);
@@ -77,7 +78,8 @@ namespace Source.Service.Admin
                 IsCorrect = answer.IsCorrect,
                 Explanation = answer.Explanation,
                 LearningQuestionId = answer.LearningQuestionId,
-                QuestionContent = question.Content
+                QuestionContent = question.Content,
+                AnswerIndex=answer.AnswerIndex?? 0
             };
         }
 

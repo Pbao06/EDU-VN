@@ -17,6 +17,10 @@ namespace Source.Service
 
         // ==================== LEARNING PATH LEVEL ====================
 
+        //Learning path list for Profile
+
+
+
         /// <summary>
         /// Tạo learning path mới cho user với career đã chọn
         /// </summary>
@@ -153,22 +157,28 @@ namespace Source.Service
             var careerSubjects = await _context.CareerSubjects
                 .Include(cs => cs.Subject)
                     .ThenInclude(s => s.Topics)
-                .Where(cs => cs.CareerId == learningPath.CareerId)
+                .Where(cs => cs.CareerId == learningPath.CareerId).OrderBy(cs=>cs.Priority)
                 .ToListAsync();
 
-            int completedSubjects = 0;
 
-            foreach (var cs in careerSubjects)
+            var subjectDtos= new List<SubjectSummaryDto>();
+            foreach(var cs in careerSubjects)
             {
-                var subjectDto = await MapToSubjectSummaryDto(cs.Subject, learningPath.UserId);
-                if (subjectDto.IsCompleted)
-                {
-                    completedSubjects++;
-                }
+                subjectDtos.Add(await MapToSubjectSummaryDto(cs.Subject,learningPath.UserId));
             }
-
+            
+            int totalTopics=subjectDtos.Sum(s=> s.TotalTopics);
+            int totalCompletedTopics = subjectDtos.Sum(s => s.CompletedTopics);
+            int completedSubjects = subjectDtos.Count(s => s.IsCompleted);
             int totalSubjects = careerSubjects.Count;
-            double overallProgress = totalSubjects > 0 ? (double)completedSubjects / totalSubjects * 100 : 0;
+
+             // ✅ progress tính theo TOPIC, đúng yêu cầu của mày
+             double overallProgress = totalTopics > 0
+             ? (double)totalCompletedTopics / totalTopics * 100
+            : 0;
+              // ✅ vì list đã sort theo Priority từ query, chỉ cần lấy phần tử đầu tiên
+             string? currentSubjectName = careerSubjects
+            .FirstOrDefault()?.Subject.Name;
 
             return new LearningPathDto
             {
@@ -183,7 +193,8 @@ namespace Source.Service
                 CompletedAt = learningPath.CompletedAt,
                 TotalSubjects = totalSubjects,
                 CompletedSubjects = completedSubjects,
-                OverallProgress = overallProgress
+                OverallProgress = overallProgress,
+                CurrentSubjectName=currentSubjectName!
             };
         }
 
@@ -193,24 +204,24 @@ namespace Source.Service
                 .Include(cs => cs.Career)
                 .FirstOrDefaultAsync(cs => cs.SubjectId == subject.Id);
 
-            int totalTopics = await _context.Topics
+            // Lấy tất cả topic ID của subject này — 1 query
+            var topicIds = await _context.Topics
                 .Where(t => t.SubjectId == subject.Id)
-                .CountAsync();
+                .Select(t => t.Id)
+                .ToListAsync();
 
-            int completedTopics = 0;
+            int totalTopics =topicIds.Count;
 
-            foreach (var topic in await _context.Topics.Where(t => t.SubjectId == subject.Id).ToListAsync())
-            {
-                var progress = await _context.UserProgresses
-                    .FirstOrDefaultAsync(up => up.UserId == userId && up.TopicId == topic.Id);
-                if (progress != null && progress.CompletionPercentage >= 100)
-                {
-                    completedTopics++;
-                }
-            }
+            int completedTopics = await _context.UserProgresses.
+            Where(up=> up.UserId==userId && topicIds.
+            Contains(up.TopicId) && up.CompletionPercentage >=100).
+            CountAsync();
+
+
+           
 
             double subjectProgress = totalTopics > 0 ? (double)completedTopics / totalTopics * 100 : 0;
-            bool isCompleted = completedTopics == totalTopics && totalTopics > 0;
+            bool isCompleted = completedTopics == totalTopics && totalTopics > 0; // neu tong topic == so luong topic done 
             bool isInProgress = completedTopics > 0 && !isCompleted;
 
             return new SubjectSummaryDto

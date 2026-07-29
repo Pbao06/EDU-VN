@@ -42,8 +42,9 @@ export interface TopicPracticeProps {
     answers: AnswerMap;
     correctCount: number;
     total: number;
-  }) => void;
-
+  }) => void | Promise<void>; // 👈 cho phép page trả về Promise (vì gọi API là async)
+  isSubmitting?: boolean;      // 👈 MỚI: page báo đang gọi API
+  submitError?: string | null; // 👈 MỚI: page báo lỗi nếu submit fail
   className?: string;
 }
 
@@ -57,6 +58,8 @@ export function TopicPractice({
   initialIndex = 0,
   onBack,
   onSubmit,
+  isSubmitting = false,   // 👈 MỚI
+  submitError = null,     // 👈 MỚI
   className = "",
 }: TopicPracticeProps) {
   const [index, setIndex] = useState(
@@ -330,10 +333,11 @@ export function TopicPractice({
                     <button
                       type="button"
                       onClick={finish}
+                       disabled={isSubmitting} // 👈 chặn bấm nhiều lần trong lúc chờ API
                       className="inline-flex h-11 items-center gap-2 rounded-2xl border-[2.5px] border-black bg-[#FF6B2C] px-5 text-sm font-extrabold uppercase tracking-wide text-white shadow-[4px_4px_0_0_#000] transition-all hover:-translate-y-0.5 hover:shadow-[6px_6px_0_0_#000] active:translate-x-[2px] active:translate-y-[2px] active:shadow-[2px_2px_0_0_#000]"
                     >
                       <Flag className="h-4 w-4" strokeWidth={2.5} />
-                      Finish
+                       {isSubmitting ? "Đang nộp..." : "Finish"} {/* 👈 đổi chữ khi loading */}
                     </button>
                   ) : (
                     <button
@@ -350,6 +354,12 @@ export function TopicPractice({
                     {correctCount}/{total} correct
                   </div>
                 </div>
+                {/* 👇 MỚI: báo lỗi nếu submit API thất bại */}
+                {submitError && (
+                  <div className="mt-4 rounded-2xl border-[2.5px] border-black bg-[#FFD9D9] p-4 text-sm font-bold text-black shadow-[4px_4px_0_0_#000]">
+                    {submitError}
+                  </div>
+                )}
               </div>
             </section>
           )}

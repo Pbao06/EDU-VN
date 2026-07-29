@@ -5,6 +5,14 @@ namespace Source.DTOs
     /// <summary>
     /// DTO cho Learning Path cơ bản (summary only)
     /// </summary>
+    /// 
+    public class LearningPathProfile
+    {
+        public int LearningPathId{get;set;}
+        public string LearningPathName{set;get;}=string.Empty;
+        public string CurrentSubject{get;set;}=string.Empty;
+        public int Progress{get;set;}
+    }
     public class LearningPathDto
     {
         public int Id { get; set; }
@@ -21,6 +29,7 @@ namespace Source.DTOs
         public int TotalSubjects { get; set; }
         public int CompletedSubjects { get; set; }
         public double OverallProgress { get; set; } // 0-100
+        public string CurrentSubjectName{get;set;}=string.Empty;
     }
 
     /// <summary>
@@ -202,11 +211,9 @@ namespace Source.DTOs
     public class SubmitTopicAnswersDto
     {
         public int TopicId { get; set; }
-        public int LearningPathId { get; set; }
-        /// <summary>
+        // public int LearningPathId { get; set; } bỏ luôuoonchir tínhddiemder r diêmm topic thôi
         /// Danh sách các câu trả lời của user
         /// Key: QuestionId, Value: AnswerId
-        /// </summary>
         public Dictionary<int, int> Answers { get; set; } = new();
     }
 

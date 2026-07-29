@@ -3,6 +3,8 @@ using Source.DTOs;
 using Source.Service.Interface;
 using Source.Middleware;
 using Microsoft.EntityFrameworkCore;
+using Source.Models;
+using System.Data;
 
 namespace Source.Service
 {
@@ -99,85 +101,72 @@ namespace Source.Service
             var topic = await _context.Topics
                 .Include(t => t.Subject)
                 .FirstOrDefaultAsync(t => t.Id == request.TopicId);
-
             if (topic == null) throw new NotFoundException("Không tìm thấy Topic");
 
-            var learningPath = await _context.UserLearningPaths
-                .FirstOrDefaultAsync(lp => lp.Id == request.LearningPathId && lp.UserId == userId);
+            // var learningPath = await _context.UserLearningPaths
+            //     .FirstOrDefaultAsync(lp => lp.Id == request.LearningPathId && lp.UserId == userId);
+            // if (learningPath == null) throw new NotFoundException("Không tìm thấy Learning Path");
 
-            if (learningPath == null) throw new NotFoundException("Không tìm thấy Learning Path");
 
-            int correctAnswers = 0;
-            int totalQuestions = request.Answers.Count;
+            // 1. Lấy TOÀN BỘ câu hỏi + đáp án thật của topic — nguồn sự thật duy nhất
+             var questions = await _context.LearningQuestions
+                .Where(q => q.TopicId == request.TopicId)
+                .Include(q => q.Answers)
+                .ToListAsync();
+            
 
-            foreach (var answerPair in request.Answers)
+            int totalQuestions = questions.Count;
+                // 2. Lấy sẵn các UserAnswer hiện có để update thay vì query từng cái trong loop
+                ///BƯỚC 2: Lấy bài học sinh đã nộp trước đó (nếu có) ra so sánh
+                /// -> "existingAnswers" = học sinh đã làm bài này lần nào chưa?
+
+             var existingAnswers = await _context.LearningUserAnswers
+                .Where(lua => lua.UserId == userId && lua.LearningQuestion.TopicId == request.TopicId)
+                .ToListAsync();
+                var existingByQuestionId = existingAnswers.ToDictionary(a => a.LearningQuestionId);
+                int correctAnswers=0;
+                //BƯỚC 3: Giáo viên cầm từng câu hỏi trong đề gốc, đi dò trong bài học sinh nộp
+                // for mỗi câu hỏi trong đề gốc (questions):
+            foreach(var question in questions) // lấy danh sácsh câu hỏi trong topic đã đc lấy 
             {
-                var questionId = answerPair.Key;
-                var answerId = answerPair.Value;
-
-                // Lấy question và answer để kiểm tra
-                var question = await _context.LearningQuestions
-                    .Include(q => q.Answers)
-                    .FirstOrDefaultAsync(q => q.Id == questionId);
-
-                if (question == null) continue;
-
-                var answer = question.Answers.FirstOrDefault(a => a.Id == answerId);
-                if (answer == null) continue;
-
-                bool isCorrect = answer.IsCorrect;
-                if (isCorrect) correctAnswers++;
-
-                // Kiểm tra user đã trả lời question này chưa
-                var existingUserAnswer = await _context.LearningUserAnswers
-                    .FirstOrDefaultAsync(lua => lua.UserId == userId && lua.LearningQuestionId == questionId);
-
-                if (existingUserAnswer != null)
+                // chỉ lấy question mà usse đã có trả lời và thuộc topic 
+                if(!request.Answers.TryGetValue(question.Id,out var answerId)) continue; // user không trả lời câu này -> bỏ qua, vẫn tính vào totalQuestions
+                var answer= question.Answers.FirstOrDefault(a=>a.Id==answerId); // dò tìm xem trong 1 câu thi các đáp án có sẵn của topic đã có đásp án mà user trả lời k
+                if(answer==null) continue; // answerId không hợp lệ cho câu này -> coi như sai/bỏ qua
+                bool isCorrect=answer.IsCorrect;
+                if(isCorrect) correctAnswers++; // nếu đúng thì cộng vào tính là 1 
+                if(existingByQuestionId.TryGetValue(question.Id,out var existing)) // nếu đã làfm câu này r thì ghi lại kq mới
                 {
-                    // Update existing answer
-                    existingUserAnswer.LearningAnswerId = answerId;
-                    existingUserAnswer.IsCorrect = isCorrect;
-                    existingUserAnswer.Score = isCorrect ? 1 : 0;
-                    existingUserAnswer.AnsweredAt = DateTime.UtcNow;
-                }
-                else
+                    existing.LearningAnswerId = answerId;
+                    existing.IsCorrect = isCorrect;
+                    existing.Score = isCorrect ? 1 : 0;
+                    existing.AnsweredAt = DateTime.UtcNow;
+                }else // nếu chưa làm thì ghi laại tạo mới
                 {
-                    // Create new user answer
-                    var userAnswer = new Models.LearningUserAnswer
+                    _context.LearningUserAnswers.Add(new LearningUserAnswer // luu lai cau user lam vao trong learningUserAnswer
                     {
-                        UserId = userId,
-                        LearningQuestionId = questionId,
-                        LearningAnswerId = answerId,
-                        IsCorrect = isCorrect,
-                        Score = isCorrect ? 1 : 0,
-                        AnsweredAt = DateTime.UtcNow
-                    };
-                    _context.LearningUserAnswers.Add(userAnswer);
+                        UserId=userId,
+                        LearningQuestionId=question.Id,
+                        LearningAnswerId=answer.Id,
+                        IsCorrect=isCorrect,
+                        Score= isCorrect ? 1 : 0 ,
+                        AnsweredAt=DateTime.UtcNow
+                    });
                 }
             }
-
-            await _context.SaveChangesAsync();
-
-            // Cập nhật UserProgress
-            var totalQuestionsInTopic = await _context.LearningQuestions
-                .Where(lq => lq.TopicId == request.TopicId)
-                .CountAsync();
-
-            var totalCompletedQuestions = await _context.LearningUserAnswers
-                .Where(lua => lua.UserId == userId && lua.LearningQuestion.TopicId == request.TopicId)
-                .Select(lua => lua.LearningQuestionId)
+             // 3. Tính completion dựa trên số câu ĐÃ TỪNG trả lời (không chỉ lần submit này)
+            int totalCompletedQuestions = existingByQuestionId.Keys
+                .Union(request.Answers.Keys.Where(qId => questions.Any(q => q.Id == qId)))
                 .Distinct()
-                .CountAsync();
-
-            var userProgress = await _context.UserProgresses
-                .FirstOrDefaultAsync(up => up.UserId == userId && up.TopicId == request.TopicId);
-
-            bool isTopicCompleted = totalCompletedQuestions >= totalQuestionsInTopic && totalQuestionsInTopic > 0;
-            int completionPercentage = isTopicCompleted ? 100 : (int)((double)totalCompletedQuestions / totalQuestionsInTopic * 100);
+                .Count();
+            // topic hoan thanh khi , tong so question >= cac question cac cau hoi dc user tra loi 
+            bool isTopicCompleted=totalQuestions >0 && totalCompletedQuestions >=totalQuestions;
+            int completionPercentage= totalQuestions ==0 ?0 : (int)((double)totalCompletedQuestions/totalQuestions * 100);
+            var userProgress= await _context.UserProgresses.FirstOrDefaultAsync(up=>up.UserId==userId && up.TopicId==request.TopicId);
 
             if (userProgress == null)
             {
-                userProgress = new Models.UserProgress
+                userProgress = new UserProgress
                 {
                     UserId = userId,
                     TopicId = request.TopicId,
@@ -192,19 +181,14 @@ namespace Source.Service
                 userProgress.LastAccessedAt = DateTime.UtcNow;
             }
 
-            await _context.SaveChangesAsync();
-
-            double score = totalQuestions > 0 ? (double)correctAnswers / totalQuestions * 100 : 0;
+            await _context.SaveChangesAsync(); // save lai 
+            // tinh diem 
+            double score = totalQuestions > 0 ? (double)correctAnswers / totalQuestions * 100 : 0; // tinh diem bang cach tong so dap an dung/tong so cau hoi *100
 
             var topicProgressDto = await MapToTopicSummaryDto(topic, userId);
-            
-            // Cập nhật subject progress nếu topic hoàn thành
-            SubjectSummaryDto? subjectProgressDto = null;
-            if (isTopicCompleted)
-            {
-                subjectProgressDto = await MapToSubjectSummaryDto(topic.Subject, userId);
-            }
-
+             SubjectSummaryDto? subjectProgressDto = isTopicCompleted
+                ? await MapToSubjectSummaryDto(topic.Subject, userId)
+                : null;
             return new SubmitTopicAnswersResponseDto
             {
                 Success = true,

@@ -2,6 +2,7 @@ import apiClient from '../lib/apiClient';
 import { 
   LearningPathDto, 
   LearningPathDetailDto, 
+  LearningPathView,
   CreateLearningPathResponseDto 
 } from '../types/Learning/learning-path';
 
@@ -21,4 +22,14 @@ export const learningPathService = {
     
   },
 };
+// hàm map data 
+export function toLearningPathView(dto: LearningPathDto): LearningPathView {
+  return {
+    id: String(dto.id),
+    name: dto.careerName,
+    progress: Math.round(dto.overallProgress),
+    subject: dto.currentSubjectName ?? "-",
+    action: dto.overallProgress > 0 ? "Continue" : "Start",
+  };
+}
 

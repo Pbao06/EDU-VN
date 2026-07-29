@@ -6,15 +6,15 @@ export const useLearningPaths = () => {
   const [paths, setPaths] = useState<LearningPathDto[]>([]);
   const [loading, setLoading] = useState(false);
 
-  const fetchPaths =useCallback (async () => {
+  const fetchPaths =useCallback (async () => { // usecallBack là đảm bảo cho không tự gọi lại hàm( vì useEffect thg này nó auto gọi API để load trang)
     setLoading(true);
     try {
-      const data = await learningPathService.getUserLearningPaths();
-      setPaths(data);
+      const data = await learningPathService.getUserLearningPaths();// gọi API lấy data 
+      setPaths(data); // bỏ đồ vào hộp đựng data 
     } finally {
       setLoading(false);
     }
-  },[]);
+  },[]); // có thay đổi gì thì nó phụ thuộc vào [] này nè , nhma nó rỗng nên sẽ ko thay đổi 
   
   const getDetail= useCallback(async (id:number):Promise<LearningPathDetailDto>=>{
     setLoading(true);

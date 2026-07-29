@@ -18,6 +18,7 @@ namespace Source.DTOs.Admin
         public string? Hint { get; set; }
         public int Difficulty { get; set; }
         public int TopicId { get; set; }
+        public int? QuestionIndex{get;set;}
     }
 
     public class UpdateLearningQuestionDto
@@ -37,6 +38,7 @@ namespace Source.DTOs.Admin
         public string? Explanation { get; set; }
         public int LearningQuestionId { get; set; }
         public string QuestionContent { get; set; } = string.Empty;
+        public int AnswerIndex{get;set;}
     }
 
     public class CreateLearningAnswerDto
@@ -45,6 +47,7 @@ namespace Source.DTOs.Admin
         public bool IsCorrect { get; set; }
         public string? Explanation { get; set; }
         public int LearningQuestionId { get; set; }
+        public int? AnswerIndex{get;set;}
     }
 
     public class UpdateLearningAnswerDto

@@ -1,11 +1,13 @@
 "use client";
 import { useEffect, useState } from "react";
-import { TopicPractice, PracticeQuestion } from "@/components/shared/TopicPractice";
+import { TopicPractice, PracticeQuestion, AnswerMap } from "@/components/shared/TopicPractice";
 import { useTopic } from "@/hooks/learning/useTopic";
+import { useRouter } from "next/navigation"; 
 
 // Define a type for the expected API response structure for better type safety
 interface ApiTopicData {
   name: string;
+  subjectId: number;
   questions: {
     id: number;
     content: string;
@@ -19,10 +21,16 @@ interface ApiTopicData {
 }
 
 const TopicDetailPage = ({ params }: { params: { id: string } }) => {
-  const { getTopicDetail, loading } = useTopic();
+  const { getTopicDetail,submitTopic, loading } = useTopic();
   const topicIdParam = params.id;
-  const [topicData, setTopicData] = useState<{ name: string; questions: PracticeQuestion[] } | null>(null);
+  const [topicData, setTopicData] = useState<{ name: string; subjectId: number; questions: PracticeQuestion[] } | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const router = useRouter(); // 👈 THÊM
+
+   // 👇 MỚI: tách riêng state cho việc submit, không dùng chung `loading` của fetch
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState<string | null>(null);
+
 
   useEffect(() => {
     if (!topicIdParam) {
@@ -70,6 +78,7 @@ const TopicDetailPage = ({ params }: { params: { id: string } }) => {
 
         setTopicData({
           name: data.name,
+          subjectId: data.subjectId,
           questions: mappedQuestions,
         });
 
@@ -81,6 +90,50 @@ const TopicDetailPage = ({ params }: { params: { id: string } }) => {
 
     fetchAndSetTopicData();
   }, [topicIdParam]); // Dependency array ensures this runs when the id changes
+
+
+  const handleSubmit=async (result:{
+    answers:AnswerMap;
+    correctCount:number;
+    total:number;
+  })=>{
+    if(!topicData) return;
+    setIsSubmitting(true);
+    setSubmitError(null);
+
+    try{
+       // Convert answers: {questionId(string): optionId(string)} -> {number: number}
+      const answersForApi: Record<number, number> = Object.fromEntries(
+        Object.entries(result.answers).map(([questionId, optionId]) => [
+          Number(questionId),
+          Number(optionId),
+        ])
+      );
+
+      const topicId = parseInt(topicIdParam, 10);
+
+      const response = await submitTopic({
+        topicId,
+        answers: answersForApi,
+      });
+
+      console.log("DEBUG: Kết quả submit từ server:", response);
+
+      // TODO: hiển thị kết quả chính thức (response.score, response.isTopicCompleted...)
+      // Ví dụ: điều hướng qua trang kết quả hoặc show modal
+       // 👇 THÊM: điều hướng về trang Subject cha sau khi submit thành công
+      router.push(`/subjectdetail/${topicData.subjectId}`);
+
+    }catch(err:any)
+    {
+       console.error("Submit thất bại:", err);
+        setSubmitError(err.message || "Nộp bài thất bại, vui lòng thử lại.");
+    }finally{
+      setIsSubmitting(false);
+    }
+
+
+  }
 
   if (loading) {
     return (
@@ -106,7 +159,13 @@ const TopicDetailPage = ({ params }: { params: { id: string } }) => {
 
   return (
     <div className="p-4">
-      <TopicPractice topicName={topicData.name} questions={topicData.questions} />
+      <TopicPractice 
+      topicName={topicData.name} 
+      questions={topicData.questions} 
+       onSubmit={handleSubmit}
+        isSubmitting={isSubmitting}
+        submitError={submitError}
+      />
     </div>
   );
 };

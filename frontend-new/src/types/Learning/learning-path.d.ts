@@ -11,8 +11,15 @@ export interface LearningPathDto {
   totalSubjects: number;
   completedSubjects: number;
   overallProgress: number;
+  currentSubjectName:string;
 }
-
+export interface LearningPathView{
+  id:string, // learningpath id 
+  name:string, // career name
+  progress:number,
+  subject: string;
+  action: "Continue" | "Start";
+}
 export interface SubjectSummaryDto {
   id: number;
   code: string;
@@ -122,7 +129,7 @@ export interface CreateLearningPathResponseDto {
 
 export interface SubmitTopicAnswersDto {
   topicId: number;
-  learningPathId: number;
+  // learningPathId: number;
   answers: Record<number, number>;
 }
 
