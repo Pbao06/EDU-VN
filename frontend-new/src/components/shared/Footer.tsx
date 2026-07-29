@@ -1,6 +1,10 @@
 "use client";
 import React, { useState } from "react";
 import { Compass, Sparkles, Mail, ArrowUpRight } from "lucide-react";
+import {useAuth} from '@/hooks/auth/userAuth';
+import {useAlert} from '@/components/shared/AlertProvider';
+import { useRouter } from "next/navigation";
+import { onboardingService } from "@/services/onboardingService";
 
 function FacebookIcon(props: React.SVGProps<SVGSVGElement>) {
   return (
@@ -150,9 +154,45 @@ interface QuizCtaProps {
 function QuizCta({ href = "#quiz" }: QuizCtaProps) {
   const [hover, setHover] = useState(false);
   const [active, setActive] = useState(false);
+  const {isAuthenticated} =useAuth();// gọi hook 
+  const [checking, setChecking] = useState(false);
+  const {showAlert}=useAlert(); // lấy hàm gọi alert 
+   const router = useRouter();
+
+  const handleClick = async () => {
+      if(!isAuthenticated){
+        showAlert({
+          title: "Yêu cầu đăng nhập",
+          message:"Bạn cần đăng nhập để thực hiện Career Quiz định hướng nghề nghiệp và xây dựng lộ trình học tập",
+          confirmLabel:"Đăng nhập ngay",
+          tone:"default",
+          onConfirm:()=>{
+            router.push("/login");
+          },
+        });
+        return;
+      }
+      if (checking) return;
+      setChecking(true);
+  
+      try {
+        const status = await onboardingService.getStatus(); // kiểm tra xem user đã có onBoarding chưa 
+        if (status?.isCompleted) {
+          router.push('/quiz');
+        } else {
+          router.push('/onboarding');
+        }
+      } catch (error) {
+        router.push('/onboarding');
+      } finally {
+        setChecking(false);
+      }
+    };
+
   return (
     <a
-      href='/onboarding'
+      // href='/onboarding'
+       onClick={handleClick}
       onMouseEnter={() => setHover(true)}
       onMouseLeave={() => {
         setHover(false);
@@ -197,7 +237,7 @@ export default function Footer({
   return (
     <footer className="w-full border-t-2 border-black bg-white font-sans">
       {/* CTA strip — reinforces the homepage's #1 goal even at the bottom of the page */}
-      <div className="mx-auto max-w-6xl px-4 pt-10 sm:px-6">
+       <div className="mx-auto max-w-6xl px-4 pt-10 sm:px-6">
         <div
           className="flex flex-col items-start justify-between gap-5 rounded-3xl border-2 border-black bg-amber-300/60 p-6 sm:flex-row sm:items-center sm:p-8"
           style={{ boxShadow: HARD_SHADOW }}
@@ -212,7 +252,7 @@ export default function Footer({
           </div>
           <QuizCta href='/onboarding' />
         </div>
-      </div>
+      </div> 
 
       {/* Main footer content */}
       <div className="mx-auto max-w-6xl px-4 py-12 sm:px-6">

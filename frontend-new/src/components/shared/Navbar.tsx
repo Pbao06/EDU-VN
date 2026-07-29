@@ -1,6 +1,6 @@
 "use client";
-import React, { useState } from "react";
-import { Menu, X, Sparkles, Compass, User, LogOut } from "lucide-react";
+import React, { useEffect, useRef, useState } from "react";
+import { Menu, X, Sparkles, Compass, User, LogOut, ChevronDown } from "lucide-react";
 import { useAuth } from "@/hooks/auth/userAuth";
 
 /**
@@ -78,11 +78,105 @@ function ShadowLink({ href, children, className = "", variant = "outline", onCli
   );
 }
 
+/**
+ * UserMenu — Neo-Brutalism dropdown
+ * Trigger = user badge. Dropdown reveals "Trang cá nhân" (Profile) + "Đăng xuất".
+ * Animated open/close (scale + fade + slight slide), closes on outside click / Escape.
+ */
+interface UserMenuProps {
+  fullName?: string;
+  profileHref?: string;
+  onLogout: () => void;
+}
+
+function UserMenu({ fullName, profileHref = "/profile", onLogout }: UserMenuProps) {
+  const [open, setOpen] = useState(false);
+  const [hover, setHover] = useState(false);
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    function handleClickOutside(e: MouseEvent) {
+      if (containerRef.current && !containerRef.current.contains(e.target as Node)) {
+        setOpen(false);
+      }
+    }
+    function handleEscape(e: KeyboardEvent) {
+      if (e.key === "Escape") setOpen(false);
+    }
+    document.addEventListener("mousedown", handleClickOutside);
+    document.addEventListener("keydown", handleEscape);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+      document.removeEventListener("keydown", handleEscape);
+    };
+  }, []);
+
+  return (
+    <div className="relative" ref={containerRef}>
+      <button
+        type="button"
+        onClick={() => setOpen((v) => !v)}
+        onMouseEnter={() => setHover(true)}
+        onMouseLeave={() => setHover(false)}
+        aria-haspopup="menu"
+        aria-expanded={open}
+        className="flex items-center gap-2 rounded-2xl border-2 border-black bg-white px-4 py-2 text-sm font-extrabold text-black transition-transform duration-150 focus:outline-none focus:ring-2 focus:ring-blue-600"
+        style={{
+          boxShadow: open ? HARD_SHADOW_PRESSED : hover ? HARD_SHADOW_HOVER : HARD_SHADOW,
+          transform: !open && hover ? "translate(-2px, -2px)" : "translate(0px, 0px)",
+        }}
+      >
+        <User className="h-4 w-4 text-blue-600" />
+        {fullName}
+        <ChevronDown
+          className={`h-4 w-4 transition-transform duration-200 ${open ? "rotate-180" : "rotate-0"}`}
+          strokeWidth={2.5}
+        />
+      </button>
+
+      {/* Dropdown panel */}
+      <div
+        role="menu"
+        className={`absolute right-0 top-[calc(100%+10px)] z-20 w-52 origin-top-right rounded-2xl border-2 border-black bg-white p-1.5 transition-all duration-200 ease-out ${
+          open
+            ? "pointer-events-auto translate-y-0 scale-100 opacity-100"
+            : "pointer-events-none -translate-y-1 scale-95 opacity-0"
+        }`}
+        style={{ boxShadow: HARD_SHADOW }}
+      >
+        <a
+          href={profileHref}
+          role="menuitem"
+          onClick={() => setOpen(false)}
+          className="flex items-center gap-2 rounded-xl px-3 py-2.5 text-sm font-bold text-black transition-colors hover:bg-amber-300/40 focus:outline-none focus:ring-2 focus:ring-blue-600"
+        >
+          <User className="h-4 w-4 text-blue-600" />
+          Trang cá nhân
+        </a>
+        <div className="my-1 h-0.5 w-full bg-black/10" />
+        <button
+          type="button"
+          role="menuitem"
+          onClick={() => {
+            setOpen(false);
+            onLogout();
+          }}
+          className="flex w-full items-center gap-2 rounded-xl px-3 py-2.5 text-left text-sm font-bold text-black transition-colors hover:bg-amber-300/40 focus:outline-none focus:ring-2 focus:ring-blue-600"
+        >
+          <LogOut className="h-4 w-4" />
+          Đăng xuất
+        </button>
+      </div>
+    </div>
+  );
+}
+
 interface NavbarProps {
   logoHref?: string;
   navItems?: NavItem[];
   browseCareersHref?: string;
   quizHref?: string;
+  profileHref?: string;
 }
 
 export default function Navbar({
@@ -90,6 +184,7 @@ export default function Navbar({
   navItems = DEFAULT_NAV_ITEMS,
   browseCareersHref = "#careers",
   quizHref = "#quiz",
+  profileHref = "/profile",
 }: NavbarProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [logoHover, setLogoHover] = useState(false);
@@ -141,22 +236,13 @@ export default function Navbar({
           {/* Desktop actions */}
           <div className="hidden items-center gap-3 lg:flex">
             {isAuthenticated ? (
-              <>
-                <div className="flex items-center gap-2 rounded-2xl border-2 border-black bg-white px-4 py-2 text-sm font-extrabold shadow-[3px_3px_0_0_#111111]">
-                  <User className="h-4 w-4 text-blue-600" />
-                  {user?.fullName}
-                </div>
-                <ShadowLink onClick={logout} variant="outline">
-                  <LogOut className="h-4 w-4" />
-                  Đăng xuất
-                </ShadowLink>
-              </>
+              <UserMenu fullName={user?.fullName} profileHref={profileHref} onLogout={logout} />
             ) : (
               <>
-                <ShadowLink href="/register">Đăng kí</ShadowLink>
+                <ShadowLink href="/register">Đăng kí</ShadowLink>
                 <ShadowLink href="/login" variant="primary">
                   <Sparkles className="h-4 w-4" strokeWidth={2.5} />
-                  Đăng Nhập
+                  Đăng Nhập
                 </ShadowLink>
               </>
             )}
@@ -202,9 +288,21 @@ export default function Navbar({
                   <User className="h-5 w-5 text-blue-600" />
                   {user?.fullName}
                 </div>
-                <ShadowLink 
-                  onClick={() => { logout(); setIsOpen(false); }} 
-                  variant="outline" 
+                <ShadowLink
+                  href={profileHref}
+                  variant="outline"
+                  className="w-full"
+                  onClick={() => setIsOpen(false)}
+                >
+                  <User className="h-5 w-5" />
+                  Trang cá nhân
+                </ShadowLink>
+                <ShadowLink
+                  onClick={() => {
+                    logout();
+                    setIsOpen(false);
+                  }}
+                  variant="outline"
                   className="w-full"
                 >
                   <LogOut className="h-5 w-5" />
@@ -214,7 +312,7 @@ export default function Navbar({
             ) : (
               <>
                 <ShadowLink href="/register" className="w-full" onClick={() => setIsOpen(false)}>
-                  Đăng kí
+                  Đăng kí
                 </ShadowLink>
                 <ShadowLink
                   href="/login"
@@ -223,7 +321,7 @@ export default function Navbar({
                   onClick={() => setIsOpen(false)}
                 >
                   <Sparkles className="h-4 w-4" strokeWidth={2.5} />
-                  Đăng nhập
+                  Đăng nhập
                 </ShadowLink>
               </>
             )}

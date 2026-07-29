@@ -279,6 +279,26 @@ export default function LearningPathPage() {
   const handleSubjectClick = (subjectId: number) => {
     router.push(`/subjectdetail/${subjectId}`);
   };
+  const colorMap = {
+    "not-started": {
+      cardBg: "#FAFAFA",
+      accentHex: "#71717a",
+      iconBg: "#52525b",
+      progressGradient: "linear-gradient(90deg, #52525b 0%, #a1a1aa 100%)",
+    },
+    completed: {
+      cardBg: "#F0FDF4",
+      accentHex: "#16a34a",
+      iconBg: "#22C55E",
+      progressGradient: "linear-gradient(90deg, #16a34a 0%, #4ade80 100%)",
+    },
+    "in-progress": {
+      cardBg: "#EFF6FF",
+      accentHex: "#4D7CFF",
+      iconBg: "#3B82F6",
+      progressGradient: "linear-gradient(90deg, #4D7CFF 0%, #60a5fa 100%)",
+    },
+  } as const;
   // xử lý loading nếu đang tải thì loading 
   if(loading || !data) return <div className='p-20 text-center'>Đang tải lộ trình...</div>
   return (
@@ -293,8 +313,31 @@ export default function LearningPathPage() {
       />
 
       <main className="relative z-10 mx-auto max-w-5xl space-y-8 px-4 py-10 sm:px-6 sm:py-14 lg:px-8">
+        {/* ── BACK BUTTON (góc phải) ── */}
+        <div className="flex justify-end">
+          <button
+            type="button"
+            onClick={() => router.back()}
+            className="inline-flex items-center gap-2 rounded-2xl border-[2.5px] border-black bg-white px-4 py-2.5 text-sm font-extrabold uppercase tracking-wide text-black shadow-[4px_4px_0_0_#000] transition-all hover:-translate-y-0.5 hover:shadow-[6px_6px_0_0_#000] active:translate-x-[2px] active:translate-y-[2px] active:shadow-[2px_2px_0_0_#000]"
+          >
+            <svg
+              width="16"
+              height="16"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2.5"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
+              <path d="M19 12H5" />
+              <path d="M12 19l-7-7 7-7" />
+            </svg>
+            Quay lại
+          </button>
+        </div>
 
-        {/* ── BREADCRUMB ── */}
+        {/* ── BREADCRUMB ──
         <nav aria-label="Breadcrumb">
           <ol className="flex flex-wrap items-center gap-2 text-sm font-semibold text-black/50">
             <li>
@@ -309,7 +352,7 @@ export default function LearningPathPage() {
               <span className="font-extrabold text-black">Backend Developer</span>
             </li>
           </ol>
-        </nav>
+        </nav> */}
 
         {/* ══════════════════════════════════════
             1. HERO
@@ -485,6 +528,54 @@ export default function LearningPathPage() {
 
           {/* grid */}
           <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3 sm:gap-6">
+            {data.subjects.map((s: any) => {
+              const status = s.isCompleted
+                ? "completed"
+                : s.isInProgress
+                ? "in-progress"
+                : "not-started";
+
+              const colors = colorMap[status];
+
+              return (
+                <SubjectCard
+                  key={s.id}
+                  onSubjectClick={handleSubjectClick}
+                  subject={{
+                    id: s.id.toString(),
+                    code: s.code,
+                    fullName: s.name,
+                    topicCount: s.totalTopics,
+                    completedTopics: s.completedTopics,
+                    progress: s.subjectProgress,
+                    status,
+                    description: s.description,
+                    cardBg: colors.cardBg,
+                    accentHex: colors.accentHex,
+                    iconBg: colors.iconBg,
+                    progressGradient: colors.progressGradient,
+                    icon: (
+                      <svg
+                        width="22"
+                        height="22"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="white"
+                        strokeWidth="2.5"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      >
+                        <ellipse cx="12" cy="5" rx="9" ry="3" />
+                        <path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3" />
+                        <path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5" />
+                      </svg>
+                    ),
+                  }}
+                />
+              );
+            })}
+          </div>
+          {/* <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3 sm:gap-6">
             {data.subjects.map((s: any) => (
               <SubjectCard 
                 key={s.id} 
@@ -520,7 +611,7 @@ export default function LearningPathPage() {
                 ),
               }} />
             ))}
-          </div>
+          </div> */}
 
           {/* encouragement banner */}
           <div className="mt-6 flex flex-col gap-4 rounded-2xl border-[2.5px] border-black bg-[#FFFBEB] p-5 shadow-[4px_4px_0_0_#000] sm:flex-row sm:items-center">
