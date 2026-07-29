@@ -72,7 +72,7 @@ function QuizButton({ href = "/onboarding" }: QuizButtonProps) {
       onMouseDown={() => setActive(true)}
       onMouseUp={() => setActive(false)}
       disabled={checking}
-      className="inline-flex items-center justify-center gap-2 rounded-2xl border-2 border-black bg-orange-400 px-7 py-4 text-base font-extrabold text-black transition-transform duration-150 hover:bg-orange-300 disabled:cursor-wait disabled:opacity-70 sm:text-lg"
+      className=" cursor-pointer inline-flex items-center justify-center gap-2 rounded-2xl border-2 border-black bg-orange-400 px-7 py-4 text-base font-extrabold text-black transition-transform duration-150 hover:bg-orange-300 disabled:cursor-wait disabled:opacity-70 sm:text-lg"
       style={{
         boxShadow: active ? HARD_SHADOW_PRESSED : hover ? HARD_SHADOW_HOVER : HARD_SHADOW,
         transform: active

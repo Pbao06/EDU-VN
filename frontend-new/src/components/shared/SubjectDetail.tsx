@@ -114,7 +114,7 @@ export function SubjectDetail({
   return (
     <div className={`w-full max-w-5xl ${className}`}>
       {/* ============ COMPACT STICKY HEADER ============ */}
-      <div
+      {/* <div
         className={`sticky top-0 z-30 -mx-4 px-4 pt-3 pb-3 transition-all duration-200 sm:-mx-6 sm:px-6 ${
           compact
             ? "pointer-events-auto opacity-100 translate-y-0"
@@ -126,7 +126,7 @@ export function SubjectDetail({
             <button
               type="button"
               onClick={onBack}
-              className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg border-[2px] border-black bg-[#FFD84D] shadow-[2px_2px_0_0_#000] transition-transform hover:-translate-y-0.5"
+              className=" cursor-pointer flex h-8 w-8 shrink-0 items-center justify-center rounded-lg border-[2px] border-black bg-[#FFD84D] shadow-[2px_2px_0_0_#000] transition-transform hover:-translate-y-0.5"
               aria-label="Back"
             >
               <ArrowLeft className="h-4 w-4" strokeWidth={2.5} />
@@ -147,7 +147,7 @@ export function SubjectDetail({
             {clamped}%
           </span>
         </div>
-      </div>
+      </div> */}
 
       {/* ============ HERO ============ */}
       <div ref={sentinelRef} />
@@ -156,7 +156,7 @@ export function SubjectDetail({
         <button
           type="button"
           onClick={onBack}
-          className="mb-4 inline-flex items-center gap-2 rounded-full border-[2.5px] border-black bg-white px-3.5 py-1.5 text-xs font-extrabold uppercase tracking-wider text-black shadow-[3px_3px_0_0_#000] transition-transform hover:-translate-y-0.5"
+          className="cursor-pointer mb-4 inline-flex items-center gap-2 rounded-full border-[2.5px] border-black bg-white px-3.5 py-1.5 text-xs font-extrabold uppercase tracking-wider text-black shadow-[3px_3px_0_0_#000] transition-transform hover:-translate-y-0.5"
         >
           <ArrowLeft className="h-4 w-4" strokeWidth={2.5} />
           Back
@@ -233,7 +233,7 @@ export function SubjectDetail({
             </div>
           </div>
 
-          {onContinue && (
+          {/* {onContinue && (
             <button
               type="button"
               onClick={onContinue}
@@ -242,7 +242,7 @@ export function SubjectDetail({
               {continueLabel}
               <ArrowRight className="h-4 w-4" strokeWidth={2.5} />
             </button>
-          )}
+          )} */}
         </div>
       </section>
 
@@ -297,7 +297,7 @@ function TopicCard({
         onClick={onClick}
         disabled={locked}
         aria-label={`${topic.title} — ${meta.label}`}
-        className={`group relative flex w-full items-start gap-4 rounded-[24px] border-[2.5px] border-black p-4 text-left shadow-[6px_6px_0_0_#000] transition-all sm:p-5 ${
+        className={` cursor-pointer group relative flex w-full items-start gap-4 rounded-[24px] border-[2.5px] border-black p-4 text-left shadow-[6px_6px_0_0_#000] transition-all sm:p-5 ${
           locked
             ? "cursor-not-allowed bg-[#F5F5F5] opacity-80"
             : "bg-white hover:-translate-y-0.5 hover:shadow-[8px_8px_0_0_#000] active:translate-x-[2px] active:translate-y-[2px] active:shadow-[3px_3px_0_0_#000]"

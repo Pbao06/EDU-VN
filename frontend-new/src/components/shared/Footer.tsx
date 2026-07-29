@@ -200,7 +200,7 @@ function QuizCta({ href = "#quiz" }: QuizCtaProps) {
       }}
       onMouseDown={() => setActive(true)}
       onMouseUp={() => setActive(false)}
-      className="inline-flex items-center justify-center gap-2 rounded-2xl border-2 border-black bg-orange-400 px-5 py-3 text-sm font-extrabold text-black transition-transform duration-150"
+      className=" cursor-pointer inline-flex items-center justify-center gap-2 rounded-2xl border-2 border-black bg-orange-400 px-5 py-3 text-sm font-extrabold text-black transition-transform duration-150"
       style={{
         boxShadow: active ? HARD_SHADOW_PRESSED : hover ? HARD_SHADOW_HOVER : HARD_SHADOW,
         transform: active

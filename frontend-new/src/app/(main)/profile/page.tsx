@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import {learningPathService,toLearningPathView} from "@/services/learningPathService";
 import {useLearningPaths} from "@/hooks/learning/useLearningPaths";
 import type { LearningPathView } from "@/types/Learning/learning-path";
+import { useRouter } from "next/navigation";
 import path from "path";
 export default function ProfilePage()
 {
@@ -12,6 +13,7 @@ export default function ProfilePage()
    const[userData,setUserData]=useState<any>(null); // lưu lại dữ liệu
     const { paths, refetch, loading: pathLoading } = useLearningPaths(); // gọi khai báo các hàm cần dùng ra 
     const [learningPathData, setLearningPathData] = useState<LearningPathView[] | null>(null);
+    const router =useRouter();
       useEffect(()=>{
         const fetchProfile= async ()=>{
             try{
@@ -38,6 +40,9 @@ export default function ProfilePage()
       console.log("API learningPath gọi dc là : ",paths); // vì refetch sẽ lấy data mới bỏ vào paths
     }
    },[paths]);
+   const handleContinuePath = (id:number) => {
+    router.push(`/learningpath/${id}`);
+};
 
 
     // ⏳ chờ API xong mới render, tránh personalInfo bị null lúc đầu
@@ -52,7 +57,7 @@ export default function ProfilePage()
       achievement={mockAchievement}         // 🔧 mock tạm
       onEditProfile={() => console.log("edit profile clicked")}
       onChangePassword={() => console.log("change password clicked")}
-      onContinuePath={(id) => console.log("continue path:", id)}
+      onContinuePath={handleContinuePath}
     />);
 
 }

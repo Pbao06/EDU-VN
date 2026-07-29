@@ -120,7 +120,7 @@ function UserMenu({ fullName, profileHref = "/profile", onLogout }: UserMenuProp
         onMouseLeave={() => setHover(false)}
         aria-haspopup="menu"
         aria-expanded={open}
-        className="flex items-center gap-2 rounded-2xl border-2 border-black bg-white px-4 py-2 text-sm font-extrabold text-black transition-transform duration-150 focus:outline-none focus:ring-2 focus:ring-blue-600"
+        className="cursor-pointer flex items-center gap-2 rounded-2xl border-2 border-black bg-white px-4 py-2 text-sm font-extrabold text-black transition-transform duration-150 focus:outline-none focus:ring-2 focus:ring-blue-600"
         style={{
           boxShadow: open ? HARD_SHADOW_PRESSED : hover ? HARD_SHADOW_HOVER : HARD_SHADOW,
           transform: !open && hover ? "translate(-2px, -2px)" : "translate(0px, 0px)",
@@ -284,7 +284,7 @@ export default function Navbar({
           <div className="mt-2 flex flex-col gap-3">
             {isAuthenticated ? (
               <>
-                <div className="flex w-full items-center justify-center gap-2 rounded-2xl border-2 border-black bg-white px-3 py-3 text-base font-extrabold shadow-[3px_3px_0_0_#111111]">
+                <div className="  flex w-full items-center justify-center gap-2 rounded-2xl border-2 border-black bg-white px-3 py-3 text-base font-extrabold shadow-[3px_3px_0_0_#111111]">
                   <User className="h-5 w-5 text-blue-600" />
                   {user?.fullName}
                 </div>

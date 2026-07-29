@@ -137,7 +137,7 @@ export function CareerQuiz({
                     type="button"
                     onClick={() => choose(c.id)}
                     aria-pressed={active}
-                    className={`group flex w-full items-center gap-4 rounded-2xl border-[2.5px] border-black px-4 py-4 text-left transition-all ${
+                    className={`cursor-pointer group flex w-full items-center gap-4 rounded-2xl border-[2.5px] border-black px-4 py-4 text-left transition-all ${
                       active
                         ? "translate-x-[2px] translate-y-[2px] bg-[#DCE6FF] shadow-[3px_3px_0_0_#000]"
                         : "bg-white shadow-[6px_6px_0_0_#000] hover:-translate-y-0.5 hover:shadow-[8px_8px_0_0_#000]"
@@ -185,7 +185,7 @@ export function CareerQuiz({
               <button
                 type="button"
                 onClick={() => setIndex((i) => Math.max(0, i - 1))}
-                className="inline-flex h-12 items-center rounded-2xl border-[2.5px] border-black bg-white px-4 text-sm font-extrabold uppercase tracking-wide text-black shadow-[5px_5px_0_0_#000] transition-all hover:-translate-y-0.5 hover:shadow-[7px_7px_0_0_#000]"
+                className="cursor-pointer inline-flex h-12 items-center rounded-2xl border-[2.5px] border-black bg-white px-4 text-sm font-extrabold uppercase tracking-wide text-black shadow-[5px_5px_0_0_#000] transition-all hover:-translate-y-0.5 hover:shadow-[7px_7px_0_0_#000]"
               >
                 ← Quay lại
               </button>
@@ -194,7 +194,7 @@ export function CareerQuiz({
               type="button"
               onClick={advance}
               disabled={!picked || submitting}
-              className={`inline-flex h-12 flex-1 items-center justify-center gap-2 rounded-2xl border-[2.5px] border-black px-6 text-sm font-extrabold uppercase tracking-widest text-white shadow-[6px_6px_0_0_#000] transition-all hover:-translate-y-0.5 hover:shadow-[8px_8px_0_0_#000] active:translate-x-[2px] active:translate-y-[2px] active:shadow-[2px_2px_0_0_#000] disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:translate-y-0 disabled:hover:shadow-[6px_6px_0_0_#000] ${
+              className={`cursor-pointer inline-flex h-12 flex-1 items-center justify-center gap-2 rounded-2xl border-[2.5px] border-black px-6 text-sm font-extrabold uppercase tracking-widest text-white shadow-[6px_6px_0_0_#000] transition-all hover:-translate-y-0.5 hover:shadow-[8px_8px_0_0_#000] active:translate-x-[2px] active:translate-y-[2px] active:shadow-[2px_2px_0_0_#000] disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:translate-y-0 disabled:hover:shadow-[6px_6px_0_0_#000] ${
                 isLast ? "bg-[#FF6B2C]" : "bg-[#4D7CFF]"
               }`}
             >

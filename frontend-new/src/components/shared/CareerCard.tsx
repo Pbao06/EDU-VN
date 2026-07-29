@@ -53,7 +53,7 @@ export function CareerCard({
     <button
       type="button"
       onClick={onClick}
-      className={`group relative flex w-full flex-col gap-5 rounded-[28px] border-[2.5px] border-black bg-white p-6 text-left shadow-[6px_6px_0_0_#000] transition-all duration-200 hover:-translate-x-0.5 hover:-translate-y-0.5 hover:shadow-[10px_10px_0_0_#000] focus:outline-none focus-visible:ring-4 focus-visible:ring-[#4D7CFF]/40 active:translate-x-0 active:translate-y-0 active:shadow-[3px_3px_0_0_#000] ${className}`}
+      className={`cursor-pointer group relative flex w-full flex-col gap-5 rounded-[28px] border-[2.5px] border-black bg-white p-6 text-left shadow-[6px_6px_0_0_#000] transition-all duration-200 hover:-translate-x-0.5 hover:-translate-y-0.5 hover:shadow-[10px_10px_0_0_#000] focus:outline-none focus-visible:ring-4 focus-visible:ring-[#4D7CFF]/40 active:translate-x-0 active:translate-y-0 active:shadow-[3px_3px_0_0_#000] ${className}`}
     >
       {/* decorative star */}
       <span

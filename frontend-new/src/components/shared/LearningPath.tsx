@@ -226,7 +226,7 @@ function SubjectCard({ subject, onSubjectClick }: { subject: any; onSubjectClick
         <button
           type="button"
           onClick={() => onSubjectClick(subject.id)}
-          className="mt-auto inline-flex w-full items-center justify-center gap-2 rounded-2xl border-[2.5px] border-black py-3 text-sm font-extrabold uppercase tracking-wide shadow-[4px_4px_0_0_#000] transition-all hover:-translate-y-0.5 hover:shadow-[6px_6px_0_0_#000] active:translate-x-[2px] active:translate-y-[2px] active:shadow-[2px_2px_0_0_#000]"
+          className="cursor-pointer mt-auto inline-flex w-full items-center justify-center gap-2 rounded-2xl border-[2.5px] border-black py-3 text-sm font-extrabold uppercase tracking-wide shadow-[4px_4px_0_0_#000] transition-all hover:-translate-y-0.5 hover:shadow-[6px_6px_0_0_#000] active:translate-x-[2px] active:translate-y-[2px] active:shadow-[2px_2px_0_0_#000]"
           style={{
             backgroundColor: subject.progress === 0 ? "#F4F4F5" : subject.accentHex,
             color: subject.progress === 0 ? "#52525b" : "white",
@@ -318,7 +318,7 @@ export default function LearningPathPage() {
           <button
             type="button"
             onClick={() => router.back()}
-            className="inline-flex items-center gap-2 rounded-2xl border-[2.5px] border-black bg-white px-4 py-2.5 text-sm font-extrabold uppercase tracking-wide text-black shadow-[4px_4px_0_0_#000] transition-all hover:-translate-y-0.5 hover:shadow-[6px_6px_0_0_#000] active:translate-x-[2px] active:translate-y-[2px] active:shadow-[2px_2px_0_0_#000]"
+            className="cursor-pointer inline-flex items-center gap-2 rounded-2xl border-[2.5px] border-black bg-white px-4 py-2.5 text-sm font-extrabold uppercase tracking-wide text-black shadow-[4px_4px_0_0_#000] transition-all hover:-translate-y-0.5 hover:shadow-[6px_6px_0_0_#000] active:translate-x-[2px] active:translate-y-[2px] active:shadow-[2px_2px_0_0_#000]"
           >
             <svg
               width="16"
@@ -435,7 +435,7 @@ export default function LearningPathPage() {
 
               {/* tags */}
               <ul className="mt-1 flex flex-wrap gap-2">
-                {["C#", ".NET", "OOP", "SQL", "Backend"].map((t) => (
+                {["E", "D", "U", "V", "N"].map((t) => (
                   <li
                     key={t}
                     className="rounded-full border-[2px] border-black bg-white px-2.5 py-1 text-xs font-bold text-black shadow-[2px_2px_0_0_#000]"

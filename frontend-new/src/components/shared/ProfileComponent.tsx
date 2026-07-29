@@ -34,7 +34,7 @@ const personalInfo = [
 
 
 export interface LearningPath {
-  id: string;           // nên có id để làm key + gọi API theo path
+  id: number;           // nên có id để làm key + gọi API theo path
   name: string;
   progress: number;      // 0-100
   subject: string;
@@ -52,7 +52,7 @@ export interface ProfileProps {
   achievement: Achievement;
   onEditProfile: () => void;
   onChangePassword: () => void;
-  onContinuePath: (pathId: string) => void;
+  onContinuePath: (pathId: number) => void;
 }
 // const learningPaths = [
 //   {
@@ -168,7 +168,7 @@ export default function Profile({
           <div className="mt-7 flex flex-col gap-3 sm:flex-row">
             <button
               type="button"
-              className="inline-flex items-center justify-center gap-2 rounded-2xl border-2 border-black bg-white px-5 py-2.5 text-sm font-extrabold text-black transition-transform duration-150 hover:bg-orange-100"
+              className=" cursor-pointer inline-flex items-center justify-center gap-2 rounded-2xl border-2 border-black bg-white px-5 py-2.5 text-sm font-extrabold text-black transition-transform duration-150 hover:bg-orange-100"
               style={{ boxShadow: HARD_SHADOW }}
               onMouseEnter={(e) => {
                 e.currentTarget.style.boxShadow = HARD_SHADOW_HOVER;
@@ -183,9 +183,9 @@ export default function Profile({
               Edit Profile
             </button>
 
-            <button
+            <button 
               type="button"
-              className="inline-flex items-center justify-center gap-2 rounded-2xl border-2 border-black bg-white px-5 py-2.5 text-sm font-extrabold text-black transition-transform duration-150 hover:bg-blue-50"
+              className=" cursor-pointer inline-flex items-center justify-center gap-2 rounded-2xl border-2 border-black bg-white px-5 py-2.5 text-sm font-extrabold text-black transition-transform duration-150 hover:bg-blue-50"
               style={{ boxShadow: HARD_SHADOW }}
               onMouseEnter={(e) => {
                 e.currentTarget.style.boxShadow = HARD_SHADOW_HOVER;
@@ -245,7 +245,7 @@ export default function Profile({
                   <td className="py-4 text-right">
                     <button
                       type="button"
-                      className="inline-flex items-center gap-1.5 rounded-xl border-2 border-black bg-white px-4 py-1.5 text-xs font-extrabold uppercase tracking-wide hover:bg-amber-100 sm:text-sm"
+                      className=" cursor-pointer inline-flex items-center gap-1.5 rounded-xl border-2 border-black bg-white px-4 py-1.5 text-xs font-extrabold uppercase tracking-wide hover:bg-amber-100 sm:text-sm"
                       onClick={() => onContinuePath(path.id)} 
                     >
                       {path.action}

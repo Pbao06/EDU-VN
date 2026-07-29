@@ -25,7 +25,7 @@ export const learningPathService = {
 // hàm map data 
 export function toLearningPathView(dto: LearningPathDto): LearningPathView {
   return {
-    id: String(dto.id),
+    id: dto.id,
     name: dto.careerName,
     progress: Math.round(dto.overallProgress),
     subject: dto.currentSubjectName ?? "-",

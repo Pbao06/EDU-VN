@@ -115,7 +115,7 @@ export function RecommendationQuiz({
                 <button
                   type="button"
                   onClick={() => onSelect?.(item)}
-                  className="mt-6 inline-flex h-12 w-full items-center justify-center gap-2 rounded-2xl border-[2.5px] border-black bg-[#4D7CFF] px-5 text-sm font-extrabold uppercase tracking-widest text-white shadow-[6px_6px_0_0_#000] transition-all hover:-translate-y-0.5 hover:shadow-[8px_8px_0_0_#000] active:translate-x-[2px] active:translate-y-[2px] active:shadow-[2px_2px_0_0_#000]"
+                  className="cursor-pointer mt-6 inline-flex h-12 w-full items-center justify-center gap-2 rounded-2xl border-[2.5px] border-black bg-[#4D7CFF] px-5 text-sm font-extrabold uppercase tracking-widest text-white shadow-[6px_6px_0_0_#000] transition-all hover:-translate-y-0.5 hover:shadow-[8px_8px_0_0_#000] active:translate-x-[2px] active:translate-y-[2px] active:shadow-[2px_2px_0_0_#000]"
                 >
                   Chi tiết →
                 </button>
@@ -136,7 +136,7 @@ export function RecommendationQuiz({
                     <button
                       type="button"
                       onClick={() => onSelect?.(item)}
-                      className="group flex w-full items-center gap-4 px-5 py-4 text-left transition-colors hover:bg-[#F2F6FF] sm:px-7 sm:py-5"
+                      className="cursor-pointer group flex w-full items-center gap-4 px-5 py-4 text-left transition-colors hover:bg-[#F2F6FF] sm:px-7 sm:py-5"
                     >
                       <span className="grid h-10 w-10 shrink-0 place-items-center rounded-xl border-[2.5px] border-black bg-[#FFD84D] text-sm font-extrabold text-black shadow-[3px_3px_0_0_#000]">
                         {item.emoji ?? i + 4}

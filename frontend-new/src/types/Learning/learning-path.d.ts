@@ -14,7 +14,7 @@ export interface LearningPathDto {
   currentSubjectName:string;
 }
 export interface LearningPathView{
-  id:string, // learningpath id 
+  id:number, // learningpath id 
   name:string, // career name
   progress:number,
   subject: string;

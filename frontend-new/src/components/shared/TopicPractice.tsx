@@ -259,7 +259,7 @@ export function TopicPractice({
                           type="button"
                           onClick={() => !showResult && pick(opt.id)}
                           disabled={showResult}
-                          className={`flex w-full items-center gap-3 rounded-2xl border-[2.5px] border-black px-4 py-3 text-left shadow-[4px_4px_0_0_#000] transition-all ${
+                          className={`cursor-pointer flex w-full items-center gap-3 rounded-2xl border-[2.5px] border-black px-4 py-3 text-left shadow-[4px_4px_0_0_#000] transition-all ${
                             showResult
                               ? "cursor-default"
                               : "hover:-translate-y-0.5 hover:shadow-[6px_6px_0_0_#000] active:translate-x-[2px] active:translate-y-[2px] active:shadow-[2px_2px_0_0_#000]"
@@ -313,7 +313,7 @@ export function TopicPractice({
                     type="button"
                     onClick={goPrev}
                     disabled={index === 0}
-                    className="inline-flex h-11 items-center gap-2 rounded-2xl border-[2.5px] border-black bg-white px-4 text-sm font-extrabold uppercase tracking-wide text-black shadow-[4px_4px_0_0_#000] transition-all hover:-translate-y-0.5 hover:shadow-[6px_6px_0_0_#000] disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:translate-y-0 disabled:hover:shadow-[4px_4px_0_0_#000]"
+                    className="cursor-pointer inline-flex h-11 items-center gap-2 rounded-2xl border-[2.5px] border-black bg-white px-4 text-sm font-extrabold uppercase tracking-wide text-black shadow-[4px_4px_0_0_#000] transition-all hover:-translate-y-0.5 hover:shadow-[6px_6px_0_0_#000] disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:translate-y-0 disabled:hover:shadow-[4px_4px_0_0_#000]"
                   >
                     <ArrowLeft className="h-4 w-4" strokeWidth={2.5} />
                     Previous
@@ -324,7 +324,7 @@ export function TopicPractice({
                       type="button"
                       onClick={submitCurrent}
                       disabled={!currentAnswer}
-                      className="inline-flex h-11 items-center gap-2 rounded-2xl border-[2.5px] border-black bg-[#4D7CFF] px-5 text-sm font-extrabold uppercase tracking-wide text-white shadow-[4px_4px_0_0_#000] transition-all hover:-translate-y-0.5 hover:shadow-[6px_6px_0_0_#000] active:translate-x-[2px] active:translate-y-[2px] active:shadow-[2px_2px_0_0_#000] disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:translate-y-0 disabled:hover:shadow-[4px_4px_0_0_#000]"
+                      className="cursor-pointer inline-flex h-11 items-center gap-2 rounded-2xl border-[2.5px] border-black bg-[#4D7CFF] px-5 text-sm font-extrabold uppercase tracking-wide text-white shadow-[4px_4px_0_0_#000] transition-all hover:-translate-y-0.5 hover:shadow-[6px_6px_0_0_#000] active:translate-x-[2px] active:translate-y-[2px] active:shadow-[2px_2px_0_0_#000] disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:translate-y-0 disabled:hover:shadow-[4px_4px_0_0_#000]"
                     >
                       <Check className="h-4 w-4" strokeWidth={3} />
                       Submit
@@ -334,7 +334,7 @@ export function TopicPractice({
                       type="button"
                       onClick={finish}
                        disabled={isSubmitting} // 👈 chặn bấm nhiều lần trong lúc chờ API
-                      className="inline-flex h-11 items-center gap-2 rounded-2xl border-[2.5px] border-black bg-[#FF6B2C] px-5 text-sm font-extrabold uppercase tracking-wide text-white shadow-[4px_4px_0_0_#000] transition-all hover:-translate-y-0.5 hover:shadow-[6px_6px_0_0_#000] active:translate-x-[2px] active:translate-y-[2px] active:shadow-[2px_2px_0_0_#000]"
+                      className="cursor-pointer inline-flex h-11 items-center gap-2 rounded-2xl border-[2.5px] border-black bg-[#FF6B2C] px-5 text-sm font-extrabold uppercase tracking-wide text-white shadow-[4px_4px_0_0_#000] transition-all hover:-translate-y-0.5 hover:shadow-[6px_6px_0_0_#000] active:translate-x-[2px] active:translate-y-[2px] active:shadow-[2px_2px_0_0_#000]"
                     >
                       <Flag className="h-4 w-4" strokeWidth={2.5} />
                        {isSubmitting ? "Đang nộp..." : "Finish"} {/* 👈 đổi chữ khi loading */}
@@ -343,7 +343,7 @@ export function TopicPractice({
                     <button
                       type="button"
                       onClick={goNext}
-                      className="inline-flex h-11 items-center gap-2 rounded-2xl border-[2.5px] border-black bg-[#4D7CFF] px-5 text-sm font-extrabold uppercase tracking-wide text-white shadow-[4px_4px_0_0_#000] transition-all hover:-translate-y-0.5 hover:shadow-[6px_6px_0_0_#000] active:translate-x-[2px] active:translate-y-[2px] active:shadow-[2px_2px_0_0_#000]"
+                      className="cursor-pointer inline-flex h-11 items-center gap-2 rounded-2xl border-[2.5px] border-black bg-[#4D7CFF] px-5 text-sm font-extrabold uppercase tracking-wide text-white shadow-[4px_4px_0_0_#000] transition-all hover:-translate-y-0.5 hover:shadow-[6px_6px_0_0_#000] active:translate-x-[2px] active:translate-y-[2px] active:shadow-[2px_2px_0_0_#000]"
                     >
                       Next
                       <ArrowRight className="h-4 w-4" strokeWidth={2.5} />
@@ -367,7 +367,7 @@ export function TopicPractice({
       </div>
 
       {/* Mobile sidebar drawer */}
-      {mobileNavOpen && (
+      {/* {mobileNavOpen && (
         <div className="fixed inset-0 z-50 lg:hidden">
           <div
             className="absolute inset-0 bg-black/50"
@@ -399,7 +399,7 @@ export function TopicPractice({
             />
           </div>
         </div>
-      )}
+      )} */}
     </div>
   );
 }
