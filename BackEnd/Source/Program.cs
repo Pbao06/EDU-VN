@@ -220,8 +220,8 @@ namespace Source
             }
             // Configure the HTTP request pipeline.
            // ===== Middleware =====
-            if (app.Environment.IsDevelopment())
-            {
+            // if (app.Environment.IsDevelopment())
+            // {
                 app.MapOpenApi(); // Map endpoint OpenAPI mới
                 app.UseSwagger(); // Enable Swagger middleware
                 app.UseSwaggerUI(options =>
@@ -229,7 +229,7 @@ namespace Source
                     options.SwaggerEndpoint("/swagger/v1/swagger.json", "EduPath API v1");
                     options.RoutePrefix = string.Empty; // Set Swagger UI at root URL
                 });
-            }
+            // }
             app.UseRouting();
             app.UseCors(app.Environment.IsDevelopment() ? "AllowAll" : "AllowFrontend");
             // app.UseHttpsRedirection(); // Comment out để tránh redirect từ http sang https trong development
