@@ -20,8 +20,12 @@ namespace Source
         public static void Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
-            var port = Environment.GetEnvironmentVariable("PORT") ?? "5000";
-            builder.WebHost.UseUrls($"http://0.0.0.0:{port}");
+            // Đoạn ép mở port đúng chuẩn cho Render:
+            var port = Environment.GetEnvironmentVariable("PORT") ?? "10000";
+            builder.WebHost.ConfigureKestrel(serverOptions =>
+            {
+                serverOptions.ListenAnyIP(int.Parse(port));
+            });
             // Tắt hoàn toàn việc theo dõi file appsettings.json để tránh tràn giới hạn inotify trên Render
             builder.Configuration.Sources.Clear();
             builder.Configuration
