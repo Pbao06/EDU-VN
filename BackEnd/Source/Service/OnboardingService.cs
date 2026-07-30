@@ -41,11 +41,11 @@ namespace Source.Service
             }
 
             // Bước 3: Kiểm tra xem user đã hoàn thành onboarding chưa
-            if (user.IsOnboardingCompleted)
-            {
-                // Nếu đã hoàn thành, ném exception để tránh update lại
-                throw new BadRequestException("Người dùng đã hoàn thành onboarding");
-            }
+            // if (user.IsOnboardingCompleted)
+            // {
+            //     // Nếu đã hoàn thành, ném exception để tránh update lại
+            //     throw new BadRequestException("Người dùng đã hoàn thành onboarding");
+            // }
 
             // Bước 4: Cập nhật thông tin user từ DTO
             // user.FullName = dto.FullName;
