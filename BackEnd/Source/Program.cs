@@ -26,15 +26,12 @@ namespace Source
             {
                 serverOptions.ListenAnyIP(int.Parse(port));
             });
-            // Tắt hoàn toàn việc theo dõi file appsettings.json để tránh tràn giới hạn inotify trên Render
+            // Xóa sạch nguồn cũ và CHỈ ĐỌC TỪ BIẾN MÔI TRƯỜNG TRÊN RENDER, tuyệt đối không đụng tới file JSON nữa
             builder.Configuration.Sources.Clear();
-            builder.Configuration
-            .SetBasePath(Directory.GetCurrentDirectory())
-            .AddJsonFile("appsettings.json", optional: true, reloadOnChange: false)
-            .AddJsonFile($"appsettings.{builder.Environment.EnvironmentName}.json", optional: true, reloadOnChange: false)
-            .AddEnvironmentVariables();
+            builder.Configuration.AddEnvironmentVariables();
 
-            var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+            var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") 
+                       ?? Environment.GetEnvironmentVariable("ConnectionStrings__DefaultConnection");
 
             builder.Services.AddDbContext<Data.ApplicationDbContext>(options =>
                 options.UseMySql(
