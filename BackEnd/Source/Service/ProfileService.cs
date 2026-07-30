@@ -47,8 +47,6 @@ namespace Source.Service
         {
             var user= await _context.Users.FindAsync(UserId);
             if(user==null) throw new NotFoundException("Not found user");
-            user.Email=dto.Email;
-            user.AvatarUrl=dto.AvatarUrl;
             user.FieldId=dto.FieldId;
             if (!Enum.TryParse<MainGoal>(dto.Maingoal,true, out var mainGoal))// true la ignore viet hoa viet thuong
             {
@@ -65,12 +63,10 @@ namespace Source.Service
             var data = new ProfileEditDto
             {
                 FullName=user.FullName,
-                Email=user.Email,
                 FieldId=user.FieldId,
                 UseType=user.UserType.ToString(),
                 Maingoal=user.MainGoal.ToString(),
                 UpdatedAt=user.UpdatedAt,
-                AvatarUrl=user.AvatarUrl
             };
             return data;
         }

@@ -21,11 +21,7 @@ namespace Source.DTOs
     }
     public class ProfileEditDto
     {
-        
-        public string? Email {get;set;}
-        [Required(ErrorMessage=" User Name khong null")]
         public string FullName { get; set; } = string.Empty;
-        public string? AvatarUrl { get; set; }
         public int? FieldId{get;set;}
         public string? UseType{get;set;}
         public string? Maingoal{get;set;}

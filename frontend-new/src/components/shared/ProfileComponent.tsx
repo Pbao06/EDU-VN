@@ -168,6 +168,7 @@ export default function Profile({
           <div className="mt-7 flex flex-col gap-3 sm:flex-row">
             <button
               type="button"
+              onClick={onEditProfile}
               className=" cursor-pointer inline-flex items-center justify-center gap-2 rounded-2xl border-2 border-black bg-white px-5 py-2.5 text-sm font-extrabold text-black transition-transform duration-150 hover:bg-orange-100"
               style={{ boxShadow: HARD_SHADOW }}
               onMouseEnter={(e) => {
@@ -185,6 +186,7 @@ export default function Profile({
 
             <button 
               type="button"
+              
               className=" cursor-pointer inline-flex items-center justify-center gap-2 rounded-2xl border-2 border-black bg-white px-5 py-2.5 text-sm font-extrabold text-black transition-transform duration-150 hover:bg-blue-50"
               style={{ boxShadow: HARD_SHADOW }}
               onMouseEnter={(e) => {
