@@ -162,7 +162,8 @@ namespace Source
                     "http://127.0.0.1:3002",
                     "https://localhost:3000",
                     "https://localhost:3001",
-                    "https://localhost:3002"
+                    "https://localhost:3002",
+                    "https://edu-vn-git-main-pbao06s-projects.vercel.app"
                 ) // Cho phép Frontend trên nhiều port
                       .AllowAnyMethod()
                      .AllowAnyHeader()
