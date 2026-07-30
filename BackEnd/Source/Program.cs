@@ -19,15 +19,12 @@ namespace Source
     {
         public static void Main(string[] args)
         {
-            var builder = WebApplication.CreateBuilder(new WebApplicationOptions
-            {
-                Args=args
-            });
+            var builder = WebApplication.CreateBuilder(args);
             // Tắt hoàn toàn việc theo dõi file appsettings.json để tránh tràn giới hạn inotify trên Render
             builder.Configuration.Sources.Clear();
             builder.Configuration
             .SetBasePath(Directory.GetCurrentDirectory())
-            .AddJsonFile("appsettings.json", optional: false, reloadOnChange: false)
+            .AddJsonFile("appsettings.json", optional: true, reloadOnChange: false)
             .AddJsonFile($"appsettings.{builder.Environment.EnvironmentName}.json", optional: true, reloadOnChange: false)
             .AddEnvironmentVariables();
 
