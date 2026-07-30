@@ -15,6 +15,7 @@
 EduPath API is a backend system that helps students discover suitable careers through recommendation quizzes and generates personalized learning paths.
 
 The system is designed using Domain-Driven Design (DDD), separating the Recommendation Domain and Learning Domain to keep business logic clean and maintainable.
+- Link for Demo: https://edu-vn-git-main-pbao06s-projects.vercel.app/home (cause i using free render,aiven maybe it's gonna off server if long time no access). 
 
 ---
 
