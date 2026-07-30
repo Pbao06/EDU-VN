@@ -1,4 +1,5 @@
-const BASE_URL = 'http://localhost:5000';
+// const BASE_URL = 'http://localhost:5000';
+const BASE_URL = 'https://edu-vn.onrender.com'; // for deploy 
 
 type ApiClientOptions = Omit<RequestInit, 'body'> & {
   headers?: Record<string, string>;
