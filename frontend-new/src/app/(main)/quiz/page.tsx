@@ -40,6 +40,10 @@ const CareerQuizPage = () => {
         setQuestions(transformApiQuestions(quiz));
       } catch (err) {
         console.error('Lỗi khi load quiz:', err);
+        //catch error backend 
+        // Tạm thời ép cứng: cứ load quiz lỗi là tống cổ về onboarding cho lẹ =)))
+        router.push('/onboarding');
+        //const errorMessage= err?.message || JSON.stringify(err);
         setError('Không thể tải quiz. Vui lòng thử lại.');
       }
     };
