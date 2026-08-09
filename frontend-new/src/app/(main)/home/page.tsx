@@ -1,18 +1,30 @@
 "use client";
-import React, { useState, useMemo, useEffect} from "react";
+import React, { useState, useMemo, useEffect } from "react";
 import { Sparkles } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useCareer } from "@/hooks/recommendation/useCareer";
 import Hero from "@/components/shared/Hero";
 import CareerFilter from "@/components/shared/CareerFilter";
-import CareerGrid from"@/components/shared/CareerGrid";
-import { DemandLevel } from"@/components/shared/CareerCard";
+import CareerGrid from "@/components/shared/CareerGrid";
+import { DemandLevel } from "@/components/shared/CareerCard";
+
+type HomeCareerItem = {
+  id: string;
+  name: string;
+  description: string;
+  salary: string;
+  salaryValue: number | null;
+  icon: React.ComponentType<any>;
+  demand: DemandLevel;
+  category: string;
+  accent: "blue";
+};
 
 export default function Home() {
-   const router = useRouter();
-   const { getListCareerPublic } = useCareer();
-      const [realCareers, setRealCareers] = useState<any[]>([]);
-      const [loading, setLoading] = useState(true);
+  const router = useRouter();
+  const { getListCareerPublic } = useCareer();
+  const [realCareers, setRealCareers] = useState<HomeCareerItem[]>([]);
+  const [loading, setLoading] = useState(true);
 
       // Load data thật từ API public
       useEffect(() => {
@@ -29,12 +41,14 @@ export default function Home() {
                 "medium": "medium",
                 "low": "low"
               };
-              
+
+              const salaryValue = item.salary !== undefined && item.salary !== null ? Number(item.salary) : null;
               return {
                 id: item.id?.toString() || item._id?.toString() || "unknown",
                 name: item.name,
                 description: item.shortDescription || item.description,
-                salary: item.salary ? `${item.salary} triệu` : "Liên hệ",
+                salary: salaryValue !== null && !Number.isNaN(salaryValue) ? `${salaryValue} triệu` : "Liên hệ",
+                salaryValue: Number.isFinite(salaryValue) ? salaryValue : null,
                 icon: Sparkles, // Placeholder
                 demand: demandLevelMap[item.demandLevel] || "high" as DemandLevel,
                 category: "Công nghệ thông tin", // Có thể thêm field category từ API nếu có
@@ -59,23 +73,62 @@ export default function Home() {
 
   // Filtering & Sorting memoized logic
   const filteredCareers = useMemo(() => {
-    return realCareers.filter((career) => {
-      // 1. Text Search
-      if (search.trim() !== "") {
-        const query = search.toLowerCase();
-        const matchName = career.name.toLowerCase().includes(query);
-        const matchDesc = career.description.toLowerCase().includes(query);
-        if (!matchName && !matchDesc) return false;
-      }
+    const salaryFilters: Record<string, { min: number; max: number | null } | null> = {
+      "Mọi mức lương": null,
+      "Dưới 10 triệu": { min: 0, max: 10 },
+      "10 - 20 triệu": { min: 10, max: 20 },
+      "20 - 35 triệu": { min: 20, max: 35 },
+      "Trên 35 triệu": { min: 35, max: null },
+    };
 
-      // 2. Category/Field Filter
-      if (field !== "Tất cả lĩnh vực" && career.category !== field) {
-        return false;
-      }
+    return realCareers
+      .filter((career) => {
+        // 1. Text Search
+        if (search.trim() !== "") {
+          const query = search.toLowerCase();
+          const matchName = career.name.toLowerCase().includes(query);
+          const matchDesc = career.description.toLowerCase().includes(query);
+          if (!matchName && !matchDesc) return false;
+        }
 
-      return true;
-    });
-  }, [realCareers, search, field]);
+        // 2. Category/Field Filter
+        if (field !== "Tất cả lĩnh vực" && career.category !== field) {
+          return false;
+        }
+
+        // 3. Salary Filter
+        const selectedSalaryFilter = salaryFilters[salary];
+        if (selectedSalaryFilter) {
+          const careerSalary = career.salaryValue;
+          if (careerSalary === null || careerSalary === undefined) {
+            return false;
+          }
+
+          if (careerSalary < selectedSalaryFilter.min) {
+            return false;
+          }
+
+          if (selectedSalaryFilter.max !== null && careerSalary > selectedSalaryFilter.max) {
+            return false;
+          }
+        }
+
+        return true;
+      })
+      .sort((a, b) => {
+        if (sort === "Lương cao nhất") {
+          const aSalary = a.salaryValue ?? 0;
+          const bSalary = b.salaryValue ?? 0;
+          return bSalary - aSalary;
+        }
+
+        if (sort === "A - Z") {
+          return a.name.localeCompare(b.name);
+        }
+
+        return 0;
+      });
+  }, [realCareers, search, field, salary, sort]);
 
   // Handle click on a career card
   const handleCareerClick = (career: any) => {
