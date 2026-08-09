@@ -359,12 +359,10 @@ Backend Developer (.NET)
 
 ```
 
-## Tôi sẽ bổ sung thêm sau khi frontend hoàn thành:
-
-- 📸 Screenshot giao diện.
+## Next update:
 - 🎥 Demo GIF.
 - 🗄️ ERD Database.
 - 🏛️ DDD Architecture Diagram.
 - 📡 API Sequence Flow.
-- ☁️ Link Deploy (Render/Azure).
-- 📖 API Documentation (Swagger).
+- Admin CRUD
+- Assign AI to Recommendation 
