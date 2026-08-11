@@ -88,7 +88,7 @@ namespace Source.Data
             var answers = await SeedAnswersAsync(context, questions);
 
             // 9. Seed AnswerCareerWeights (QUAN TRỌNG NHẤT)
-            await SeedAnswerCareerWeightsAsync(context, answers, careers);
+            await SeedAnswerCareerWeightsAsync(context, answers, questions, careers);
 
             // 10. Seed Learning Questions (knowledge test for subjects)
             var learningQuestions = await SeedLearningQuestionsAsync(context, topics);
@@ -485,13 +485,6 @@ namespace Source.Data
                 },
                 new Subject
                 {
-                    Code = "OOP",
-                    Name = "Lập Trình Hướng Đối Tượng",
-                    Description = "OOP principles, design patterns, SOLID",
-                    Type = "Core"
-                },
-                new Subject
-                {
                     Code = "HTML_CSS",
                     Name = "HTML & CSS",
                     Description = "Cấu trúc trang web và styling",
@@ -772,7 +765,6 @@ namespace Source.Data
             var cauTrucDuLieu = subjects.First(s => s.Code == "CAU_TRUC_DU_LIEU");
             var coSoDuLieu = subjects.First(s => s.Code == "CO_SO_DU_LIEU");
             var webDev = subjects.First(s => s.Code == "WEB_DEVELOPMENT");
-            var oop = subjects.First(s => s.Code == "OOP");
             var htmlCss = subjects.First(s => s.Code == "HTML_CSS");
             var javaScript = subjects.First(s => s.Code == "JAVASCRIPT");
             var react = subjects.First(s => s.Code == "REACT");
@@ -811,7 +803,7 @@ namespace Source.Data
                 // Frontend Developer Subjects
                 new CareerSubject { CareerId = frontendDev.Id, SubjectId = lapTrinhCoBan.Id, Priority = 1, Reason = "Cần thiết để hiểu logic code" },
                 new CareerSubject { CareerId = frontendDev.Id, SubjectId = webDev.Id, Priority = 1, Reason = "Core skill cho frontend" },
-                new CareerSubject { CareerId = frontendDev.Id, SubjectId = oop.Id, Priority = 2, Reason = "Giúp tổ chức code tốt hơn" },
+                new CareerSubject { CareerId = frontendDev.Id, SubjectId = oopCSharp.Id, Priority = 2, Reason = "Giúp tổ chức code tốt hơn" },
                 new CareerSubject { CareerId = frontendDev.Id, SubjectId = htmlCss.Id, Priority = 1, Reason = "Nền tảng cấu trúc và style" },
                 new CareerSubject { CareerId = frontendDev.Id, SubjectId = javaScript.Id, Priority = 1, Reason = "Ngôn ngữ cốt lõi của frontend" },
                 new CareerSubject { CareerId = frontendDev.Id, SubjectId = react.Id, Priority = 2, Reason = "Framework UI phổ biến nhất" },
@@ -819,7 +811,6 @@ namespace Source.Data
                 new CareerSubject { CareerId = backendDev.Id, SubjectId = lapTrinhCoBan.Id, Priority = 1, Reason = "Cần thiết để hiểu lập trình" },
                 new CareerSubject { CareerId = backendDev.Id, SubjectId = cauTrucDuLieu.Id, Priority = 1, Reason = "Quan trọng cho performance" },
                 new CareerSubject { CareerId = backendDev.Id, SubjectId = coSoDuLieu.Id, Priority = 1, Reason = "Core skill cho backend" },
-                new CareerSubject { CareerId = backendDev.Id, SubjectId = oop.Id, Priority = 2, Reason = "Giúp thiết kế architecture tốt" },
                 new CareerSubject { CareerId = backendDev.Id, SubjectId = cSharpFund.Id, Priority = 1, Reason = "Ngôn ngữ backend chính" },
                 new CareerSubject { CareerId = backendDev.Id, SubjectId = oopCSharp.Id, Priority = 1, Reason = "Kiến trúc hướng đối tượng C#" },
                 new CareerSubject { CareerId = backendDev.Id, SubjectId = sqlDb.Id, Priority = 1, Reason = "Quản lý và truy vấn dữ liệu" },
@@ -838,7 +829,7 @@ namespace Source.Data
                 // Mobile Developer Subjects
                 new CareerSubject { CareerId = mobileDev.Id, SubjectId = lapTrinhCoBan.Id, Priority = 1, Reason = "Cần thiết để hiểu lập trình" },
                 new CareerSubject { CareerId = mobileDev.Id, SubjectId = webDev.Id, Priority = 1, Reason = "Giúp phát triển cross-platform" },
-                new CareerSubject { CareerId = mobileDev.Id, SubjectId = oop.Id, Priority = 2, Reason = "Giúp tổ chức code tốt hơn" },
+                new CareerSubject { CareerId = mobileDev.Id, SubjectId = oopCSharp.Id, Priority = 2, Reason = "Giúp tổ chức code tốt hơn" },
                 // AI Engineer Subjects
                 new CareerSubject { CareerId = aiEngineer.Id, SubjectId = machineLearning.Id, Priority = 1, Reason = "Core skill cho AI engineer" },
                 new CareerSubject { CareerId = aiEngineer.Id, SubjectId = aiFund.Id, Priority = 1, Reason = "Nền tảng trí tuệ nhân tạo" },
@@ -1505,7 +1496,7 @@ namespace Source.Data
             return allAnswers;
         }
 
-        private static async Task SeedAnswerCareerWeightsAsync(ApplicationDbContext context, List<RecommendationAnswer> answers, List<Career> careers)
+        private static async Task SeedAnswerCareerWeightsAsync(ApplicationDbContext context, List<RecommendationAnswer> answers, List<RecommendationQuestion> questions, List<Career> careers)
         {
             Console.WriteLine("Seeding AnswerCareerWeights (QUAN TRỌNG NHẤT)...");
             
@@ -1529,19 +1520,14 @@ namespace Source.Data
             var eduConsultant = careers.First(c => c.Code == "EDUCATIONAL_CONSULTANT");
             var instructionalDesigner = careers.First(c => c.Code == "INSTRUCTIONAL_DESIGNER");
 
-            // Look up answers by content (business key) so weights never bind to the wrong answer on incremental runs
-            var answersByContent = answers.ToDictionary(a => a.Content);
-
-            int AnswerId(string content) => answersByContent[content].Id;
-
             var seedWeights = new List<AnswerCareerWeight>
             {
                 // ===== CNTT Weights =====
                 // Q1: Frontend vs Backend vs Both
                 // Answer 1: Thích giao diện → Frontend++, Backend--, Mobile+
-                new AnswerCareerWeight { RecommendationAnswerId = AnswerId("Thích thiết kế giao diện đẹp, tương tác người dùng"), CareerId = frontendDev.Id, Weight = 5 },
-                new AnswerCareerWeight { RecommendationAnswerId = AnswerId("Thích thiết kế giao diện đẹp, tương tác người dùng"), CareerId = backendDev.Id, Weight = -2 },
-                new AnswerCareerWeight { RecommendationAnswerId = AnswerId("Thích thiết kế giao diện đẹp, tương tác người dùng"), CareerId = mobileDev.Id, Weight = 3 },
+                new AnswerCareerWeight { RecommendationAnswerId = answers[0].Id, CareerId = frontendDev.Id, Weight = 5 },
+                new AnswerCareerWeight { RecommendationAnswerId = answers[0].Id, CareerId = backendDev.Id, Weight = -2 },
+                new AnswerCareerWeight { RecommendationAnswerId = answers[0].Id, CareerId = mobileDev.Id, Weight = 3 },
                 // Answer 2: Thích logic → Frontend--, Backend++, Data Science+
                 new AnswerCareerWeight { RecommendationAnswerId = answers[1].Id, CareerId = frontendDev.Id, Weight = -2 },
                 new AnswerCareerWeight { RecommendationAnswerId = answers[1].Id, CareerId = backendDev.Id, Weight = 5 },
