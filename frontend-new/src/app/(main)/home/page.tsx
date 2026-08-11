@@ -1,6 +1,6 @@
 "use client";
 import React, { useState, useMemo, useEffect } from "react";
-import { Sparkles } from "lucide-react";
+import { Sparkles, type LucideIcon } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useCareer } from "@/hooks/recommendation/useCareer";
 import Hero from "@/components/shared/Hero";
@@ -14,7 +14,7 @@ type HomeCareerItem = {
   description: string;
   salary: string;
   salaryValue: number | null;
-  icon: React.ComponentType<any>;
+  icon: LucideIcon;
   demand: DemandLevel;
   category: string;
   accent: "blue";

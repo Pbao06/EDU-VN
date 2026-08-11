@@ -18,43 +18,7 @@ namespace Source.Service
 
         // ==================== LEARNING PATH LEVEL ====================
         // Get continue learningpath of user 
-        public async Task<CountinueLearningPath> GetContinue(string UserId)
-        {
-            // query chinh: 1 la thong ke tinh toan progress , tong topic finished 
-            // 2 la check current topic va subject 
-            // validation 
-            var user= await _context.Users.FindAsync(userId);
-            if(user==null) throw new NotFoundException(" Not found User ");
-            var learningpathUser= await _context.UserLearingPaths.Include(l=>l.career).FirstOrDefaultAsync(l=>l.UserId==user.Id);
-            if(learningPath==null) throw new NotFoundException(" Not found LearningPath User");
-            var query= await _context.UserLearingPaths.where(lp=> lp.Id==learningpathUser.Id).
-            Select(lp=>lp.Career).
-            SelectMany(c=>c.CareerSubjects).
-            Select(cs=>cs.Subject).
-            SelectMany(s=>s.Topics).ToListAsync(); // đang ở topic nè
-            if(!query.Any()) throw new BadRequestException(" Sai logic không thể truy vấn"); 
-            var totalTopic= query.Count;
-            var completedTopic= query.Count(t=>t.UserProgresses.Any(up=>up.userId==user.Id && up.CompletionPercentage>=100));
-            var progress= totalTopic==0 ? 0:  (completedTopic *100.0 /totalTopic);
-            var currentTopic= query.FirstOrDefault(t=>t.UserProgresses.
-            Any(up=> up.UserId==user.Id && up.CompletionPercentage<100)); // currentTOpic là topic chưa hoàn thành
-            Subject? currentSubject = null;
-            if(currentSubject!=)
-            {
-                currentSubject= await _context.Subjects.FirstOrDefaultAsync(s=>s.Id==currentTopic.SubjectId);
-            }
-            
-
-            return new CountinueLearningPath{
-                learningPathId=learningpathUser.Id,
-                CareerName=learningpathUser.career.Name,
-                Progress=progress,
-                currentSubject=currentSubject?.Name ??  "null",
-                currentTopic= currentTopic?.Name?? "null",
-                TotalTopic=totalTopic,
-                CompletedTopic=completedTopic
-            };
-        }
+       
 
 
         //Learning path list for Profile
