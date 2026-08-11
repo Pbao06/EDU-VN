@@ -1,5 +1,5 @@
 export interface OnBoardingDto {
-  fullName: string;
+  fullName?: string | null;
   userType: string;
   mainGoal?: string | null;
   fieldId?: number | null;

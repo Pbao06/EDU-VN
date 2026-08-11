@@ -14,6 +14,12 @@ export type FieldOption = {
   id: number;
   name: string;
 };
+
+export type MainGoalOption = {
+  value: string;
+  label: string;
+};
+
 interface EditProfileModalProps {
   isOpen: boolean;
   initialData: EditProfileFormData;
@@ -21,6 +27,7 @@ interface EditProfileModalProps {
   onSave: (data: EditProfileFormData) => Promise<void> | void;
   useTypeOptions?: string[];
   fieldOptions?: FieldOption[];
+  mainGoalOptions?: MainGoalOption[];
 }
 
 const HARD_SHADOW = "4px 4px 0 0 #111111";
@@ -31,8 +38,14 @@ export function EditProfileModal({
   initialData,
   onClose,
   onSave,
-  useTypeOptions = ["Learner", "Instructor", "Professional", "Student", "Other"],
-  fieldOptions , //["Software Engineering", "Marketing", "Design", "Business", "Other"],
+  useTypeOptions = ["HighSchoolStudent", "University", "Working"],
+  fieldOptions,
+  mainGoalOptions = [
+    { value: "UniversityExam", label: "Thi đại học" },
+    { value: "ImproveGrades", label: "Cải thiện điểm số" },
+    { value: "NewSkill", label: "Học kỹ năng mới" },
+    { value: "InterviewPrep", label: "Chuẩn bị phỏng vấn" },
+  ],
 }: EditProfileModalProps) {
   const [formData, setFormData] = useState<EditProfileFormData>(initialData);
   const [busy, setBusy] = useState(false);
@@ -147,7 +160,7 @@ export function EditProfileModal({
               </label>
               <select
                 value={formData.fieldId}
-                onChange={(e) => setFormData({ ...formData, fieldId: Number(e.target.value )})}
+                onChange={(e) => setFormData({ ...formData, fieldId: Number(e.target.value) })}
                 className="w-full cursor-pointer appearance-none rounded-xl border-2 border-black bg-white px-4 py-3 text-sm font-extrabold outline-none transition-transform focus:-translate-y-0.5"
                 style={{ boxShadow: "3px 3px 0 0 #111111" }}
               >
@@ -164,14 +177,18 @@ export function EditProfileModal({
               <label className="mb-1.5 block text-xs font-extrabold uppercase tracking-wide text-black/60">
                 Main Goal
               </label>
-              <textarea
-                rows={2}
-                required
+              <select
                 value={formData.mainGoal}
                 onChange={(e) => setFormData({ ...formData, mainGoal: e.target.value })}
-                className="w-full resize-none rounded-xl border-2 border-black bg-white px-4 py-3 text-sm font-extrabold outline-none transition-transform focus:-translate-y-0.5"
+                className="w-full cursor-pointer appearance-none rounded-xl border-2 border-black bg-white px-4 py-3 text-sm font-extrabold outline-none transition-transform focus:-translate-y-0.5"
                 style={{ boxShadow: "3px 3px 0 0 #111111" }}
-              />
+              >
+                {mainGoalOptions.map((opt) => (
+                  <option key={opt.value} value={opt.value}>
+                    {opt.label}
+                  </option>
+                ))}
+              </select>
             </div>
 
             {/* Action Buttons */}

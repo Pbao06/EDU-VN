@@ -8,11 +8,9 @@ namespace Source.DTOs
     public class OnBoardingDto
     {
         /// <summary>
-        /// Họ tên đầy đủ của người dùng
+        /// Họ tên đầy đủ của người dùng (không bắt buộc vì user đã có tên khi đăng ký)
         /// </summary>
-        [Required(ErrorMessage = "Họ tên là bắt buộc")]
-        [MinLength(2, ErrorMessage = "Họ tên phải có ít nhất 2 ký tự")]
-        public string FullName { get; set; } = string.Empty;
+        public string? FullName { get; set; }
 
         /// <summary>
         /// Loại người dùng: HocSinh, SinhVien, NguoiDiLam

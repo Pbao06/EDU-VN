@@ -3,7 +3,6 @@ import { useState, type FormEvent } from "react";
 import { Compass, Check, Rocket, ChevronDown, Loader2 } from "lucide-react";
 
 export interface CareerQuizFormData {
-  fullName: string;
   userType: string;
   mainGoal: string;
   fieldId: string;
@@ -125,35 +124,6 @@ function BenefitItem({ text }: { text: string }) {
   );
 }
 
-function InputField({
-  label,
-  value,
-  onChange,
-  placeholder,
-  type = "text",
-}: {
-  label: string;
-  value: string;
-  onChange: (value: string) => void;
-  placeholder: string;
-  type?: string;
-}) {
-  return (
-    <label className="flex flex-col gap-1.5">
-      <span className="text-xs font-extrabold uppercase tracking-wider text-edu-black/60">
-        {label}
-      </span>
-      <input
-        type={type}
-        value={value}
-        onChange={(e) => onChange(e.target.value)}
-        placeholder={placeholder}
-        className="w-full rounded-2xl border-[2.5px] border-edu-black bg-edu-white px-4 py-3 text-sm font-bold text-edu-black placeholder:text-edu-black/30 shadow-[3px_3px_0_0_var(--edu-black)] outline-none transition-transform focus:ring-2 focus:ring-edu-blue active:translate-x-[1px] active:translate-y-[1px] active:shadow-[1px_1px_0_0_var(--edu-black)]"
-      />
-    </label>
-  );
-}
-
 function SelectField({
   label,
   value,
@@ -205,7 +175,6 @@ export function CareerQuizCard({
   className = "",
 }: CareerQuizCardProps) {
   const [form, setForm] = useState<CareerQuizFormData>({
-    fullName: "",
     userType: "",
     mainGoal: "",
     fieldId: "",
@@ -222,10 +191,6 @@ export function CareerQuizCard({
 
   const handleSubmit = (e: FormEvent) => {
     e.preventDefault();
-    if (!form.fullName.trim()) {
-      setError("Vui lòng nhập họ tên.");
-      return;
-    }
     if (!form.userType || !form.mainGoal || !form.fieldId) {
       setError("Vui lòng chọn đầy đủ thông tin.");
       return;
@@ -302,12 +267,6 @@ export function CareerQuizCard({
               </div>
 
               <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-                <InputField
-                  label="Họ và tên"
-                  value={form.fullName}
-                  onChange={(v) => updateField("fullName", v)}
-                  placeholder="Nguyễn Văn A"
-                />
                 <SelectField
                   label="Bạn là"
                   value={form.userType}

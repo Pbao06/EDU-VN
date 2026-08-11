@@ -6,18 +6,25 @@ import { learningPathService, toLearningPathView } from "@/services/learningPath
 import { useLearningPaths } from "@/hooks/learning/useLearningPaths";
 import type { LearningPathView } from "@/types/Learning/learning-path";
 import { useRouter } from "next/navigation";
-import { EditProfileModal, EditProfileFormData, FieldOption } from "@/components/shared/EditUserProfile";
+import { EditProfileModal, EditProfileFormData, FieldOption, MainGoalOption } from "@/components/shared/EditUserProfile";
 import type { editprofile } from "@/types/Profile/userProfile";
 
-// Danh sách map giữa ID và Tên Field
+// Danh sách map giữa ID và Tên Field (khớp với bảng Fields trong backend)
 const FIELD_OPTIONS: FieldOption[] = [
-  { id: 1, name: "Software Engineering" },
-  { id: 2, name: "Marketing" },
-  { id: 3, name: "Design" },
-  { id: 4, name: "Business" },
+  { id: 1, name: "CNTT - Công Nghệ Thông Tin" },
+  { id: 2, name: "Marketing - Tiếp Thị" },
+  { id: 3, name: "Kinh Tế - Tài Chính" },
+  { id: 4, name: "Y Tế - Sức Khỏe" },
+  { id: 5, name: "Giáo Dục" },
 ];
 
-// 1. ĐƯA MOCK DATA LÊN ĐÂY ĐỂ KHÔNG BỊ LỖI "CHƯA KHAI BÁO"
+// Danh sách Main Goal (khớp với enum MainGoal trong backend)
+const MAIN_GOAL_OPTIONS: MainGoalOption[] = [
+  { value: "UniversityExam", label: "Thi đại học" },
+  { value: "ImproveGrades", label: "Cải thiện điểm số" },
+  { value: "NewSkill", label: "Học kỹ năng mới" },
+  { value: "InterviewPrep", label: "Chuẩn bị phỏng vấn" },
+];
 const mockLearningPath = [
   { id: "1", name: "Backend Developer", progress: 72, subject: "ASP.NET Core", action: "Continue" as const },
   { id: "2", name: "Frontend Developer", progress: 18, subject: "JavaScript", action: "Continue" as const },
@@ -114,11 +121,12 @@ export default function ProfilePage() {
         onClose={() => setIsEditModalOpen(false)}
         onSave={handleSaveProfile}
         fieldOptions={FIELD_OPTIONS}
+        mainGoalOptions={MAIN_GOAL_OPTIONS}
         // 4. TRUYỀN DỮ LIỆU THẬT THAY VÌ { ... }
         initialData={{
           fullName: userData.fullName || "",
-          useType: userData.useType || "Learner",
-          mainGoal: userData.mainGoal || "",
+          useType: userData.useType || "HighSchoolStudent",
+          mainGoal: userData.mainGoal || "UniversityExam",
           fieldId: userData.fieldId || 1,
         }}
       />

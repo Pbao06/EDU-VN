@@ -23,6 +23,36 @@ import { userProfile } from "@/services/profileService";
 const HARD_SHADOW = "4px 4px 0 0 #111111";
 const HARD_SHADOW_HOVER = "6px 6px 0 0 #111111";
 
+// Danh sách màu nền ngẫu nhiên cho avatar
+const AVATAR_COLORS = [
+  "bg-amber-300",
+  "bg-orange-400",
+  "bg-blue-400",
+  "bg-green-400",
+  "bg-pink-400",
+  "bg-purple-400",
+  "bg-teal-400",
+  "bg-red-400",
+  "bg-indigo-400",
+  "bg-cyan-400",
+];
+
+// Lấy chữ cái đầu tiên của tên (viết hoa)
+const getInitial = (name: string) => {
+  const trimmed = name?.trim() || "?";
+  return trimmed.charAt(0).toUpperCase();
+};
+
+// Random màu dựa trên tên (ổn định cho cùng một tên)
+const getAvatarColor = (name: string) => {
+  const trimmed = name?.trim() || "";
+  let hash = 0;
+  for (let i = 0; i < trimmed.length; i++) {
+    hash = (hash * 31 + trimmed.charCodeAt(i)) % 997;
+  }
+  return AVATAR_COLORS[hash % AVATAR_COLORS.length];
+};
+
 const personalInfo = [
   { label: "Full Name", value: "Nguyễn An" },
   { label: "Email", value: "an.nguyen@email.com" },
@@ -88,10 +118,10 @@ export default function Profile({
         {/* Avatar — just the identity anchor, no card */}
         <div className="flex flex-row items-center gap-4 lg:flex-col lg:items-start lg:gap-0">
           <div
-            className="flex h-24 w-24 shrink-0 items-center justify-center rounded-2xl border-2 border-black bg-amber-300 text-3xl font-extrabold"
+            className={`flex h-24 w-24 shrink-0 items-center justify-center rounded-2xl border-2 border-black text-3xl font-extrabold ${getAvatarColor(personalInfo.fullName)}`}
             style={{ boxShadow: HARD_SHADOW }}
           >
-            Pbao
+            {getInitial(personalInfo.fullName)}
           </div>
           <div className="lg:mt-5">
             <span className="inline-flex w-fit items-center rounded-xl border-2 border-black bg-blue-600 px-3 py-1 text-xs font-extrabold uppercase tracking-wide text-white">
