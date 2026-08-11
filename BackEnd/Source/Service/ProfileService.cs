@@ -32,9 +32,9 @@ namespace Source.Service
                 FullName=user.FullName,
                 Email=user.Email,
                 AvatarUrl=user.AvatarUrl,
-                FieldName=user.Field.Name,
-                MainGoal=user.MainGoal.ToString()!,
-                UseType=user.UserType.ToString()!,
+                FieldName=user.Field?.Name,
+                MainGoal=user.MainGoal?.ToString(),
+                UseType=user.UserType?.ToString(),
                 UpdatedAt=user.UpdatedAt,
                 FieldId=user.FieldId,
                 Role=roles.FirstOrDefault()
@@ -64,8 +64,8 @@ namespace Source.Service
             {
                 FullName=user.FullName,
                 FieldId=user.FieldId,
-                UseType=user.UserType.ToString(),
-                Maingoal=user.MainGoal.ToString(),
+                UseType=user.UserType?.ToString(),
+                Maingoal=user.MainGoal?.ToString(),
                 UpdatedAt=user.UpdatedAt,
             };
             return data;
