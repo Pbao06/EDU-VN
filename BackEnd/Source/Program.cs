@@ -231,7 +231,7 @@ namespace Source
                 });
             // }
             app.UseRouting();
-            app.UseCors(app.Environment.IsDevelopment() ? "AllowAll" : "AllowFrontend");
+            app.UseCors("AllowAll");
             // app.UseHttpsRedirection(); // Comment out để tránh redirect từ http sang https trong development
             app.UseMiddleware<ExceptionMiddleware>();
             app.UseAuthentication();
